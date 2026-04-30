@@ -10,11 +10,22 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppWalletRouteImport } from './routes/app.wallet'
+import { Route as AppProfileRouteImport } from './routes/app.profile'
+import { Route as AppInboxRouteImport } from './routes/app.inbox'
+import { Route as AppDiscoverRouteImport } from './routes/app.discover'
+import { Route as AppCampaignsRouteImport } from './routes/app.campaigns'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -22,30 +33,99 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppWalletRoute = AppWalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProfileRoute = AppProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInboxRoute = AppInboxRouteImport.update({
+  id: '/inbox',
+  path: '/inbox',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDiscoverRoute = AppDiscoverRouteImport.update({
+  id: '/discover',
+  path: '/discover',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCampaignsRoute = AppCampaignsRouteImport.update({
+  id: '/campaigns',
+  path: '/campaigns',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/app/campaigns': typeof AppCampaignsRoute
+  '/app/discover': typeof AppDiscoverRoute
+  '/app/inbox': typeof AppInboxRoute
+  '/app/profile': typeof AppProfileRoute
+  '/app/wallet': typeof AppWalletRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/app/campaigns': typeof AppCampaignsRoute
+  '/app/discover': typeof AppDiscoverRoute
+  '/app/inbox': typeof AppInboxRoute
+  '/app/profile': typeof AppProfileRoute
+  '/app/wallet': typeof AppWalletRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/app/campaigns': typeof AppCampaignsRoute
+  '/app/discover': typeof AppDiscoverRoute
+  '/app/inbox': typeof AppInboxRoute
+  '/app/profile': typeof AppProfileRoute
+  '/app/wallet': typeof AppWalletRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/auth'
+    | '/app/campaigns'
+    | '/app/discover'
+    | '/app/inbox'
+    | '/app/profile'
+    | '/app/wallet'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth'
-  id: '__root__' | '/' | '/auth'
+  to:
+    | '/'
+    | '/app'
+    | '/auth'
+    | '/app/campaigns'
+    | '/app/discover'
+    | '/app/inbox'
+    | '/app/profile'
+    | '/app/wallet'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/auth'
+    | '/app/campaigns'
+    | '/app/discover'
+    | '/app/inbox'
+    | '/app/profile'
+    | '/app/wallet'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
 }
 
@@ -58,6 +138,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -65,11 +152,65 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/wallet': {
+      id: '/app/wallet'
+      path: '/wallet'
+      fullPath: '/app/wallet'
+      preLoaderRoute: typeof AppWalletRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/profile': {
+      id: '/app/profile'
+      path: '/profile'
+      fullPath: '/app/profile'
+      preLoaderRoute: typeof AppProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/inbox': {
+      id: '/app/inbox'
+      path: '/inbox'
+      fullPath: '/app/inbox'
+      preLoaderRoute: typeof AppInboxRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/discover': {
+      id: '/app/discover'
+      path: '/discover'
+      fullPath: '/app/discover'
+      preLoaderRoute: typeof AppDiscoverRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/campaigns': {
+      id: '/app/campaigns'
+      path: '/campaigns'
+      fullPath: '/app/campaigns'
+      preLoaderRoute: typeof AppCampaignsRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AppRouteChildren {
+  AppCampaignsRoute: typeof AppCampaignsRoute
+  AppDiscoverRoute: typeof AppDiscoverRoute
+  AppInboxRoute: typeof AppInboxRoute
+  AppProfileRoute: typeof AppProfileRoute
+  AppWalletRoute: typeof AppWalletRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppCampaignsRoute: AppCampaignsRoute,
+  AppDiscoverRoute: AppDiscoverRoute,
+  AppInboxRoute: AppInboxRoute,
+  AppProfileRoute: AppProfileRoute,
+  AppWalletRoute: AppWalletRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
