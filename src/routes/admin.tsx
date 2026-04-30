@@ -33,12 +33,12 @@ function AdminLayout() {
     </div>
   );
 
-  const tabs = [
+  const tabs: { to: "/admin" | "/admin/campaigns" | "/admin/applications" | "/admin/withdrawals"; label: string; exact?: boolean }[] = [
     { to: "/admin", label: "Dashboard", exact: true },
     { to: "/admin/campaigns", label: "Campaigns" },
     { to: "/admin/applications", label: "Applications" },
     { to: "/admin/withdrawals", label: "Withdrawals" },
-  ] as const;
+  ];
 
   return (
     <div className="min-h-screen">

@@ -16,7 +16,7 @@ function AdminWd() {
   }
   useEffect(() => { load(); }, []);
 
-  async function setStatus(w: any, status: string) {
+  async function setStatus(w: any, status: "pending" | "processing" | "paid" | "failed") {
     const { error } = await supabase.from("withdrawals").update({ status, reference: status === "paid" ? `TXN${Date.now()}` : w.reference }).eq("id", w.id);
     if (error) return toast.error(error.message);
     if (status === "paid") {
