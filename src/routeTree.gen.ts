@@ -9,15 +9,34 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AppWalletRouteImport } from './routes/app.wallet'
+import { Route as AppSupportRouteImport } from './routes/app.support'
+import { Route as AppSettingsRouteImport } from './routes/app.settings'
+import { Route as AppReferralsRouteImport } from './routes/app.referrals'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
+import { Route as AppKycRouteImport } from './routes/app.kyc'
 import { Route as AppInboxRouteImport } from './routes/app.inbox'
+import { Route as AppEditProfileRouteImport } from './routes/app.edit-profile'
 import { Route as AppDiscoverRouteImport } from './routes/app.discover'
+import { Route as AppConnectedRouteImport } from './routes/app.connected'
 import { Route as AppCampaignsRouteImport } from './routes/app.campaigns'
+import { Route as AdminWithdrawalsRouteImport } from './routes/admin.withdrawals'
+import { Route as AdminCampaignsRouteImport } from './routes/admin.campaigns'
+import { Route as AdminApplicationsRouteImport } from './routes/admin.applications'
+import { Route as AppCampaignIdRouteImport } from './routes/app.campaign.$id'
+import { Route as AppApplicationIdRouteImport } from './routes/app.application.$id'
 
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -28,14 +47,39 @@ const AppRoute = AppRouteImport.update({
   path: '/app',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AppWalletRoute = AppWalletRouteImport.update({
   id: '/wallet',
   path: '/wallet',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSupportRoute = AppSupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppReferralsRoute = AppReferralsRouteImport.update({
+  id: '/referrals',
+  path: '/referrals',
   getParentRoute: () => AppRoute,
 } as any)
 const AppProfileRoute = AppProfileRouteImport.update({
@@ -43,9 +87,19 @@ const AppProfileRoute = AppProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AppRoute,
 } as any)
+const AppKycRoute = AppKycRouteImport.update({
+  id: '/kyc',
+  path: '/kyc',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppInboxRoute = AppInboxRouteImport.update({
   id: '/inbox',
   path: '/inbox',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEditProfileRoute = AppEditProfileRouteImport.update({
+  id: '/edit-profile',
+  path: '/edit-profile',
   getParentRoute: () => AppRoute,
 } as any)
 const AppDiscoverRoute = AppDiscoverRouteImport.update({
@@ -53,84 +107,205 @@ const AppDiscoverRoute = AppDiscoverRouteImport.update({
   path: '/discover',
   getParentRoute: () => AppRoute,
 } as any)
+const AppConnectedRoute = AppConnectedRouteImport.update({
+  id: '/connected',
+  path: '/connected',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppCampaignsRoute = AppCampaignsRouteImport.update({
   id: '/campaigns',
   path: '/campaigns',
   getParentRoute: () => AppRoute,
 } as any)
+const AdminWithdrawalsRoute = AdminWithdrawalsRouteImport.update({
+  id: '/withdrawals',
+  path: '/withdrawals',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCampaignsRoute = AdminCampaignsRouteImport.update({
+  id: '/campaigns',
+  path: '/campaigns',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminApplicationsRoute = AdminApplicationsRouteImport.update({
+  id: '/applications',
+  path: '/applications',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AppCampaignIdRoute = AppCampaignIdRouteImport.update({
+  id: '/campaign/$id',
+  path: '/campaign/$id',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppApplicationIdRoute = AppApplicationIdRouteImport.update({
+  id: '/application/$id',
+  path: '/application/$id',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/onboarding': typeof OnboardingRoute
+  '/admin/applications': typeof AdminApplicationsRoute
+  '/admin/campaigns': typeof AdminCampaignsRoute
+  '/admin/withdrawals': typeof AdminWithdrawalsRoute
   '/app/campaigns': typeof AppCampaignsRoute
+  '/app/connected': typeof AppConnectedRoute
   '/app/discover': typeof AppDiscoverRoute
+  '/app/edit-profile': typeof AppEditProfileRoute
   '/app/inbox': typeof AppInboxRoute
+  '/app/kyc': typeof AppKycRoute
   '/app/profile': typeof AppProfileRoute
+  '/app/referrals': typeof AppReferralsRoute
+  '/app/settings': typeof AppSettingsRoute
+  '/app/support': typeof AppSupportRoute
   '/app/wallet': typeof AppWalletRoute
+  '/admin/': typeof AdminIndexRoute
+  '/app/application/$id': typeof AppApplicationIdRoute
+  '/app/campaign/$id': typeof AppCampaignIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/onboarding': typeof OnboardingRoute
+  '/admin/applications': typeof AdminApplicationsRoute
+  '/admin/campaigns': typeof AdminCampaignsRoute
+  '/admin/withdrawals': typeof AdminWithdrawalsRoute
   '/app/campaigns': typeof AppCampaignsRoute
+  '/app/connected': typeof AppConnectedRoute
   '/app/discover': typeof AppDiscoverRoute
+  '/app/edit-profile': typeof AppEditProfileRoute
   '/app/inbox': typeof AppInboxRoute
+  '/app/kyc': typeof AppKycRoute
   '/app/profile': typeof AppProfileRoute
+  '/app/referrals': typeof AppReferralsRoute
+  '/app/settings': typeof AppSettingsRoute
+  '/app/support': typeof AppSupportRoute
   '/app/wallet': typeof AppWalletRoute
+  '/admin': typeof AdminIndexRoute
+  '/app/application/$id': typeof AppApplicationIdRoute
+  '/app/campaign/$id': typeof AppCampaignIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/onboarding': typeof OnboardingRoute
+  '/admin/applications': typeof AdminApplicationsRoute
+  '/admin/campaigns': typeof AdminCampaignsRoute
+  '/admin/withdrawals': typeof AdminWithdrawalsRoute
   '/app/campaigns': typeof AppCampaignsRoute
+  '/app/connected': typeof AppConnectedRoute
   '/app/discover': typeof AppDiscoverRoute
+  '/app/edit-profile': typeof AppEditProfileRoute
   '/app/inbox': typeof AppInboxRoute
+  '/app/kyc': typeof AppKycRoute
   '/app/profile': typeof AppProfileRoute
+  '/app/referrals': typeof AppReferralsRoute
+  '/app/settings': typeof AppSettingsRoute
+  '/app/support': typeof AppSupportRoute
   '/app/wallet': typeof AppWalletRoute
+  '/admin/': typeof AdminIndexRoute
+  '/app/application/$id': typeof AppApplicationIdRoute
+  '/app/campaign/$id': typeof AppCampaignIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/app'
     | '/auth'
+    | '/onboarding'
+    | '/admin/applications'
+    | '/admin/campaigns'
+    | '/admin/withdrawals'
     | '/app/campaigns'
+    | '/app/connected'
     | '/app/discover'
+    | '/app/edit-profile'
     | '/app/inbox'
+    | '/app/kyc'
     | '/app/profile'
+    | '/app/referrals'
+    | '/app/settings'
+    | '/app/support'
     | '/app/wallet'
+    | '/admin/'
+    | '/app/application/$id'
+    | '/app/campaign/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/app'
     | '/auth'
+    | '/onboarding'
+    | '/admin/applications'
+    | '/admin/campaigns'
+    | '/admin/withdrawals'
     | '/app/campaigns'
+    | '/app/connected'
     | '/app/discover'
+    | '/app/edit-profile'
     | '/app/inbox'
+    | '/app/kyc'
     | '/app/profile'
+    | '/app/referrals'
+    | '/app/settings'
+    | '/app/support'
     | '/app/wallet'
+    | '/admin'
+    | '/app/application/$id'
+    | '/app/campaign/$id'
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/app'
     | '/auth'
+    | '/onboarding'
+    | '/admin/applications'
+    | '/admin/campaigns'
+    | '/admin/withdrawals'
     | '/app/campaigns'
+    | '/app/connected'
     | '/app/discover'
+    | '/app/edit-profile'
     | '/app/inbox'
+    | '/app/kyc'
     | '/app/profile'
+    | '/app/referrals'
+    | '/app/settings'
+    | '/app/support'
     | '/app/wallet'
+    | '/admin/'
+    | '/app/application/$id'
+    | '/app/campaign/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
+  OnboardingRoute: typeof OnboardingRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -145,6 +320,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -152,11 +334,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/app/wallet': {
       id: '/app/wallet'
       path: '/wallet'
       fullPath: '/app/wallet'
       preLoaderRoute: typeof AppWalletRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/support': {
+      id: '/app/support'
+      path: '/support'
+      fullPath: '/app/support'
+      preLoaderRoute: typeof AppSupportRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/settings': {
+      id: '/app/settings'
+      path: '/settings'
+      fullPath: '/app/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/referrals': {
+      id: '/app/referrals'
+      path: '/referrals'
+      fullPath: '/app/referrals'
+      preLoaderRoute: typeof AppReferralsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/profile': {
@@ -166,11 +376,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProfileRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/kyc': {
+      id: '/app/kyc'
+      path: '/kyc'
+      fullPath: '/app/kyc'
+      preLoaderRoute: typeof AppKycRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/inbox': {
       id: '/app/inbox'
       path: '/inbox'
       fullPath: '/app/inbox'
       preLoaderRoute: typeof AppInboxRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/edit-profile': {
+      id: '/app/edit-profile'
+      path: '/edit-profile'
+      fullPath: '/app/edit-profile'
+      preLoaderRoute: typeof AppEditProfileRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/discover': {
@@ -180,6 +404,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDiscoverRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/connected': {
+      id: '/app/connected'
+      path: '/connected'
+      fullPath: '/app/connected'
+      preLoaderRoute: typeof AppConnectedRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/campaigns': {
       id: '/app/campaigns'
       path: '/campaigns'
@@ -187,32 +418,110 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCampaignsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/admin/withdrawals': {
+      id: '/admin/withdrawals'
+      path: '/withdrawals'
+      fullPath: '/admin/withdrawals'
+      preLoaderRoute: typeof AdminWithdrawalsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/campaigns': {
+      id: '/admin/campaigns'
+      path: '/campaigns'
+      fullPath: '/admin/campaigns'
+      preLoaderRoute: typeof AdminCampaignsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/applications': {
+      id: '/admin/applications'
+      path: '/applications'
+      fullPath: '/admin/applications'
+      preLoaderRoute: typeof AdminApplicationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/app/campaign/$id': {
+      id: '/app/campaign/$id'
+      path: '/campaign/$id'
+      fullPath: '/app/campaign/$id'
+      preLoaderRoute: typeof AppCampaignIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/application/$id': {
+      id: '/app/application/$id'
+      path: '/application/$id'
+      fullPath: '/app/application/$id'
+      preLoaderRoute: typeof AppApplicationIdRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminApplicationsRoute: typeof AdminApplicationsRoute
+  AdminCampaignsRoute: typeof AdminCampaignsRoute
+  AdminWithdrawalsRoute: typeof AdminWithdrawalsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminApplicationsRoute: AdminApplicationsRoute,
+  AdminCampaignsRoute: AdminCampaignsRoute,
+  AdminWithdrawalsRoute: AdminWithdrawalsRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 interface AppRouteChildren {
   AppCampaignsRoute: typeof AppCampaignsRoute
+  AppConnectedRoute: typeof AppConnectedRoute
   AppDiscoverRoute: typeof AppDiscoverRoute
+  AppEditProfileRoute: typeof AppEditProfileRoute
   AppInboxRoute: typeof AppInboxRoute
+  AppKycRoute: typeof AppKycRoute
   AppProfileRoute: typeof AppProfileRoute
+  AppReferralsRoute: typeof AppReferralsRoute
+  AppSettingsRoute: typeof AppSettingsRoute
+  AppSupportRoute: typeof AppSupportRoute
   AppWalletRoute: typeof AppWalletRoute
+  AppApplicationIdRoute: typeof AppApplicationIdRoute
+  AppCampaignIdRoute: typeof AppCampaignIdRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppCampaignsRoute: AppCampaignsRoute,
+  AppConnectedRoute: AppConnectedRoute,
   AppDiscoverRoute: AppDiscoverRoute,
+  AppEditProfileRoute: AppEditProfileRoute,
   AppInboxRoute: AppInboxRoute,
+  AppKycRoute: AppKycRoute,
   AppProfileRoute: AppProfileRoute,
+  AppReferralsRoute: AppReferralsRoute,
+  AppSettingsRoute: AppSettingsRoute,
+  AppSupportRoute: AppSupportRoute,
   AppWalletRoute: AppWalletRoute,
+  AppApplicationIdRoute: AppApplicationIdRoute,
+  AppCampaignIdRoute: AppCampaignIdRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
+  OnboardingRoute: OnboardingRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
