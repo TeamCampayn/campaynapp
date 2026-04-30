@@ -19,6 +19,7 @@ import { Route as AppInboxRouteImport } from './routes/app.inbox'
 import { Route as AppDiscoverRouteImport } from './routes/app.discover'
 import { Route as AppCampaignsRouteImport } from './routes/app.campaigns'
 import { Route as AppCampaignIdRouteImport } from './routes/app.campaign.$id'
+import { Route as AppApplicationIdRouteImport } from './routes/app.application.$id'
 
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
@@ -70,6 +71,11 @@ const AppCampaignIdRoute = AppCampaignIdRouteImport.update({
   path: '/campaign/$id',
   getParentRoute: () => AppRoute,
 } as any)
+const AppApplicationIdRoute = AppApplicationIdRouteImport.update({
+  id: '/application/$id',
+  path: '/application/$id',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/app/inbox': typeof AppInboxRoute
   '/app/profile': typeof AppProfileRoute
   '/app/wallet': typeof AppWalletRoute
+  '/app/application/$id': typeof AppApplicationIdRoute
   '/app/campaign/$id': typeof AppCampaignIdRoute
 }
 export interface FileRoutesByTo {
@@ -93,6 +100,7 @@ export interface FileRoutesByTo {
   '/app/inbox': typeof AppInboxRoute
   '/app/profile': typeof AppProfileRoute
   '/app/wallet': typeof AppWalletRoute
+  '/app/application/$id': typeof AppApplicationIdRoute
   '/app/campaign/$id': typeof AppCampaignIdRoute
 }
 export interface FileRoutesById {
@@ -106,6 +114,7 @@ export interface FileRoutesById {
   '/app/inbox': typeof AppInboxRoute
   '/app/profile': typeof AppProfileRoute
   '/app/wallet': typeof AppWalletRoute
+  '/app/application/$id': typeof AppApplicationIdRoute
   '/app/campaign/$id': typeof AppCampaignIdRoute
 }
 export interface FileRouteTypes {
@@ -120,6 +129,7 @@ export interface FileRouteTypes {
     | '/app/inbox'
     | '/app/profile'
     | '/app/wallet'
+    | '/app/application/$id'
     | '/app/campaign/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -132,6 +142,7 @@ export interface FileRouteTypes {
     | '/app/inbox'
     | '/app/profile'
     | '/app/wallet'
+    | '/app/application/$id'
     | '/app/campaign/$id'
   id:
     | '__root__'
@@ -144,6 +155,7 @@ export interface FileRouteTypes {
     | '/app/inbox'
     | '/app/profile'
     | '/app/wallet'
+    | '/app/application/$id'
     | '/app/campaign/$id'
   fileRoutesById: FileRoutesById
 }
@@ -226,6 +238,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCampaignIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/application/$id': {
+      id: '/app/application/$id'
+      path: '/application/$id'
+      fullPath: '/app/application/$id'
+      preLoaderRoute: typeof AppApplicationIdRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
@@ -235,6 +254,7 @@ interface AppRouteChildren {
   AppInboxRoute: typeof AppInboxRoute
   AppProfileRoute: typeof AppProfileRoute
   AppWalletRoute: typeof AppWalletRoute
+  AppApplicationIdRoute: typeof AppApplicationIdRoute
   AppCampaignIdRoute: typeof AppCampaignIdRoute
 }
 
@@ -244,6 +264,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppInboxRoute: AppInboxRoute,
   AppProfileRoute: AppProfileRoute,
   AppWalletRoute: AppWalletRoute,
+  AppApplicationIdRoute: AppApplicationIdRoute,
   AppCampaignIdRoute: AppCampaignIdRoute,
 }
 
