@@ -12,7 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AppWalletRouteImport } from './routes/app.wallet'
 import { Route as AppSupportRouteImport } from './routes/app.support'
 import { Route as AppSettingsRouteImport } from './routes/app.settings'
@@ -24,6 +26,9 @@ import { Route as AppEditProfileRouteImport } from './routes/app.edit-profile'
 import { Route as AppDiscoverRouteImport } from './routes/app.discover'
 import { Route as AppConnectedRouteImport } from './routes/app.connected'
 import { Route as AppCampaignsRouteImport } from './routes/app.campaigns'
+import { Route as AdminWithdrawalsRouteImport } from './routes/admin.withdrawals'
+import { Route as AdminCampaignsRouteImport } from './routes/admin.campaigns'
+import { Route as AdminApplicationsRouteImport } from './routes/admin.applications'
 import { Route as AppCampaignIdRouteImport } from './routes/app.campaign.$id'
 import { Route as AppApplicationIdRouteImport } from './routes/app.application.$id'
 
@@ -42,10 +47,20 @@ const AppRoute = AppRouteImport.update({
   path: '/app',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AppWalletRoute = AppWalletRouteImport.update({
   id: '/wallet',
@@ -102,6 +117,21 @@ const AppCampaignsRoute = AppCampaignsRouteImport.update({
   path: '/campaigns',
   getParentRoute: () => AppRoute,
 } as any)
+const AdminWithdrawalsRoute = AdminWithdrawalsRouteImport.update({
+  id: '/withdrawals',
+  path: '/withdrawals',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCampaignsRoute = AdminCampaignsRouteImport.update({
+  id: '/campaigns',
+  path: '/campaigns',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminApplicationsRoute = AdminApplicationsRouteImport.update({
+  id: '/applications',
+  path: '/applications',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AppCampaignIdRoute = AppCampaignIdRouteImport.update({
   id: '/campaign/$id',
   path: '/campaign/$id',
@@ -115,9 +145,13 @@ const AppApplicationIdRoute = AppApplicationIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
+  '/admin/applications': typeof AdminApplicationsRoute
+  '/admin/campaigns': typeof AdminCampaignsRoute
+  '/admin/withdrawals': typeof AdminWithdrawalsRoute
   '/app/campaigns': typeof AppCampaignsRoute
   '/app/connected': typeof AppConnectedRoute
   '/app/discover': typeof AppDiscoverRoute
@@ -129,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/app/settings': typeof AppSettingsRoute
   '/app/support': typeof AppSupportRoute
   '/app/wallet': typeof AppWalletRoute
+  '/admin/': typeof AdminIndexRoute
   '/app/application/$id': typeof AppApplicationIdRoute
   '/app/campaign/$id': typeof AppCampaignIdRoute
 }
@@ -137,6 +172,9 @@ export interface FileRoutesByTo {
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
+  '/admin/applications': typeof AdminApplicationsRoute
+  '/admin/campaigns': typeof AdminCampaignsRoute
+  '/admin/withdrawals': typeof AdminWithdrawalsRoute
   '/app/campaigns': typeof AppCampaignsRoute
   '/app/connected': typeof AppConnectedRoute
   '/app/discover': typeof AppDiscoverRoute
@@ -148,15 +186,20 @@ export interface FileRoutesByTo {
   '/app/settings': typeof AppSettingsRoute
   '/app/support': typeof AppSupportRoute
   '/app/wallet': typeof AppWalletRoute
+  '/admin': typeof AdminIndexRoute
   '/app/application/$id': typeof AppApplicationIdRoute
   '/app/campaign/$id': typeof AppCampaignIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
+  '/admin/applications': typeof AdminApplicationsRoute
+  '/admin/campaigns': typeof AdminCampaignsRoute
+  '/admin/withdrawals': typeof AdminWithdrawalsRoute
   '/app/campaigns': typeof AppCampaignsRoute
   '/app/connected': typeof AppConnectedRoute
   '/app/discover': typeof AppDiscoverRoute
@@ -168,6 +211,7 @@ export interface FileRoutesById {
   '/app/settings': typeof AppSettingsRoute
   '/app/support': typeof AppSupportRoute
   '/app/wallet': typeof AppWalletRoute
+  '/admin/': typeof AdminIndexRoute
   '/app/application/$id': typeof AppApplicationIdRoute
   '/app/campaign/$id': typeof AppCampaignIdRoute
 }
@@ -175,9 +219,13 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/app'
     | '/auth'
     | '/onboarding'
+    | '/admin/applications'
+    | '/admin/campaigns'
+    | '/admin/withdrawals'
     | '/app/campaigns'
     | '/app/connected'
     | '/app/discover'
@@ -189,6 +237,7 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/app/support'
     | '/app/wallet'
+    | '/admin/'
     | '/app/application/$id'
     | '/app/campaign/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -197,6 +246,9 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/onboarding'
+    | '/admin/applications'
+    | '/admin/campaigns'
+    | '/admin/withdrawals'
     | '/app/campaigns'
     | '/app/connected'
     | '/app/discover'
@@ -208,14 +260,19 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/app/support'
     | '/app/wallet'
+    | '/admin'
     | '/app/application/$id'
     | '/app/campaign/$id'
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/app'
     | '/auth'
     | '/onboarding'
+    | '/admin/applications'
+    | '/admin/campaigns'
+    | '/admin/withdrawals'
     | '/app/campaigns'
     | '/app/connected'
     | '/app/discover'
@@ -227,12 +284,14 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/app/support'
     | '/app/wallet'
+    | '/admin/'
     | '/app/application/$id'
     | '/app/campaign/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
   OnboardingRoute: typeof OnboardingRoute
@@ -261,12 +320,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/app/wallet': {
       id: '/app/wallet'
@@ -345,6 +418,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCampaignsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/admin/withdrawals': {
+      id: '/admin/withdrawals'
+      path: '/withdrawals'
+      fullPath: '/admin/withdrawals'
+      preLoaderRoute: typeof AdminWithdrawalsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/campaigns': {
+      id: '/admin/campaigns'
+      path: '/campaigns'
+      fullPath: '/admin/campaigns'
+      preLoaderRoute: typeof AdminCampaignsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/applications': {
+      id: '/admin/applications'
+      path: '/applications'
+      fullPath: '/admin/applications'
+      preLoaderRoute: typeof AdminApplicationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/app/campaign/$id': {
       id: '/app/campaign/$id'
       path: '/campaign/$id'
@@ -361,6 +455,22 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AdminRouteChildren {
+  AdminApplicationsRoute: typeof AdminApplicationsRoute
+  AdminCampaignsRoute: typeof AdminCampaignsRoute
+  AdminWithdrawalsRoute: typeof AdminWithdrawalsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminApplicationsRoute: AdminApplicationsRoute,
+  AdminCampaignsRoute: AdminCampaignsRoute,
+  AdminWithdrawalsRoute: AdminWithdrawalsRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AppRouteChildren {
   AppCampaignsRoute: typeof AppCampaignsRoute
@@ -398,6 +508,7 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
   OnboardingRoute: OnboardingRoute,
