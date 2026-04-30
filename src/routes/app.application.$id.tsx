@@ -48,7 +48,7 @@ function ApplicationDetail() {
     if (!/^https?:\/\//.test(postUrl)) return toast.error("Paste a valid URL");
     setBusy(true);
     try {
-      const { error: se } = await supabase.from("submissions").insert({ application_id: id, kind: "post", asset_url: postUrl });
+      const { error: se } = await supabase.from("submissions").insert({ application_id: id, kind: "video", asset_url: postUrl });
       if (se) throw se;
       const { error: ue } = await supabase.from("applications").update({ status: "posted", post_url: postUrl }).eq("id", id);
       if (ue) throw ue;
