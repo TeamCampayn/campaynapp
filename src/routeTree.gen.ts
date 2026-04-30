@@ -14,9 +14,15 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppWalletRouteImport } from './routes/app.wallet'
+import { Route as AppSupportRouteImport } from './routes/app.support'
+import { Route as AppSettingsRouteImport } from './routes/app.settings'
+import { Route as AppReferralsRouteImport } from './routes/app.referrals'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
+import { Route as AppKycRouteImport } from './routes/app.kyc'
 import { Route as AppInboxRouteImport } from './routes/app.inbox'
+import { Route as AppEditProfileRouteImport } from './routes/app.edit-profile'
 import { Route as AppDiscoverRouteImport } from './routes/app.discover'
+import { Route as AppConnectedRouteImport } from './routes/app.connected'
 import { Route as AppCampaignsRouteImport } from './routes/app.campaigns'
 import { Route as AppCampaignIdRouteImport } from './routes/app.campaign.$id'
 import { Route as AppApplicationIdRouteImport } from './routes/app.application.$id'
@@ -46,9 +52,29 @@ const AppWalletRoute = AppWalletRouteImport.update({
   path: '/wallet',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSupportRoute = AppSupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppReferralsRoute = AppReferralsRouteImport.update({
+  id: '/referrals',
+  path: '/referrals',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppProfileRoute = AppProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppKycRoute = AppKycRouteImport.update({
+  id: '/kyc',
+  path: '/kyc',
   getParentRoute: () => AppRoute,
 } as any)
 const AppInboxRoute = AppInboxRouteImport.update({
@@ -56,9 +82,19 @@ const AppInboxRoute = AppInboxRouteImport.update({
   path: '/inbox',
   getParentRoute: () => AppRoute,
 } as any)
+const AppEditProfileRoute = AppEditProfileRouteImport.update({
+  id: '/edit-profile',
+  path: '/edit-profile',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDiscoverRoute = AppDiscoverRouteImport.update({
   id: '/discover',
   path: '/discover',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppConnectedRoute = AppConnectedRouteImport.update({
+  id: '/connected',
+  path: '/connected',
   getParentRoute: () => AppRoute,
 } as any)
 const AppCampaignsRoute = AppCampaignsRouteImport.update({
@@ -83,9 +119,15 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
   '/app/campaigns': typeof AppCampaignsRoute
+  '/app/connected': typeof AppConnectedRoute
   '/app/discover': typeof AppDiscoverRoute
+  '/app/edit-profile': typeof AppEditProfileRoute
   '/app/inbox': typeof AppInboxRoute
+  '/app/kyc': typeof AppKycRoute
   '/app/profile': typeof AppProfileRoute
+  '/app/referrals': typeof AppReferralsRoute
+  '/app/settings': typeof AppSettingsRoute
+  '/app/support': typeof AppSupportRoute
   '/app/wallet': typeof AppWalletRoute
   '/app/application/$id': typeof AppApplicationIdRoute
   '/app/campaign/$id': typeof AppCampaignIdRoute
@@ -96,9 +138,15 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
   '/app/campaigns': typeof AppCampaignsRoute
+  '/app/connected': typeof AppConnectedRoute
   '/app/discover': typeof AppDiscoverRoute
+  '/app/edit-profile': typeof AppEditProfileRoute
   '/app/inbox': typeof AppInboxRoute
+  '/app/kyc': typeof AppKycRoute
   '/app/profile': typeof AppProfileRoute
+  '/app/referrals': typeof AppReferralsRoute
+  '/app/settings': typeof AppSettingsRoute
+  '/app/support': typeof AppSupportRoute
   '/app/wallet': typeof AppWalletRoute
   '/app/application/$id': typeof AppApplicationIdRoute
   '/app/campaign/$id': typeof AppCampaignIdRoute
@@ -110,9 +158,15 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
   '/app/campaigns': typeof AppCampaignsRoute
+  '/app/connected': typeof AppConnectedRoute
   '/app/discover': typeof AppDiscoverRoute
+  '/app/edit-profile': typeof AppEditProfileRoute
   '/app/inbox': typeof AppInboxRoute
+  '/app/kyc': typeof AppKycRoute
   '/app/profile': typeof AppProfileRoute
+  '/app/referrals': typeof AppReferralsRoute
+  '/app/settings': typeof AppSettingsRoute
+  '/app/support': typeof AppSupportRoute
   '/app/wallet': typeof AppWalletRoute
   '/app/application/$id': typeof AppApplicationIdRoute
   '/app/campaign/$id': typeof AppCampaignIdRoute
@@ -125,9 +179,15 @@ export interface FileRouteTypes {
     | '/auth'
     | '/onboarding'
     | '/app/campaigns'
+    | '/app/connected'
     | '/app/discover'
+    | '/app/edit-profile'
     | '/app/inbox'
+    | '/app/kyc'
     | '/app/profile'
+    | '/app/referrals'
+    | '/app/settings'
+    | '/app/support'
     | '/app/wallet'
     | '/app/application/$id'
     | '/app/campaign/$id'
@@ -138,9 +198,15 @@ export interface FileRouteTypes {
     | '/auth'
     | '/onboarding'
     | '/app/campaigns'
+    | '/app/connected'
     | '/app/discover'
+    | '/app/edit-profile'
     | '/app/inbox'
+    | '/app/kyc'
     | '/app/profile'
+    | '/app/referrals'
+    | '/app/settings'
+    | '/app/support'
     | '/app/wallet'
     | '/app/application/$id'
     | '/app/campaign/$id'
@@ -151,9 +217,15 @@ export interface FileRouteTypes {
     | '/auth'
     | '/onboarding'
     | '/app/campaigns'
+    | '/app/connected'
     | '/app/discover'
+    | '/app/edit-profile'
     | '/app/inbox'
+    | '/app/kyc'
     | '/app/profile'
+    | '/app/referrals'
+    | '/app/settings'
+    | '/app/support'
     | '/app/wallet'
     | '/app/application/$id'
     | '/app/campaign/$id'
@@ -203,11 +275,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppWalletRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/support': {
+      id: '/app/support'
+      path: '/support'
+      fullPath: '/app/support'
+      preLoaderRoute: typeof AppSupportRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/settings': {
+      id: '/app/settings'
+      path: '/settings'
+      fullPath: '/app/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/referrals': {
+      id: '/app/referrals'
+      path: '/referrals'
+      fullPath: '/app/referrals'
+      preLoaderRoute: typeof AppReferralsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/profile': {
       id: '/app/profile'
       path: '/profile'
       fullPath: '/app/profile'
       preLoaderRoute: typeof AppProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/kyc': {
+      id: '/app/kyc'
+      path: '/kyc'
+      fullPath: '/app/kyc'
+      preLoaderRoute: typeof AppKycRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/inbox': {
@@ -217,11 +317,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppInboxRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/edit-profile': {
+      id: '/app/edit-profile'
+      path: '/edit-profile'
+      fullPath: '/app/edit-profile'
+      preLoaderRoute: typeof AppEditProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/discover': {
       id: '/app/discover'
       path: '/discover'
       fullPath: '/app/discover'
       preLoaderRoute: typeof AppDiscoverRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/connected': {
+      id: '/app/connected'
+      path: '/connected'
+      fullPath: '/app/connected'
+      preLoaderRoute: typeof AppConnectedRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/campaigns': {
@@ -250,9 +364,15 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppCampaignsRoute: typeof AppCampaignsRoute
+  AppConnectedRoute: typeof AppConnectedRoute
   AppDiscoverRoute: typeof AppDiscoverRoute
+  AppEditProfileRoute: typeof AppEditProfileRoute
   AppInboxRoute: typeof AppInboxRoute
+  AppKycRoute: typeof AppKycRoute
   AppProfileRoute: typeof AppProfileRoute
+  AppReferralsRoute: typeof AppReferralsRoute
+  AppSettingsRoute: typeof AppSettingsRoute
+  AppSupportRoute: typeof AppSupportRoute
   AppWalletRoute: typeof AppWalletRoute
   AppApplicationIdRoute: typeof AppApplicationIdRoute
   AppCampaignIdRoute: typeof AppCampaignIdRoute
@@ -260,9 +380,15 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppCampaignsRoute: AppCampaignsRoute,
+  AppConnectedRoute: AppConnectedRoute,
   AppDiscoverRoute: AppDiscoverRoute,
+  AppEditProfileRoute: AppEditProfileRoute,
   AppInboxRoute: AppInboxRoute,
+  AppKycRoute: AppKycRoute,
   AppProfileRoute: AppProfileRoute,
+  AppReferralsRoute: AppReferralsRoute,
+  AppSettingsRoute: AppSettingsRoute,
+  AppSupportRoute: AppSupportRoute,
   AppWalletRoute: AppWalletRoute,
   AppApplicationIdRoute: AppApplicationIdRoute,
   AppCampaignIdRoute: AppCampaignIdRoute,
