@@ -40,7 +40,7 @@ function AdminApps() {
       await supabase.from("transactions").insert({ user_id: a.user_id, amount_inr: amt, kind: "earning", description: `${a.campaigns?.brand_name} – ${a.campaigns?.title}`, application_id: a.id });
       const { data: prof } = await supabase.from("profiles").select("coin_balance, lifetime_earnings").eq("id", a.user_id).maybeSingle();
       await supabase.from("profiles").update({ coin_balance: (prof?.coin_balance ?? 0) + amt, lifetime_earnings: (prof?.lifetime_earnings ?? 0) + amt }).eq("id", a.user_id);
-      await supabase.from("notifications").insert({ user_id: a.user_id, kind: "payment", title: `+${amt} Coins credited 🎉`, body: `${a.campaigns?.brand_name} paid out for "${a.campaigns?.title}".` });
+      await supabase.from("notifications").insert({ user_id: a.user_id, kind: "wallet", title: `+${amt} Coins credited 🎉`, body: `${a.campaigns?.brand_name} paid out for "${a.campaigns?.title}".` });
     } else {
       await supabase.from("notifications").insert({ user_id: a.user_id, kind: "campaign", title: `Status: ${status}`, body: `${a.campaigns?.title}` });
     }

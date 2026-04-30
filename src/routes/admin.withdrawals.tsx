@@ -24,7 +24,7 @@ function AdminWd() {
       await supabase.from("transactions").insert({ user_id: w.user_id, amount_inr: -w.amount_inr, kind: "withdrawal", status: "completed", description: `Withdrawal to ${w.destination_value}` });
       const { data: prof } = await supabase.from("profiles").select("coin_balance").eq("id", w.user_id).maybeSingle();
       await supabase.from("profiles").update({ coin_balance: Math.max(0, (prof?.coin_balance ?? 0) - w.amount_inr) }).eq("id", w.user_id);
-      await supabase.from("notifications").insert({ user_id: w.user_id, kind: "payment", title: `Withdrawal paid`, body: `${inrFmt(w.amount_inr)} sent to ${w.destination_value}` });
+      await supabase.from("notifications").insert({ user_id: w.user_id, kind: "wallet", title: `Withdrawal paid`, body: `${inrFmt(w.amount_inr)} sent to ${w.destination_value}` });
     }
     toast.success("Updated"); load();
   }
