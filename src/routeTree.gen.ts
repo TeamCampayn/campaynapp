@@ -32,6 +32,7 @@ import { Route as AdminApplicationsRouteImport } from './routes/admin.applicatio
 import { Route as AppCampaignIdRouteImport } from './routes/app.campaign.$id'
 import { Route as AppApplicationIdRouteImport } from './routes/app.application.$id'
 import { Route as AppCampaignRouteImport } from './routes/app.campaign.'
+import { Route as AppApplicationRouteImport } from './routes/app.application.'
 
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
@@ -148,6 +149,11 @@ const AppCampaignRoute = AppCampaignRouteImport.update({
   path: '/campaign/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppApplicationRoute = AppApplicationRouteImport.update({
+  id: '/application/',
+  path: '/application/',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -170,6 +176,7 @@ export interface FileRoutesByFullPath {
   '/app/support': typeof AppSupportRoute
   '/app/wallet': typeof AppWalletRoute
   '/admin/': typeof AdminIndexRoute
+  '/app/application/': typeof AppApplicationRoute
   '/app/campaign/': typeof AppCampaignRoute
   '/app/application/$id': typeof AppApplicationIdRoute
   '/app/campaign/$id': typeof AppCampaignIdRoute
@@ -194,6 +201,7 @@ export interface FileRoutesByTo {
   '/app/support': typeof AppSupportRoute
   '/app/wallet': typeof AppWalletRoute
   '/admin': typeof AdminIndexRoute
+  '/app/application': typeof AppApplicationRoute
   '/app/campaign': typeof AppCampaignRoute
   '/app/application/$id': typeof AppApplicationIdRoute
   '/app/campaign/$id': typeof AppCampaignIdRoute
@@ -220,6 +228,7 @@ export interface FileRoutesById {
   '/app/support': typeof AppSupportRoute
   '/app/wallet': typeof AppWalletRoute
   '/admin/': typeof AdminIndexRoute
+  '/app/application/': typeof AppApplicationRoute
   '/app/campaign/': typeof AppCampaignRoute
   '/app/application/$id': typeof AppApplicationIdRoute
   '/app/campaign/$id': typeof AppCampaignIdRoute
@@ -247,6 +256,7 @@ export interface FileRouteTypes {
     | '/app/support'
     | '/app/wallet'
     | '/admin/'
+    | '/app/application/'
     | '/app/campaign/'
     | '/app/application/$id'
     | '/app/campaign/$id'
@@ -271,6 +281,7 @@ export interface FileRouteTypes {
     | '/app/support'
     | '/app/wallet'
     | '/admin'
+    | '/app/application'
     | '/app/campaign'
     | '/app/application/$id'
     | '/app/campaign/$id'
@@ -296,6 +307,7 @@ export interface FileRouteTypes {
     | '/app/support'
     | '/app/wallet'
     | '/admin/'
+    | '/app/application/'
     | '/app/campaign/'
     | '/app/application/$id'
     | '/app/campaign/$id'
@@ -472,6 +484,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCampaignRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/application/': {
+      id: '/app/application/'
+      path: '/application'
+      fullPath: '/app/application/'
+      preLoaderRoute: typeof AppApplicationRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
@@ -503,6 +522,7 @@ interface AppRouteChildren {
   AppSettingsRoute: typeof AppSettingsRoute
   AppSupportRoute: typeof AppSupportRoute
   AppWalletRoute: typeof AppWalletRoute
+  AppApplicationRoute: typeof AppApplicationRoute
   AppCampaignRoute: typeof AppCampaignRoute
   AppApplicationIdRoute: typeof AppApplicationIdRoute
   AppCampaignIdRoute: typeof AppCampaignIdRoute
@@ -520,6 +540,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppSettingsRoute: AppSettingsRoute,
   AppSupportRoute: AppSupportRoute,
   AppWalletRoute: AppWalletRoute,
+  AppApplicationRoute: AppApplicationRoute,
   AppCampaignRoute: AppCampaignRoute,
   AppApplicationIdRoute: AppApplicationIdRoute,
   AppCampaignIdRoute: AppCampaignIdRoute,
