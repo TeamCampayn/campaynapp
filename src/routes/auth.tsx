@@ -30,8 +30,7 @@ function AuthPage() {
     try {
       if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
-          email: form.email,
-          password: form.password,
+          email: form.email, password: form.password,
           options: { data: { display_name: form.name }, emailRedirectTo: window.location.origin + "/app/discover" },
         });
         if (error) throw error;
@@ -48,28 +47,36 @@ function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col px-5 pt-8 pb-10 max-w-md mx-auto w-full">
+    <div className="min-h-screen flex flex-col px-5 pt-8 pb-10 max-w-md mx-auto w-full bg-background">
       <Logo />
-      <h1 className="mt-10 text-3xl font-black tracking-tight">{mode === "signup" ? "Create your creator account" : "Welcome back"}</h1>
-      <p className="mt-2 text-muted-foreground text-sm">{mode === "signup" ? "Takes 30 seconds. No card needed." : "Sign in to continue earning."}</p>
+      <h1 className="mt-10 text-[28px] font-extrabold tracking-tight text-foreground leading-tight">
+        {mode === "signup" ? "Create your creator account" : "Welcome back"}
+      </h1>
+      <p className="mt-2 text-muted-foreground text-sm">
+        {mode === "signup" ? "Takes 30 seconds. No card needed." : "Sign in to continue earning."}
+      </p>
 
       <form onSubmit={submit} className="mt-8 space-y-3">
         {mode === "signup" && (
-          <input className="w-full bg-input/60 border border-border rounded-xl px-4 py-3 text-[15px] outline-none focus:ring-2 focus:ring-primary"
-            placeholder="Display name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} maxLength={40} />
+          <input className="cmp-input" placeholder="Display name" value={form.name}
+            onChange={e => setForm({ ...form, name: e.target.value })} maxLength={40} />
         )}
-        <input className="w-full bg-input/60 border border-border rounded-xl px-4 py-3 text-[15px] outline-none focus:ring-2 focus:ring-primary"
-          type="email" placeholder="Email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} maxLength={255} autoComplete="email" />
-        <input className="w-full bg-input/60 border border-border rounded-xl px-4 py-3 text-[15px] outline-none focus:ring-2 focus:ring-primary"
-          type="password" placeholder="Password (8+ chars)" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} maxLength={72} autoComplete={mode === "signup" ? "new-password" : "current-password"} />
+        <input className="cmp-input" type="email" placeholder="Email" value={form.email}
+          onChange={e => setForm({ ...form, email: e.target.value })} maxLength={255} autoComplete="email" />
+        <input className="cmp-input" type="password" placeholder="Password (8+ chars)" value={form.password}
+          onChange={e => setForm({ ...form, password: e.target.value })} maxLength={72}
+          autoComplete={mode === "signup" ? "new-password" : "current-password"} />
 
-        <button type="submit" disabled={busy} className="w-full grad-coin py-3.5 rounded-2xl font-bold ring-coin transition active:scale-[0.98] disabled:opacity-60">
+        <button type="submit" disabled={busy} className="btn-primary w-full mt-2">
           {busy ? "Please wait…" : mode === "signup" ? "Create account" : "Sign in"}
         </button>
       </form>
 
-      <button onClick={() => setMode(mode === "signup" ? "signin" : "signup")} className="mt-6 text-sm text-muted-foreground text-center">
-        {mode === "signup" ? <>Already have an account? <span className="text-foreground font-semibold">Sign in</span></> : <>New to Campayn? <span className="text-foreground font-semibold">Create account</span></>}
+      <button onClick={() => setMode(mode === "signup" ? "signin" : "signup")}
+        className="mt-6 text-sm text-muted-foreground text-center">
+        {mode === "signup"
+          ? <>Already have an account? <span className="text-primary-blue font-semibold">Sign in</span></>
+          : <>New to Campayn? <span className="text-primary-blue font-semibold">Create account</span></>}
       </button>
     </div>
   );

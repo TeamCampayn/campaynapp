@@ -1,23 +1,16 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { compactFmt, inrFmt } from "@/lib/auth";
-import { Logo } from "@/components/app/Logo";
-import { Clock, Users, Sparkles, Search } from "lucide-react";
+import { Sparkles, Search, Filter } from "lucide-react";
+import { CampaignCard, CampaignCardMini, type CampaignCardData } from "@/components/app/CampaignCard";
 
 export const Route = createFileRoute("/app/discover")({
   head: () => ({ meta: [{ title: "Discover — Campayn" }]}),
   component: Discover,
 });
 
-type Campaign = {
-  id: string; brand_name: string; brand_logo_url: string | null; cover_image_url: string | null;
-  title: string; tagline: string | null; cpv_paise: number; deadline: string | null;
-  slots_total: number; slots_filled: number; platform: string; target_niches: string[];
-};
-
 function Discover() {
-  const [items, setItems] = useState<Campaign[] | null>(null);
+  const [items, setItems] = useState<CampaignCardData[] | null>(null);
   const [profile, setProfile] = useState<{ display_name: string | null } | null>(null);
   const [avgViews, setAvgViews] = useState<number>(50000);
   const [q, setQ] = useState("");
@@ -25,7 +18,7 @@ function Discover() {
 
   useEffect(() => {
     supabase.from("campaigns").select("*").eq("status", "active").order("created_at", { ascending: false })
-      .then(({ data }) => setItems((data as Campaign[]) ?? []));
+      .then(({ data }) => setItems((data as CampaignCardData[]) ?? []));
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) return;
       const { data: p } = await supabase.from("profiles").select("display_name").eq("id", user.id).maybeSingle();
@@ -42,82 +35,90 @@ function Discover() {
     if (!items) return null;
     return items.filter(c => {
       if (filter !== "all" && c.platform !== filter && c.platform !== "both") return false;
-      if (q && !`${c.title} ${c.brand_name} ${c.tagline ?? ""}`.toLowerCase().includes(q.toLowerCase())) return false;
+      if (q && !`${c.title} ${c.brand_name}`.toLowerCase().includes(q.toLowerCase())) return false;
       return true;
     });
   }, [items, q, filter]);
 
   return (
-    <div className="px-5 pt-6">
-      <header className="flex items-center justify-between">
-        <Logo />
-        <span className="chip"><Sparkles className="h-3 w-3 text-coin" /> Live</span>
-      </header>
-
-      <div className="mt-6">
-        <p className="text-muted-foreground text-sm">Hi {profile?.display_name ?? "creator"} 👋</p>
-        <h1 className="text-2xl font-black tracking-tight">Campaigns matched for you</h1>
+    <div className="pb-6">
+      {/* Header */}
+      <div className="px-5 pt-3 flex items-center gap-3">
+        <div className="flex-1">
+          <div className="text-[13px] text-muted-foreground">Namaste, {profile?.display_name ?? "creator"} 👋</div>
+          <h1 className="text-[28px] font-extrabold tracking-tight text-foreground leading-tight mt-0.5">Discover</h1>
+        </div>
+        <div className="h-[42px] w-[42px] rounded-full grad-primary grid place-items-center text-white font-bold">
+          {(profile?.display_name?.[0] ?? "C").toUpperCase()}
+        </div>
       </div>
 
+      {/* Search + filter */}
+      <div className="px-5 pt-3.5 flex gap-2.5">
+        <div className="relative flex-1">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-muted-foreground" />
+          <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search campaigns…"
+            className="w-full h-11 pl-10 pr-3.5 rounded-xl bg-white border border-border text-[14px] outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
+        </div>
+        <button className="h-11 w-11 grid place-items-center rounded-xl bg-white border border-border text-foreground relative">
+          <Filter className="h-[18px] w-[18px]" />
+          <span className="absolute top-0.5 right-0.5 h-2.5 w-2.5 rounded-full" style={{ background:"#F4B400", border:"2px solid #fff" }} />
+        </button>
+      </div>
+
+      {/* Category chips */}
+      <div className="mt-3 px-5 flex gap-2 overflow-x-auto no-scrollbar pb-1">
+        {[["all","All"],["instagram","Instagram"],["youtube","YouTube"]].map(([v,l]) => {
+          const sel = filter === v;
+          return (
+            <button key={v} onClick={() => setFilter(v)}
+              className={`shrink-0 px-3.5 py-2 rounded-full text-[13px] border transition ${
+                sel ? "bg-primary text-white border-primary font-semibold" : "bg-white text-foreground border-border font-medium"
+              }`}>{l}</button>
+          );
+        })}
+      </div>
+
+      {/* Loading skeleton */}
       {items === null && (
-        <div className="mt-6 space-y-3">
-          {[1,2,3].map(i => <div key={i} className="h-44 rounded-2xl glass-card animate-pulse" />)}
+        <div className="mt-5 px-5 space-y-4">
+          {[1,2,3].map(i => <div key={i} className="h-56 rounded-2xl bg-white border border-border animate-pulse" />)}
         </div>
       )}
 
-      <div className="mt-5 relative">
-        <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-        <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search brands or campaigns"
-          className="w-full bg-input/60 border border-border rounded-xl pl-9 pr-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary" />
-      </div>
-      <div className="mt-3 flex gap-2 overflow-x-auto no-scrollbar">
-        {[["all","All"],["instagram","Instagram"],["youtube","YouTube"]].map(([v,l]) => (
-          <button key={v} onClick={() => setFilter(v)} className={`chip whitespace-nowrap ${filter === v ? "ring-2 ring-coin text-coin" : ""}`}>{l}</button>
-        ))}
-      </div>
-
-      {filtered?.length === 0 && (
-        <div className="mt-10 text-center text-muted-foreground">No campaigns match. Try clearing filters.</div>
+      {/* Top picks rail */}
+      {items && items.length > 0 && (
+        <div className="mt-2">
+          <div className="px-5 flex items-baseline justify-between mb-2.5">
+            <h2 className="text-[17px] font-semibold text-foreground">Top picks for you</h2>
+            <span className="text-[11px] font-medium text-muted-foreground tracking-wider inline-flex items-center gap-1">
+              <Sparkles className="h-3 w-3 text-primary-blue" /> AI-MATCHED
+            </span>
+          </div>
+          <div className="flex gap-3 overflow-x-auto no-scrollbar px-5 pb-3">
+            {items.slice(0, 5).map(c => (
+              <CampaignCardMini key={c.id} c={c} avgViews={avgViews} />
+            ))}
+          </div>
+        </div>
       )}
 
-      <ul className="mt-5 space-y-4">
-        {filtered?.map(c => {
-          const days = c.deadline ? Math.max(0, Math.ceil((new Date(c.deadline).getTime() - Date.now()) / 86400000)) : null;
-          const est = Math.round((avgViews / 1000) * (c.cpv_paise / 100));
-          return (
-            <li key={c.id}>
-              <Link to="/app/campaign/$id" params={{ id: c.id }} className="block glass-card rounded-2xl overflow-hidden active:scale-[0.99] transition">
-                {c.cover_image_url && (
-                  <div className="h-32 bg-cover bg-center" style={{ backgroundImage: `url(${c.cover_image_url})` }} />
-                )}
-                <div className="p-4">
-                  <div className="flex items-center gap-3">
-                    {c.brand_logo_url && <img src={c.brand_logo_url} alt={c.brand_name} className="h-9 w-9 rounded-lg bg-white object-contain p-1" />}
-                    <div className="min-w-0">
-                      <div className="font-bold text-[15px] truncate">{c.title}</div>
-                      <div className="text-xs text-muted-foreground">{c.brand_name} · {c.platform}</div>
-                    </div>
-                  </div>
-                  {c.tagline && <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{c.tagline}</p>}
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {c.target_niches.slice(0,3).map(n => <span key={n} className="chip capitalize">{n}</span>)}
-                  </div>
-                  <div className="mt-4 flex items-end justify-between">
-                    <div>
-                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">You'll earn ~</div>
-                      <div className="text-coin font-black text-xl leading-none">{inrFmt(est)}</div>
-                    </div>
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                      <span className="inline-flex items-center gap-1"><Users className="h-3 w-3" /> {compactFmt(c.slots_total - c.slots_filled)} left</span>
-                      {days !== null && <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" /> {days}d</span>}
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
+      {/* All campaigns */}
+      {filtered && (
+        <div className="px-5 mt-2">
+          <div className="flex items-baseline justify-between mb-3">
+            <h2 className="text-[17px] font-semibold text-foreground">All campaigns</h2>
+            <span className="text-[11px] font-medium text-muted-foreground">{filtered.length} live</span>
+          </div>
+          {filtered.length === 0 ? (
+            <div className="py-10 text-center text-muted-foreground text-sm">No campaigns match. Try clearing filters.</div>
+          ) : (
+            <div className="space-y-3.5">
+              {filtered.map(c => <CampaignCard key={c.id} c={c} avgViews={avgViews} />)}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
