@@ -40,44 +40,44 @@
 
 :root {
   --radius: 1rem;
-  /* Campayn — premium dark creator aesthetic, neon-lime coin accent */
-  --background: oklch(0.16 0.03 270);
-  --foreground: oklch(0.97 0.01 270);
-  --surface-1: oklch(0.20 0.035 270);
-  --surface-2: oklch(0.24 0.04 270);
-  --card: oklch(0.20 0.035 270);
-  --card-foreground: oklch(0.97 0.01 270);
-  --popover: oklch(0.22 0.04 270);
-  --popover-foreground: oklch(0.97 0.01 270);
-  --primary: oklch(0.65 0.22 280);            /* indigo-violet */
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.28 0.05 270);
-  --secondary-foreground: oklch(0.97 0.01 270);
-  --muted: oklch(0.26 0.03 270);
-  --muted-foreground: oklch(0.72 0.02 270);
-  --accent: oklch(0.32 0.06 280);
-  --accent-foreground: oklch(0.97 0.01 270);
-  --destructive: oklch(0.62 0.22 25);
-  --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.30 0.03 270 / 0.6);
-  --input: oklch(0.28 0.03 270);
-  --ring: oklch(0.65 0.22 280);
-  --coin: oklch(0.88 0.21 130);                /* neon lime — creator coin */
-  --coin-foreground: oklch(0.18 0.04 130);
-  --success: oklch(0.78 0.18 155);
-  --warning: oklch(0.82 0.16 75);
-  --info: oklch(0.72 0.15 230);
+  /* Campayn Design System — light, warm off-white canvas, blue primary, gold coin */
+  --background: #FAF8F5;            /* warm off-white app canvas */
+  --foreground: #0F172A;            /* near-black navy text */
+  --surface-1: #FFFFFF;
+  --surface-2: #F4F3EE;
+  --card: #FFFFFF;
+  --card-foreground: #0F172A;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F172A;
+  --primary: #3B4FE4;               /* Campayn blue */
+  --primary-foreground: #FFFFFF;
+  --primary-2: #6C7EF5;             /* lighter blue (gradient stop) */
+  --secondary: #EEF0FD;             /* pale blue surface (chip fills) */
+  --secondary-foreground: #3B4FE4;
+  --muted: #F1F5F9;
+  --muted-foreground: #64748B;      /* slate captions */
+  --accent: #EEF0FD;
+  --accent-foreground: #3B4FE4;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: #E2E8F0;
+  --input: #FFFFFF;
+  --ring: #3B4FE4;
+  --coin: #F4B400;                  /* creator-coin gold */
+  --coin-foreground: #0F172A;
+  --coin-2: #FFCD3C;
+  --success: #22C55E;
+  --warning: #F59E0B;
+  --info: #3B4FE4;
 }
 
-.dark { color-scheme: dark; }
+:root { color-scheme: light; }
 
 @layer base {
   * { border-color: var(--color-border); }
   html, body, #root { min-height: 100%; }
   body {
-    background: radial-gradient(1200px 600px at 10% -10%, oklch(0.30 0.10 280 / 0.35), transparent 60%),
-                radial-gradient(1000px 500px at 110% 20%, oklch(0.35 0.12 200 / 0.25), transparent 60%),
-                var(--color-background);
+    background: var(--color-background);
     color: var(--color-foreground);
     font-family: ui-sans-serif, system-ui, -apple-system, "Inter", "SF Pro Display", sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -85,26 +85,94 @@
 }
 
 @layer components {
+  /* Card surface — flagship Campayn card */
   .glass-card {
-    background: linear-gradient(180deg, color-mix(in oklab, var(--surface-1) 90%, transparent), color-mix(in oklab, var(--surface-2) 80%, transparent));
-    border: 1px solid color-mix(in oklab, var(--foreground) 8%, transparent);
-    backdrop-filter: blur(8px);
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
   }
-  .grad-primary {
-    background: linear-gradient(135deg, oklch(0.62 0.22 290), oklch(0.55 0.20 240));
-  }
-  .grad-coin {
-    background: linear-gradient(135deg, oklch(0.90 0.21 135), oklch(0.78 0.20 110));
-    color: oklch(0.18 0.04 130);
-  }
-  .text-coin { color: var(--coin); }
-  .ring-coin { box-shadow: 0 0 0 1px color-mix(in oklab, var(--coin) 40%, transparent), 0 8px 30px -10px color-mix(in oklab, var(--coin) 35%, transparent); }
+  .cmp-card { background:#fff; border-radius:16px; box-shadow:0 4px 16px rgba(15,23,42,0.08); overflow:hidden; }
+  .grad-primary { background: linear-gradient(135deg, #3B4FE4 0%, #6C7EF5 100%); color:#fff; }
+  .grad-splash  { background: linear-gradient(180deg, #3B4FE4 0%, #1A1A2E 100%); color:#fff; }
+  .grad-coin    { background: linear-gradient(135deg, #F4B400 0%, #FFCD3C 100%); color:#0F172A; }
+  .text-coin    { color: var(--coin); }
+  .text-primary-blue { color: var(--primary); }
+  .ring-coin    { box-shadow: 0 6px 20px -8px rgba(244,180,0,0.55); }
+  .ring-primary { box-shadow: 0 8px 24px rgba(59,79,228,0.20); }
+
+  /* Soft chip (used everywhere as filter/category/meta pill) */
   .chip {
     display: inline-flex; align-items: center; gap: 0.35rem;
-    padding: 0.25rem 0.6rem; border-radius: 999px; font-size: 0.72rem; font-weight: 600;
-    background: color-mix(in oklab, var(--surface-2) 80%, transparent);
-    border: 1px solid color-mix(in oklab, var(--foreground) 10%, transparent);
+    padding: 6px 10px; border-radius: 999px;
+    font-size: 12px; font-weight: 600; line-height: 1;
+    background: #EEF0FD; color: #3B4FE4;
+    border: 1px solid transparent;
+    white-space: nowrap;
   }
+  .chip-neutral { background:#F1F5F9; color:#64748B; }
+  .chip-warn    { background: rgba(245,158,11,0.12); color:#B07303; }
+  .chip-success { background: rgba(34,197,94,0.12);  color:#15803D; }
+  .chip-error   { background: rgba(239,68,68,0.12);  color:#B91C1C; }
+
+  /* Coin pill — gold, with ₹ amount */
+  .coin-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 6px 12px; background: var(--coin); color: #fff;
+    border-radius: 999px; font-weight: 700; font-size: 12px; line-height: 1;
+    letter-spacing: 0.01em; white-space: nowrap;
+  }
+
+  /* Status chip — colored dot + label, used in My Campaigns */
+  .status { display:inline-flex; align-items:center; gap:6px; padding:5px 10px; border-radius:999px;
+            font-weight:600; font-size:12px; line-height:1; border:1px solid currentColor; }
+  .status::before { content:""; width:6px; height:6px; border-radius:999px; background:currentColor; }
+  .status-applied  { color:#3B4FE4; background:rgba(59,79,228,0.10); }
+  .status-approved { color:#22C55E; background:rgba(34,197,94,0.10); }
+  .status-pending  { color:#F59E0B; background:rgba(245,158,11,0.10); }
+  .status-rejected { color:#EF4444; background:rgba(239,68,68,0.10); }
+  .status-paid     { color:#22C55E; background:rgba(34,197,94,0.10); }
+
+  /* Buttons — design-system primitives */
+  .btn-primary {
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    height:52px; padding:0 24px; border-radius:14px; border:none; cursor:pointer;
+    background: var(--primary); color:#fff; font-weight:600; font-size:16px;
+    transition: transform 120ms ease, background 120ms ease, box-shadow 120ms ease;
+  }
+  .btn-primary:hover    { background:#2A3CC8; }
+  .btn-primary:active   { transform: scale(0.97); }
+  .btn-primary:disabled { background:#EEF0FD; color:#94A3B8; cursor:not-allowed; }
+  .btn-secondary {
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    height:44px; padding:0 18px; border-radius:14px; cursor:pointer;
+    background:transparent; color:var(--primary); border:1.5px solid var(--primary);
+    font-weight:600; font-size:14px;
+  }
+  .btn-secondary:hover { background: rgba(59,79,228,0.06); }
+  .btn-ghost {
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    padding:8px 12px; border-radius:12px; background:transparent; color:#0F172A;
+    border:1px solid #E2E8F0; cursor:pointer; font-weight:600; font-size:14px;
+  }
+
+  /* Inputs */
+  .cmp-input {
+    width:100%; height:52px; padding:0 16px; border-radius:12px;
+    border:1px solid var(--border); background:#fff; color:var(--foreground);
+    font-size:15px; outline:none; transition: border-color 120ms, box-shadow 120ms;
+  }
+  .cmp-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59,79,228,0.15); }
+  .cmp-textarea { @apply cmp-input; height:auto; min-height:120px; padding:14px 16px; line-height:1.5; }
+
+  /* Brand cover — gradient card hero */
+  .brand-cover { position:relative; overflow:hidden; }
+  .brand-cover::after {
+    content:""; position:absolute; inset:auto 0 0 0; height:60%;
+    background: linear-gradient(180deg, transparent 0%, rgba(26,26,46,0.55) 100%);
+    pointer-events:none;
+  }
+
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }
