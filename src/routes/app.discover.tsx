@@ -35,7 +35,7 @@ function Discover() {
     if (!items) return null;
     return items.filter(c => {
       if (filter !== "all" && c.platform !== filter && c.platform !== "both") return false;
-      if (q && !`${c.title} ${c.brand_name} ${c.tagline ?? ""}`.toLowerCase().includes(q.toLowerCase())) return false;
+      if (q && !`${c.title} ${c.brand_name}`.toLowerCase().includes(q.toLowerCase())) return false;
       return true;
     });
   }, [items, q, filter]);
