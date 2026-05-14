@@ -6,7 +6,7 @@ import { ArrowLeft, Check, X, Sparkles, Clock, Users, Loader2, Share2, Eye } fro
 import { toast } from "sonner";
 import { BrandCover } from "@/components/app/BrandCover";
 
-export const Route = createFileRoute("/app/campaign/$id")({
+export const Route = createFileRoute("/app/campaign/")({
   head: () => ({ meta: [{ title: "Campaign — Campayn" }] }),
   component: CampaignDetail,
 });
