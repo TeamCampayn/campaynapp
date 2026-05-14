@@ -19,18 +19,21 @@ function Landing() {
   if (user) return <Navigate to="/app/discover" />;
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background">
       <header className="px-5 pt-6 flex items-center justify-between max-w-md mx-auto w-full">
         <Logo />
-        <Link to="/auth" className="text-sm font-semibold text-muted-foreground hover:text-foreground">Sign in</Link>
+        <Link to="/auth" className="text-sm font-semibold text-primary-blue">Sign in</Link>
       </header>
 
       <main className="flex-1 px-5 pt-10 pb-24 max-w-md mx-auto w-full">
-        <span className="chip"><Sparkles className="h-3 w-3 text-coin" /> Made for Indian creators</span>
-        <h1 className="mt-4 text-4xl font-black leading-[1.05] tracking-tight">
-          Brands ke deals, <span className="text-coin">ek tap door.</span>
+        <span className="chip"><Sparkles className="h-3 w-3" /> Made for Indian creators</span>
+        <h1 className="mt-4 text-[40px] font-extrabold leading-[1.05] tracking-tight text-foreground">
+          Brands ke deals,{" "}
+          <span style={{ background: "linear-gradient(135deg,#3B4FE4,#6C7EF5)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+            ek tap door.
+          </span>
         </h1>
-        <p className="mt-3 text-muted-foreground text-[15px]">
+        <p className="mt-3 text-muted-foreground text-[15px] leading-relaxed">
           See exactly how much each campaign will pay <em>before</em> you apply. Earn Creator Coins. Withdraw to UPI in 24 hours.
         </p>
 
@@ -40,22 +43,24 @@ function Landing() {
             { i: Coins,      t: "Get paid in Creator Coins", d: "1 Coin = ₹1. Withdraw to UPI or bank." },
             { i: Sparkles,   t: "AI script & caption help",  d: "Powered by Lovable AI inside the app." },
           ].map(({ i: Icon, t, d }) => (
-            <div key={t} className="glass-card rounded-2xl p-4 flex gap-3">
+            <div key={t} className="cmp-card p-4 flex gap-3">
               <div className="h-10 w-10 rounded-xl grad-primary grid place-items-center shrink-0">
-                <Icon className="h-5 w-5 text-primary-foreground" />
+                <Icon className="h-5 w-5 text-white" />
               </div>
               <div>
-                <div className="font-bold">{t}</div>
+                <div className="font-semibold text-foreground">{t}</div>
                 <div className="text-sm text-muted-foreground">{d}</div>
               </div>
             </div>
           ))}
         </div>
 
-        <Link to="/auth" className="mt-8 block w-full text-center grad-coin py-3.5 rounded-2xl font-bold ring-coin transition active:scale-[0.98]">
+        <Link to="/auth" className="mt-8 btn-primary w-full">
           Get started — it's free
         </Link>
-        <p className="mt-3 text-center text-xs text-muted-foreground">Already on Campayn? <Link to="/auth" className="text-foreground font-semibold">Sign in</Link></p>
+        <p className="mt-3 text-center text-xs text-muted-foreground">
+          Already on Campayn? <Link to="/auth" className="text-primary-blue font-semibold">Sign in</Link>
+        </p>
       </main>
     </div>
   );
