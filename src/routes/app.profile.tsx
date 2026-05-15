@@ -239,6 +239,29 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
+function Sparkline({ data }: { data: number[] }) {
+  const w = 96, h = 40, pad = 3;
+  const max = Math.max(1, ...data);
+  const step = data.length > 1 ? (w - pad*2) / (data.length - 1) : 0;
+  const pts = data.map((v, i) => `${pad + i*step},${h - pad - (v/max)*(h - pad*2)}`).join(" ");
+  const area = `M ${pad},${h-pad} L ${pts.split(" ").join(" L ")} L ${w-pad},${h-pad} Z`;
+  if (!data.some(v => v > 0)) {
+    return <TrendingUp className="h-10 w-10 text-primary" />;
+  }
+  return (
+    <svg width={w} height={h} className="overflow-visible">
+      <defs>
+        <linearGradient id="spark" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="var(--primary)" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <path d={area} fill="url(#spark)" />
+      <polyline points={pts} fill="none" stroke="var(--primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function PlatformRow({ icon, name, conn, bg }: { icon: React.ReactNode; name: string; conn: any; bg: string }) {
   return (
     <Link to="/app/connected" className="mt-3 flex items-center gap-3 active:opacity-80">
