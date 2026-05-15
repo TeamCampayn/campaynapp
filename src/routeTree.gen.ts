@@ -18,6 +18,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AppWalletRouteImport } from './routes/app.wallet'
 import { Route as AppSupportRouteImport } from './routes/app.support'
 import { Route as AppSettingsRouteImport } from './routes/app.settings'
+import { Route as AppScoreRouteImport } from './routes/app.score'
 import { Route as AppReferralsRouteImport } from './routes/app.referrals'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppKycRouteImport } from './routes/app.kyc'
@@ -75,6 +76,11 @@ const AppSupportRoute = AppSupportRouteImport.update({
 const AppSettingsRoute = AppSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppScoreRoute = AppScoreRouteImport.update({
+  id: '/score',
+  path: '/score',
   getParentRoute: () => AppRoute,
 } as any)
 const AppReferralsRoute = AppReferralsRouteImport.update({
@@ -160,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/app/kyc': typeof AppKycRoute
   '/app/profile': typeof AppProfileRoute
   '/app/referrals': typeof AppReferralsRoute
+  '/app/score': typeof AppScoreRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/support': typeof AppSupportRoute
   '/app/wallet': typeof AppWalletRoute
@@ -183,6 +190,7 @@ export interface FileRoutesByTo {
   '/app/kyc': typeof AppKycRoute
   '/app/profile': typeof AppProfileRoute
   '/app/referrals': typeof AppReferralsRoute
+  '/app/score': typeof AppScoreRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/support': typeof AppSupportRoute
   '/app/wallet': typeof AppWalletRoute
@@ -208,6 +216,7 @@ export interface FileRoutesById {
   '/app/kyc': typeof AppKycRoute
   '/app/profile': typeof AppProfileRoute
   '/app/referrals': typeof AppReferralsRoute
+  '/app/score': typeof AppScoreRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/support': typeof AppSupportRoute
   '/app/wallet': typeof AppWalletRoute
@@ -234,6 +243,7 @@ export interface FileRouteTypes {
     | '/app/kyc'
     | '/app/profile'
     | '/app/referrals'
+    | '/app/score'
     | '/app/settings'
     | '/app/support'
     | '/app/wallet'
@@ -257,6 +267,7 @@ export interface FileRouteTypes {
     | '/app/kyc'
     | '/app/profile'
     | '/app/referrals'
+    | '/app/score'
     | '/app/settings'
     | '/app/support'
     | '/app/wallet'
@@ -281,6 +292,7 @@ export interface FileRouteTypes {
     | '/app/kyc'
     | '/app/profile'
     | '/app/referrals'
+    | '/app/score'
     | '/app/settings'
     | '/app/support'
     | '/app/wallet'
@@ -360,6 +372,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/app/settings'
       preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/score': {
+      id: '/app/score'
+      path: '/score'
+      fullPath: '/app/score'
+      preLoaderRoute: typeof AppScoreRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/referrals': {
@@ -481,6 +500,7 @@ interface AppRouteChildren {
   AppKycRoute: typeof AppKycRoute
   AppProfileRoute: typeof AppProfileRoute
   AppReferralsRoute: typeof AppReferralsRoute
+  AppScoreRoute: typeof AppScoreRoute
   AppSettingsRoute: typeof AppSettingsRoute
   AppSupportRoute: typeof AppSupportRoute
   AppWalletRoute: typeof AppWalletRoute
@@ -497,6 +517,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppKycRoute: AppKycRoute,
   AppProfileRoute: AppProfileRoute,
   AppReferralsRoute: AppReferralsRoute,
+  AppScoreRoute: AppScoreRoute,
   AppSettingsRoute: AppSettingsRoute,
   AppSupportRoute: AppSupportRoute,
   AppWalletRoute: AppWalletRoute,
