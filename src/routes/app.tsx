@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet, Navigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { BottomNav } from "@/components/app/BottomNav";
+import { RealtimeNotifier } from "@/components/app/RealtimeNotifier";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -27,6 +28,7 @@ function AppLayout() {
         <Outlet />
       </div>
       <BottomNav />
+      <RealtimeNotifier user={user} />
     </div>
   );
 }

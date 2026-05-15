@@ -123,16 +123,20 @@ function Wallet() {
           <ul className="space-y-2.5">
             {pending.map(a => {
               const due = a.payout_due_at ? new Date(a.payout_due_at) : null;
-              const left = due ? Math.max(0, due.getTime() - Date.now()) : 0;
+              const window = (a.campaigns?.payout_window_days ?? 7) * 86400000;
+              const left = due ? Math.max(0, due.getTime() - Date.now()) : window;
+              const elapsed = window - left;
+              const pct = Math.max(2, Math.min(100, Math.round((elapsed / window) * 100)));
               const days = Math.floor(left / 86400000);
               const hours = Math.floor((left % 86400000) / 3600000);
               const projected = a.estimated_earning_inr ?? 0;
               return (
                 <li key={a.id}>
                   <Link to="/app/application/$id" params={{ id: a.id }}
-                    className="cmp-card block p-3.5 active:scale-[0.99] transition">
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="min-w-0">
+                    className="glass block p-3.5 rounded-2xl active:scale-[0.99] transition">
+                    <div className="flex items-center gap-3">
+                      <ProgressRing pct={pct} label={`${days}d`} />
+                      <div className="flex-1 min-w-0">
                         <div className="font-bold text-[14px] truncate">{a.campaigns?.brand_name}</div>
                         <div className="text-[12px] text-muted-foreground inline-flex items-center gap-1 mt-0.5">
                           <Clock className="h-3 w-3" />
@@ -271,9 +275,33 @@ function Wallet() {
 
 function StatCard({ label, value, accent, muted }: { label: string; value: string; accent?: boolean; muted?: boolean }) {
   return (
-    <div className="cmp-card p-3">
+    <div className="glass p-3 rounded-2xl">
       <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">{label}</div>
       <div className={`mt-1 font-black text-[15px] truncate ${accent ? "text-primary" : muted ? "text-muted-foreground" : ""}`}>{value}</div>
+    </div>
+  );
+}
+
+function ProgressRing({ pct, label }: { pct: number; label: string }) {
+  const r = 22;
+  const c = 2 * Math.PI * r;
+  const dash = (pct / 100) * c;
+  return (
+    <div className="relative h-[52px] w-[52px] shrink-0">
+      <svg viewBox="0 0 56 56" className="h-full w-full -rotate-90">
+        <circle cx="28" cy="28" r={r} stroke="rgba(60,76,226,0.12)" strokeWidth="5" fill="none" />
+        <circle cx="28" cy="28" r={r} stroke="url(#ring-grad)" strokeWidth="5" fill="none"
+          strokeDasharray={`${dash} ${c}`} strokeLinecap="round" />
+        <defs>
+          <linearGradient id="ring-grad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#3C4CE2" />
+            <stop offset="100%" stopColor="#8B5CF6" />
+          </linearGradient>
+        </defs>
+      </svg>
+      <div className="absolute inset-0 grid place-items-center text-[11px] font-black text-primary tabular-nums">
+        {label}
+      </div>
     </div>
   );
 }

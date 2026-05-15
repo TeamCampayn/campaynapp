@@ -17,6 +17,12 @@ function Landing() {
   const { user, loading } = useAuth();
   if (loading) return <div className="min-h-screen grid place-items-center text-muted-foreground">Loading…</div>;
   if (user) return <Navigate to="/app/discover" />;
+  // First-time visitors see the splash + 3-screen tour. Returning visitors who
+  // already saw it get the marketing landing page.
+  if (typeof window !== "undefined" && !localStorage.getItem("campayn.tour.v1")) {
+    localStorage.setItem("campayn.tour.v1", "1");
+    return <Navigate to="/welcome" />;
+  }
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-background">

@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, Sparkles } from "lucide-react";
+import { Search, Sparkles, X } from "lucide-react";
 import { CampaignCard, CampaignCardMini, type CampaignCardData } from "@/components/app/CampaignCard";
 import { NotificationsBell } from "@/components/app/NotificationsBell";
 
@@ -16,6 +16,9 @@ function Discover() {
   const [avgViews, setAvgViews] = useState<number>(50000);
   const [filter, setFilter] = useState<string>("all");
   const [niches, setNiches] = useState<string[]>([]);
+  const [query, setQuery] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
+  const [activeNiches, setActiveNiches] = useState<string[]>([]);
 
   useEffect(() => {
     supabase.from("campaigns").select("*").eq("status", "active").order("created_at", { ascending: false })
@@ -50,6 +53,7 @@ function Discover() {
   const filtered = useMemo(() => {
     if (!items) return null;
     const now = Date.now();
+    const q = query.trim().toLowerCase();
     return items.filter(c => {
       if (filter === "new") {
         const isNew = c.created_at ? now - new Date(c.created_at).getTime() < 1000 * 60 * 60 * 24 * 4 : false;
@@ -60,9 +64,30 @@ function Discover() {
         const hours = c.deadline ? Math.ceil((new Date(c.deadline).getTime() - now) / 3600000) : null;
         if (hours === null || hours > 24) return false;
       }
+      if (activeNiches.length > 0) {
+        const cN = (c.target_niches ?? []).map(n => n.toLowerCase());
+        const hit = activeNiches.some(n => cN.includes(n.toLowerCase()));
+        if (!hit) return false;
+      }
+      if (q) {
+        const hay = `${c.title} ${c.brand_name} ${(c.target_niches ?? []).join(" ")}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
       return true;
     });
-  }, [items, filter]);
+  }, [items, filter, query, activeNiches]);
+
+  // All niches available across active campaigns, ranked by frequency
+  const allNiches = useMemo(() => {
+    if (!items) return [] as string[];
+    const counts = new Map<string, number>();
+    for (const c of items) for (const n of (c.target_niches ?? [])) counts.set(n, (counts.get(n) ?? 0) + 1);
+    return Array.from(counts.entries()).sort((a,b) => b[1] - a[1]).map(([n]) => n).slice(0, 16);
+  }, [items]);
+
+  function toggleNiche(n: string) {
+    setActiveNiches(prev => prev.includes(n) ? prev.filter(x => x !== n) : [...prev, n]);
+  }
 
   const firstName = (profile?.display_name ?? "creator").split(" ")[0];
   const projected = Math.round(avgViews * 0.5); // ~₹0.50/view typical
@@ -76,12 +101,31 @@ function Discover() {
             campayn
           </div>
           <div className="flex items-center gap-2">
-            <button className="h-10 w-10 grid place-items-center rounded-full glass">
+            <button onClick={() => setShowSearch(s => !s)}
+              className={`h-10 w-10 grid place-items-center rounded-full glass ${showSearch ? "ring-2 ring-primary" : ""}`}
+              aria-label="Search">
               <Search className="h-[18px] w-[18px] text-foreground" />
             </button>
             <NotificationsBell />
           </div>
         </div>
+
+        {showSearch && (
+          <div className="px-5 mt-3">
+            <div className="relative">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input autoFocus value={query} onChange={e => setQuery(e.target.value)}
+                placeholder="Search brand, niche or keyword"
+                className="w-full h-11 pl-10 pr-10 rounded-full glass text-[14px] outline-none focus:ring-2 focus:ring-primary" />
+              {query && (
+                <button onClick={() => setQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 h-6 w-6 rounded-full bg-secondary grid place-items-center">
+                  <X className="h-3 w-3 text-muted-foreground" />
+                </button>
+              )}
+            </div>
+          </div>
+        )}
 
         <div className="px-5 mt-4">
           <span className="chip-glass">
@@ -111,6 +155,27 @@ function Discover() {
             );
           })}
         </div>
+
+        {allNiches.length > 0 && (
+          <div className="mt-2.5 px-5 flex gap-1.5 overflow-x-auto no-scrollbar pb-1">
+            {allNiches.map(n => {
+              const sel = activeNiches.includes(n);
+              return (
+                <button key={n} onClick={() => toggleNiche(n)}
+                  className={`shrink-0 px-3 py-1.5 rounded-full text-[12px] font-semibold transition border
+                    ${sel ? "bg-primary text-white border-transparent" : "bg-white/70 text-muted-foreground border-border hover:text-foreground"}`}>
+                  #{n}
+                </button>
+              );
+            })}
+            {activeNiches.length > 0 && (
+              <button onClick={() => setActiveNiches([])}
+                className="shrink-0 px-3 py-1.5 rounded-full text-[12px] font-semibold text-destructive">
+                Clear
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Loading skeleton */}

@@ -17,19 +17,22 @@ function Profile() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [stats, setStats] = useState({ campaigns: 0, followers: 0, avgViews: 0, reliability: 0 });
   const [socials, setSocials] = useState<any[]>([]);
+  const [kycStatus, setKycStatus] = useState<string>("not_started");
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) return;
-      const [{ data }, { data: roles }, { count: cCount }, { data: s }] = await Promise.all([
+      const [{ data }, { data: roles }, { count: cCount }, { data: s }, { data: k }] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
         supabase.from("user_roles").select("role").eq("user_id", user.id),
         supabase.from("applications").select("id", { count: "exact", head: true }).eq("user_id", user.id),
         supabase.from("social_connections").select("*").eq("user_id", user.id),
+        supabase.from("kyc").select("status").eq("user_id", user.id).maybeSingle(),
       ]);
       setP(data);
       setIsAdmin(!!roles?.some((r: any) => r.role === "admin"));
       setSocials(s ?? []);
+      setKycStatus((k?.status as string) ?? "not_started");
       const followers = (s ?? []).reduce((sum, c: any) => sum + (c.followers || 0), 0);
       const avgViews = (s ?? []).length ? Math.round((s as any[]).reduce((sum, c) => sum + (c.avg_views || 0), 0) / (s as any[]).length) : 0;
       setStats({ campaigns: cCount ?? 0, followers, avgViews, reliability: data?.profile_completion ?? 0 });
@@ -43,11 +46,21 @@ function Profile() {
   }
 
   const compact = (n: number) => n >= 1000 ? (n/1000).toFixed(1).replace(/\.0$/,"") + "K" : String(n);
-  const completion = p?.profile_completion ?? 0;
+  const kycVerified = kycStatus === "verified";
+  // Recompute completion from real signals so verified creators stop seeing nags
+  const checks = [
+    !!p?.display_name,
+    !!p?.city,
+    socials.length > 0,
+    kycVerified,
+    !!(p?.niches && p.niches.length > 0),
+  ];
+  const completion = Math.round((checks.filter(Boolean).length / checks.length) * 100);
   const missing: string[] = [];
   if (socials.length === 0) missing.push("Connect a platform");
-  if (!p?.kyc_done) missing.push("Complete KYC");
+  if (!kycVerified) missing.push(kycStatus === "submitted" ? "KYC under review" : "Complete KYC");
   if (!p?.city) missing.push("Add your city");
+  if (!p?.niches || p.niches.length === 0) missing.push("Pick your niches");
 
   const ig = socials.find(s => s.platform === "instagram");
   const yt = socials.find(s => s.platform === "youtube");
