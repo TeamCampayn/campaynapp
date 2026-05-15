@@ -20,7 +20,7 @@ const NICHES = [
 ];
 const LANGS = ["Hindi","English","Hinglish","Tamil","Telugu","Marathi","Bengali","Punjabi","Kannada","Malayalam","Gujarati","Urdu","Odia","Assamese"];
 
-const MIN_NICHES = 3;
+const MIN_NICHES = 1;
 const MAX_NICHES = 5;
 
 function Onboarding() {

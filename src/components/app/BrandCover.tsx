@@ -27,11 +27,19 @@ export function BrandCover({ brandName, brandLogoUrl, coverUrl, height = 168, ch
       className="brand-cover w-full"
       style={{
         height,
-        background: coverUrl
-          ? `url(${coverUrl}) center/cover`
-          : `linear-gradient(135deg, ${c2} 0%, ${c1} 100%)`,
+        background: `linear-gradient(135deg, ${c2} 0%, ${c1} 100%)`,
       }}
     >
+      {coverUrl && (
+        <img
+          src={coverUrl}
+          alt={brandName}
+          referrerPolicy="no-referrer"
+          loading="lazy"
+          onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      )}
       {!coverUrl && (
         <div
           aria-hidden
