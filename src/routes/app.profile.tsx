@@ -83,11 +83,11 @@ function Profile() {
       </div>
 
       {/* Campayn Score */}
-      <div className="mt-5 rounded-2xl p-4 grad-coin text-white relative overflow-hidden">
+      <Link to="/app/score" className="mt-5 block rounded-2xl p-4 grad-coin text-white relative overflow-hidden active:scale-[0.99] transition">
         <Award className="absolute -right-3 -bottom-3 h-28 w-28 opacity-15" strokeWidth={1.4} />
         <div className="relative">
           <div className="text-[11px] uppercase tracking-widest font-bold opacity-80 inline-flex items-center gap-1.5">
-            <Award className="h-3.5 w-3.5" /> Campayn Score
+            <Award className="h-3.5 w-3.5" /> Campayn Score · tap for details
           </div>
           <div className="mt-1.5 flex items-end gap-2">
             <div className="text-[40px] leading-none font-black">{score}</div>
@@ -99,7 +99,7 @@ function Profile() {
           </div>
           <div className="mt-2 text-[11.5px] opacity-85">Higher score = priority on premium campaigns</div>
         </div>
-      </div>
+      </Link>
 
       {/* Profile completion card */}
       <div className="mt-5 rounded-2xl p-4" style={{ background: "var(--secondary)" }}>
