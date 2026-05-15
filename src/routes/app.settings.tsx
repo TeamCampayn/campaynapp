@@ -33,18 +33,23 @@ function Settings() {
       <h1 className="mt-3 text-2xl font-black">Settings</h1>
 
       <ul className="mt-5 space-y-2">
-        <li className="glass-card rounded-2xl p-4 flex items-center gap-3">
-          <Bell className="h-4 w-4 text-coin" />
-          <div className="flex-1 font-semibold text-sm">Push notifications</div>
-          <button onClick={toggleNotif} className={`h-6 w-11 rounded-full transition ${notif ? "bg-coin" : "bg-secondary"}`}>
-            <div className={`h-5 w-5 bg-background rounded-full transition-transform ${notif ? "translate-x-5" : "translate-x-0.5"}`} />
+        <li className="cmp-card p-4 flex items-center gap-3">
+          <div className="h-9 w-9 rounded-xl bg-secondary grid place-items-center"><Bell className="h-4 w-4 text-primary" /></div>
+          <div className="flex-1">
+            <div className="font-semibold text-sm">Push notifications</div>
+            <div className="text-[11px] text-muted-foreground">Get notified when status changes</div>
+          </div>
+          <button onClick={toggleNotif} aria-label="Toggle notifications" className={`h-6 w-11 rounded-full transition flex items-center ${notif ? "bg-primary" : "bg-secondary"}`}>
+            <div className={`h-5 w-5 bg-white shadow rounded-full transition-transform ${notif ? "translate-x-[22px]" : "translate-x-0.5"}`} />
           </button>
         </li>
-        <li className="glass-card rounded-2xl p-4 flex items-center gap-3">
-          <Shield className="h-4 w-4 text-coin" /><span className="flex-1 font-semibold text-sm">Privacy policy</span>
+        <li className="cmp-card p-4 flex items-center gap-3">
+          <div className="h-9 w-9 rounded-xl bg-secondary grid place-items-center"><Shield className="h-4 w-4 text-primary" /></div>
+          <span className="flex-1 font-semibold text-sm">Privacy policy</span>
         </li>
-        <li className="glass-card rounded-2xl p-4 flex items-center gap-3">
-          <FileText className="h-4 w-4 text-coin" /><span className="flex-1 font-semibold text-sm">Terms of service</span>
+        <li className="cmp-card p-4 flex items-center gap-3">
+          <div className="h-9 w-9 rounded-xl bg-secondary grid place-items-center"><FileText className="h-4 w-4 text-primary" /></div>
+          <span className="flex-1 font-semibold text-sm">Terms of service</span>
         </li>
       </ul>
 

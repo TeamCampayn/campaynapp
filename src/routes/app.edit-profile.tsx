@@ -71,14 +71,14 @@ function EditProfile() {
           </div>
         </Field>
       </div>
-      <button disabled={busy} onClick={save} className="mt-6 w-full grad-coin py-3.5 rounded-2xl font-bold ring-coin disabled:opacity-50">
+      <button disabled={busy} onClick={save} className="mt-6 btn-primary w-full disabled:opacity-50">
         {busy ? "Saving…" : "Save changes"}
       </button>
     </div>
   );
 }
 
-const cls = "w-full bg-input/60 border border-border rounded-xl px-4 py-3 text-[15px] outline-none focus:ring-2 focus:ring-primary";
+const cls = "cmp-input";
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return <div><label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">{label}</label><div className="mt-1.5">{children}</div></div>;
 }

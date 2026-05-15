@@ -34,15 +34,17 @@ function Referrals() {
     <div className="px-5 pt-6 pb-10">
       <Link to="/app/profile" className="inline-flex items-center gap-1 text-sm text-muted-foreground"><ArrowLeft className="h-4 w-4" /> Back</Link>
       <h1 className="mt-3 text-2xl font-black">Refer & earn</h1>
-      <div className="mt-6 glass-card rounded-3xl p-6 text-center ring-coin">
-        <Gift className="h-10 w-10 text-coin mx-auto" />
-        <div className="mt-3 text-sm text-muted-foreground">Refer creators, get</div>
-        <div className="text-3xl font-black text-coin">100 Coins each</div>
-        <div className="mt-5 text-xs uppercase tracking-wider text-muted-foreground">Your code</div>
-        <div className="mt-1 font-black text-2xl tracking-widest">{code ?? "—"}</div>
-        <div className="mt-5 flex gap-2">
-          <button onClick={copy} className="flex-1 bg-secondary text-secondary-foreground rounded-xl py-3 font-semibold inline-flex items-center justify-center gap-1.5"><Copy className="h-4 w-4" />Copy link</button>
-          <button onClick={share} className="flex-1 grad-coin rounded-xl py-3 font-bold ring-coin">Share</button>
+      <div className="mt-6 cmp-card p-6 text-center">
+        <div className="mx-auto h-14 w-14 rounded-2xl grad-coin grid place-items-center ring-coin">
+          <Gift className="h-7 w-7 text-coin-foreground" />
+        </div>
+        <div className="mt-4 text-sm text-muted-foreground">Refer creators, both earn</div>
+        <div className="mt-1 text-3xl font-black text-coin">₹100 each</div>
+        <div className="mt-6 text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Your code</div>
+        <div className="mt-1.5 font-black text-2xl tracking-[0.3em] font-mono">{code ?? "—"}</div>
+        <div className="mt-6 flex gap-2">
+          <button onClick={copy} className="btn-ghost flex-1 h-12 rounded-2xl"><Copy className="h-4 w-4" />Copy link</button>
+          <button onClick={share} className="btn-primary flex-1 h-12 rounded-2xl">Share</button>
         </div>
       </div>
       <p className="mt-4 text-xs text-muted-foreground text-center">Reward credits when your referral completes their first paid campaign.</p>
