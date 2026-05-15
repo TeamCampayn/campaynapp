@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Pencil, Settings, Instagram, Youtube, ChevronRight, ShieldCheck, Gift, LifeBuoy, Lock, LogOut, TrendingUp, Award } from "lucide-react";
+import { Pencil, Settings, Instagram, Youtube, ChevronRight, ShieldCheck, Gift, LifeBuoy, Lock, LogOut, TrendingUp, Award, Eye, Play } from "lucide-react";
 import { inrFmt } from "@/lib/auth";
 import { RupeeCoin } from "@/components/app/RupeeCoin";
 import { NotificationsBell } from "@/components/app/NotificationsBell";
@@ -18,21 +18,33 @@ function Profile() {
   const [stats, setStats] = useState({ campaigns: 0, followers: 0, avgViews: 0, reliability: 0 });
   const [socials, setSocials] = useState<any[]>([]);
   const [kycStatus, setKycStatus] = useState<string>("not_started");
+  const [posts, setPosts] = useState<any[]>([]);
+  const [earningsSeries, setEarningsSeries] = useState<number[]>([]);
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) return;
-      const [{ data }, { data: roles }, { count: cCount }, { data: s }, { data: k }] = await Promise.all([
+      const [{ data }, { data: roles }, { count: cCount }, { data: s }, { data: k }, { data: pp }, { data: tx }] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
         supabase.from("user_roles").select("role").eq("user_id", user.id),
         supabase.from("applications").select("id", { count: "exact", head: true }).eq("user_id", user.id),
         supabase.from("social_connections").select("*").eq("user_id", user.id),
         supabase.from("kyc").select("status").eq("user_id", user.id).maybeSingle(),
+        supabase.from("applications").select("id, post_url, verified_views, final_earning_inr, estimated_earning_inr, posted_at, status, campaigns(title, brand_name, brand_logo_url, cover_image_url)").eq("user_id", user.id).in("status", ["posted","verified","paid","withdrawn"]).order("posted_at", { ascending: false }).limit(12),
+        supabase.from("transactions").select("amount_inr, created_at, kind").eq("user_id", user.id).eq("kind","earning").order("created_at", { ascending: true }),
       ]);
       setP(data);
       setIsAdmin(!!roles?.some((r: any) => r.role === "admin"));
       setSocials(s ?? []);
       setKycStatus((k?.status as string) ?? "not_started");
+      setPosts(pp ?? []);
+      // bucket earnings into last 8 weeks for sparkline
+      const now = Date.now(); const buckets = new Array(8).fill(0);
+      (tx ?? []).forEach((t: any) => {
+        const w = Math.floor((now - new Date(t.created_at).getTime()) / (7*86400000));
+        if (w >= 0 && w < 8) buckets[7-w] += (t.amount_inr || 0);
+      });
+      setEarningsSeries(buckets);
       const followers = (s ?? []).reduce((sum, c: any) => sum + (c.followers || 0), 0);
       const avgViews = (s ?? []).length ? Math.round((s as any[]).reduce((sum, c) => sum + (c.avg_views || 0), 0) / (s as any[]).length) : 0;
       setStats({ campaigns: cCount ?? 0, followers, avgViews, reliability: data?.profile_completion ?? 0 });
@@ -150,9 +162,40 @@ function Profile() {
               <span className="text-[24px] font-black text-foreground">{inrFmt(p?.lifetime_earnings ?? 0)}</span>
             </div>
           </div>
-          <TrendingUp className="h-10 w-10 text-primary" />
+          <Sparkline data={earningsSeries} />
         </div>
       </div>
+
+      {/* Posted content gallery */}
+      {posts.length > 0 && (
+        <div className="mt-5">
+          <div className="flex items-end justify-between mb-2.5">
+            <h3 className="font-black text-[16px]">My posts</h3>
+            <span className="text-[12px] text-muted-foreground">{posts.length} live</span>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {posts.map(po => (
+              <a key={po.id} href={po.post_url || "#"} target="_blank" rel="noreferrer"
+                 className="relative aspect-[3/4] rounded-xl overflow-hidden bg-secondary group active:scale-[0.98] transition">
+                {po.campaigns?.cover_image_url
+                  ? <img src={po.campaigns.cover_image_url} className="absolute inset-0 h-full w-full object-cover" />
+                  : <div className="absolute inset-0 grad-primary" />}
+                <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/0 to-black/75" />
+                <Play className="absolute top-2 right-2 h-4 w-4 text-white/90 drop-shadow" />
+                <div className="absolute bottom-1.5 left-1.5 right-1.5 text-white">
+                  <div className="text-[10px] opacity-85 truncate font-semibold">{po.campaigns?.brand_name}</div>
+                  <div className="flex items-center justify-between mt-0.5">
+                    <span className="inline-flex items-center gap-1 text-[10.5px] font-bold">
+                      <Eye className="h-2.5 w-2.5" /> {compact(po.verified_views ?? 0)}
+                    </span>
+                    <span className="text-[10.5px] font-black">₹{inrFmt(po.final_earning_inr ?? po.estimated_earning_inr ?? 0).replace("₹","")}</span>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Platform connections */}
       <div className="mt-4 cmp-card p-4">
