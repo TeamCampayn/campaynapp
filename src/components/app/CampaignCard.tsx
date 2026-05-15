@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { Clock, Zap, Instagram, Youtube } from "lucide-react";
 import { BrandCover } from "./BrandCover";
+import { BrandLogo } from "./BrandLogo";
+import { RupeeCoin, compactInr } from "./RupeeCoin";
 
 export type CampaignCardData = {
   id: string;
@@ -17,11 +19,6 @@ export type CampaignCardData = {
   created_at?: string;
 };
 
-const compact = (n: number) => {
-  if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, "") + "K";
-  return String(n);
-};
-
 function PlatformIcon({ p }: { p: string }) {
   if (p === "youtube") return <Youtube className="h-3.5 w-3.5" />;
   return <Instagram className="h-3.5 w-3.5" />;
@@ -31,33 +28,12 @@ function niceNiche(n: string) {
   return n.charAt(0).toUpperCase() + n.slice(1);
 }
 
-// Tiny gold moon-coin used inline, no dark pill background.
-function CoinIcon({ size = 18 }: { size?: number }) {
-  return (
-    <span
-      aria-hidden
-      style={{
-        width: size, height: size, borderRadius: "50%",
-        background: "radial-gradient(circle at 35% 30%, #F6D27A 0%, #D9A327 55%, #8C6510 100%)",
-        display: "inline-block", flexShrink: 0,
-        boxShadow: "inset -1px -1px 2px rgba(0,0,0,0.25)",
-      }}
-    />
-  );
-}
-
 function BrandPill({ name, logo, size = "md" }: { name: string; logo: string | null; size?: "sm" | "md" }) {
   const isSm = size === "sm";
-  const dot = isSm ? "h-5 w-5 text-[10px]" : "h-6 w-6 text-[11px]";
   const pad = isSm ? "pl-1 pr-2.5 py-0.5 text-[11px]" : "pl-1 pr-3 py-1 text-[12px]";
   return (
     <div className={`inline-flex items-center gap-1.5 bg-white rounded-full ${pad} shadow-sm`}>
-      <span className={`${dot} rounded-full grad-primary grid place-items-center text-white font-bold`}>
-        {logo ? (
-          <img src={logo} alt="" referrerPolicy="no-referrer"
-            className={`${dot.split(" ").slice(0,2).join(" ")} rounded-full object-cover`} />
-        ) : name[0]?.toUpperCase()}
-      </span>
+      <BrandLogo name={name} url={logo} size={isSm ? 20 : 24} rounded="full" />
       <span className="font-semibold text-foreground">{name}</span>
     </div>
   );
@@ -94,11 +70,11 @@ export function CampaignCard({ c, avgViews }: { c: CampaignCardData; avgViews: n
         <h3 className="text-[16px] font-bold leading-snug text-foreground line-clamp-2">{c.title}</h3>
         <div className="mt-3 flex items-center gap-2 flex-wrap">
           <span className="inline-flex items-center gap-1.5">
-            <CoinIcon size={20} />
-            <span className="text-[18px] font-black text-foreground tracking-tight">₹{compact(earning)}</span>
+            <RupeeCoin size={20} />
+            <span className="text-[18px] font-black text-foreground tracking-tight">{compactInr(earning)}</span>
           </span>
           <span className="text-[13px] text-muted-foreground font-medium">/post</span>
-          <span className="text-[12px] text-muted-foreground">~₹{compact(lo)}-₹{compact(hi)}</span>
+          <span className="text-[12px] text-muted-foreground">~{compactInr(lo)}–{compactInr(hi)}</span>
         </div>
         <div className="mt-3 flex items-center gap-2.5 flex-wrap">
           <span className="inline-flex items-center gap-1 text-[12.5px] font-semibold text-foreground">
@@ -155,10 +131,10 @@ export function CampaignCardMini({ c, avgViews }: { c: CampaignCardData; avgView
           {c.title}
         </div>
         <div className="mt-2 flex items-center gap-1.5 flex-wrap">
-          <CoinIcon size={18} />
-          <span className="text-[15.5px] font-black text-foreground">₹{compact(earning)}</span>
+          <RupeeCoin size={18} />
+          <span className="text-[15.5px] font-black text-foreground">{compactInr(earning)}</span>
           <span className="text-[11.5px] text-muted-foreground font-medium">/post</span>
-          <span className="text-[10.5px] text-muted-foreground">~₹{compact(lo)}-₹{compact(hi)}</span>
+          <span className="text-[10.5px] text-muted-foreground">~{compactInr(lo)}–{compactInr(hi)}</span>
         </div>
         <div className="mt-2.5 flex items-center gap-2 flex-wrap">
           <span className="inline-flex items-center gap-1 text-[11.5px] font-semibold text-foreground">
