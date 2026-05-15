@@ -5,7 +5,7 @@ import { Sparkles, Coins, TrendingUp } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
-    { title: "Campayn — Brands ke deals, ek tap door." },
+    { title: "Campayn - Brands ke deals, ek tap door." },
     { name: "description", content: "India's AI-powered creator marketing app. Discover paid campaigns, see your earnings before you apply, and withdraw to UPI." },
     { property: "og:title", content: "Campayn Creator" },
     { property: "og:description", content: "Apne views se kamai dekho. Pehle." },
@@ -55,7 +55,7 @@ function Landing() {
 
         <div className="mt-6 space-y-3">
           {[
-            { i: TrendingUp, t: "Earnings shown upfront", d: "We use your avg views × the brand's CPV — no guesswork." },
+            { i: TrendingUp, t: "Earnings shown upfront", d: "We use your avg views × the brand's CPV - no guesswork." },
             { i: Coins,      t: "Creator Coins, real money", d: "1 Coin = ₹1. Withdraw to any UPI ID in under 24 hours." },
             { i: Sparkles,   t: "AI script & caption help",  d: "Hooks, captions and scripts written for your audience." },
           ].map(({ i: Icon, t, d }) => (
@@ -72,7 +72,7 @@ function Landing() {
         </div>
 
         <Link to="/auth" className="mt-8 btn-primary w-full">
-          Start earning — it's free
+          Start earning - it's free
         </Link>
         <p className="mt-3 text-center text-xs text-muted-foreground">
           Already on Campayn? <Link to="/auth" className="text-primary-blue font-semibold">Sign in</Link>

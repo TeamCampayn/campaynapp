@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Award, TrendingUp, Sparkles, ShieldCheck, Eye, Zap, Trophy } from "lucide-react";
 
 export const Route = createFileRoute("/app/score")({
-  head: () => ({ meta: [{ title: "Campayn Score — Campayn" }] }),
+  head: () => ({ meta: [{ title: "Campayn Score - Campayn" }] }),
   component: ScorePage,
 });
 

@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ShieldCheck } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
-  head: () => ({ meta: [{ title: "Admin — Campayn" }] }),
+  head: () => ({ meta: [{ title: "Admin - Campayn" }] }),
   component: AdminLayout,
 });
 

@@ -53,7 +53,7 @@ function Profile() {
   const yt = socials.find(s => s.platform === "youtube");
   const score = p?.campayn_score ?? 0;
   const tier = score >= 800 ? "Legend" : score >= 600 ? "Pro" : score >= 400 ? "Rising" : score >= 200 ? "Rookie+" : "Rookie";
-  const eng = ig?.engagement_rate ? Number(ig.engagement_rate).toFixed(1) + "%" : "—";
+  const eng = ig?.engagement_rate ? Number(ig.engagement_rate).toFixed(1) + "%" : "-";
 
   return (
     <div className="px-5 pt-8 pb-8">

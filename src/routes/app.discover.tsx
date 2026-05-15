@@ -6,7 +6,7 @@ import { CampaignCard, CampaignCardMini, type CampaignCardData } from "@/compone
 import { NotificationsBell } from "@/components/app/NotificationsBell";
 
 export const Route = createFileRoute("/app/discover")({
-  head: () => ({ meta: [{ title: "Discover — Campayn" }]}),
+  head: () => ({ meta: [{ title: "Discover - Campayn" }]}),
   component: Discover,
 });
 
@@ -99,7 +99,7 @@ function Discover() {
           </p>
         </div>
 
-        {/* Filter chips — glass */}
+        {/* Filter chips - glass */}
         <div className="mt-4 px-5 flex gap-2 overflow-x-auto no-scrollbar pb-1">
           {[["all","All"],["new","New"],["high","High Earning"],["closing","Closing Soon"]].map(([v,l]) => {
             const sel = filter === v;

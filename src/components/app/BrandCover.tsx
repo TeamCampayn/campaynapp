@@ -1,4 +1,4 @@
-// Gradient brand cover (PRD §7.4 — used on Discover cards & Campaign Detail hero)
+// Gradient brand cover (PRD §7.4 - used on Discover cards & Campaign Detail hero)
 type Props = {
   brandName: string;
   brandLogoUrl?: string | null;

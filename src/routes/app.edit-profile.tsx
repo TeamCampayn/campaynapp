@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/app/edit-profile")({
-  head: () => ({ meta: [{ title: "Edit profile — Campayn" }] }),
+  head: () => ({ meta: [{ title: "Edit profile - Campayn" }] }),
   component: EditProfile,
 });
 

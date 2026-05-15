@@ -8,7 +8,7 @@ import { RupeeCoin, compactInr } from "@/components/app/RupeeCoin";
 import { NotificationsBell } from "@/components/app/NotificationsBell";
 
 export const Route = createFileRoute("/app/wallet")({
-  head: () => ({ meta: [{ title: "Wallet — Campayn" }] }),
+  head: () => ({ meta: [{ title: "Wallet - Campayn" }] }),
   component: Wallet,
 });
 

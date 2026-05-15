@@ -8,7 +8,7 @@ import { Logo } from "@/components/app/Logo";
 import { Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Sign in — Campayn" }, { name: "description", content: "Sign in or create your Campayn creator account." }]}),
+  head: () => ({ meta: [{ title: "Sign in - Campayn" }, { name: "description", content: "Sign in or create your Campayn creator account." }]}),
   component: AuthPage,
 });
 

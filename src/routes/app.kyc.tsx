@@ -5,7 +5,7 @@ import { ArrowLeft, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/kyc")({
-  head: () => ({ meta: [{ title: "KYC — Campayn" }] }),
+  head: () => ({ meta: [{ title: "KYC - Campayn" }] }),
   component: Kyc,
 });
 
