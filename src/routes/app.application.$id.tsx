@@ -54,6 +54,8 @@ function ApplicationDetail() {
   const [postUrl, setPostUrl] = useState("");
   const [busy, setBusy] = useState(false);
   const [aiBusy, setAiBusy] = useState(false);
+  const [captions, setCaptions] = useState<{ text: string; hashtags: string[] }[]>([]);
+  const [capBusy, setCapBusy] = useState(false);
 
   async function load() {
     const { data } = await supabase.from("applications").select("*, campaigns(*)").eq("id", id).maybeSingle();
@@ -128,9 +130,22 @@ function ApplicationDetail() {
     finally { setAiBusy(false); }
   }
 
+  async function genCaptions() {
+    setCapBusy(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("ai-helper", {
+        body: { kind: "caption_ideas", payload: { brand: a.campaigns.brand_name, title: a.campaigns.title, brief: a.campaigns.brief } },
+      });
+      if (error) throw error;
+      setCaptions(data.captions ?? []);
+    } catch (e: any) { toast.error(e.message); }
+    finally { setCapBusy(false); }
+  }
+
   const showScript = ["approved","revision_requested"].includes(a.status);
   const showPost = ["script_approved","video_approved"].includes(a.status);
   const isRejected = a.status === "rejected";
+  const showCaptions = ["script_approved","video_approved","posted","verified","paid"].includes(a.status);
 
   return (
     <div className="px-5 pt-6 pb-24">
@@ -293,6 +308,36 @@ function ApplicationDetail() {
             className="btn-primary w-full mt-3 disabled:opacity-50">
             {busy ? "Submitting…" : "Submit post"}
           </button>
+        </div>
+      )}
+
+      {/* AI caption ideas */}
+      {showCaptions && (
+        <div className="mt-5 cmp-card p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-bold text-[15px]">Caption ideas</h3>
+              <p className="text-[12px] text-muted-foreground mt-0.5">AI-written, Hinglish, ready to copy.</p>
+            </div>
+            <button onClick={genCaptions} disabled={capBusy} className="inline-flex items-center gap-1.5 chip-glass">
+              {capBusy ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3 sparkle" />}
+              {capBusy ? "Cooking…" : captions.length ? "Regenerate" : "Generate"}
+            </button>
+          </div>
+          {captions.length > 0 && (
+            <ul className="mt-3 space-y-2.5">
+              {captions.map((c, i) => (
+                <li key={i} className="rounded-xl p-3 bg-secondary">
+                  <p className="text-[13px] leading-snug">{c.text}</p>
+                  {c.hashtags?.length > 0 && (
+                    <p className="mt-1.5 text-[11.5px] text-primary font-semibold">{c.hashtags.map(h => h.startsWith("#") ? h : `#${h}`).join(" ")}</p>
+                  )}
+                  <button onClick={() => { navigator.clipboard.writeText(`${c.text}\n\n${(c.hashtags||[]).map(h => h.startsWith("#") ? h : `#${h}`).join(" ")}`); toast.success("Copied"); }}
+                    className="mt-2 text-[11.5px] font-bold text-primary">Copy</button>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       )}
 
