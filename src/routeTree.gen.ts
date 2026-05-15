@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
@@ -33,6 +34,11 @@ import { Route as AdminApplicationsRouteImport } from './routes/admin.applicatio
 import { Route as AppCampaignIdRouteImport } from './routes/app.campaign.$id'
 import { Route as AppApplicationIdRouteImport } from './routes/app.application.$id'
 
+const WelcomeRoute = WelcomeRouteImport.update({
+  id: '/welcome',
+  path: '/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -155,6 +161,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
+  '/welcome': typeof WelcomeRoute
   '/admin/applications': typeof AdminApplicationsRoute
   '/admin/campaigns': typeof AdminCampaignsRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
@@ -179,6 +186,7 @@ export interface FileRoutesByTo {
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
+  '/welcome': typeof WelcomeRoute
   '/admin/applications': typeof AdminApplicationsRoute
   '/admin/campaigns': typeof AdminCampaignsRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
@@ -205,6 +213,7 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
+  '/welcome': typeof WelcomeRoute
   '/admin/applications': typeof AdminApplicationsRoute
   '/admin/campaigns': typeof AdminCampaignsRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
@@ -232,6 +241,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/onboarding'
+    | '/welcome'
     | '/admin/applications'
     | '/admin/campaigns'
     | '/admin/withdrawals'
@@ -256,6 +266,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/onboarding'
+    | '/welcome'
     | '/admin/applications'
     | '/admin/campaigns'
     | '/admin/withdrawals'
@@ -281,6 +292,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/onboarding'
+    | '/welcome'
     | '/admin/applications'
     | '/admin/campaigns'
     | '/admin/withdrawals'
@@ -307,10 +319,18 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
   OnboardingRoute: typeof OnboardingRoute
+  WelcomeRoute: typeof WelcomeRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/welcome': {
+      id: '/welcome'
+      path: '/welcome'
+      fullPath: '/welcome'
+      preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
@@ -533,6 +553,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
   OnboardingRoute: OnboardingRoute,
+  WelcomeRoute: WelcomeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
