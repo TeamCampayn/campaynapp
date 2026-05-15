@@ -41,20 +41,33 @@ function AdminLayout() {
   ];
 
   return (
-    <div className="min-h-screen">
-      <header className="px-5 pt-6 pb-3 border-b border-border">
-        <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <div className="font-black text-lg">⚡ Campayn Admin</div>
-          <Link to="/app/discover" className="text-xs text-muted-foreground">Back to app</Link>
+    <div className="min-h-screen bg-background">
+      <header className="bg-white border-b border-border sticky top-0 z-30">
+        <div className="max-w-4xl mx-auto px-5 pt-5 pb-2 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-lg grad-primary grid place-items-center text-primary-foreground font-black">C</div>
+            <div>
+              <div className="font-black text-[15px] leading-none">Campayn Admin</div>
+              <div className="text-[10px] text-muted-foreground mt-0.5">Internal console</div>
+            </div>
+          </div>
+          <Link to="/app/discover" className="text-xs font-semibold text-primary">← Back to app</Link>
         </div>
-        <nav className="max-w-3xl mx-auto mt-3 flex gap-2 overflow-x-auto no-scrollbar">
+        <nav className="max-w-4xl mx-auto px-5 pb-1 flex gap-1 overflow-x-auto no-scrollbar">
           {tabs.map(t => {
             const active = t.exact ? loc.pathname === t.to : loc.pathname.startsWith(t.to);
-            return <Link key={t.to} to={t.to} className={`chip whitespace-nowrap ${active ? "ring-2 ring-coin text-coin" : ""}`}>{t.label}</Link>;
+            return (
+              <Link key={t.to} to={t.to}
+                className={`whitespace-nowrap px-3 py-2.5 text-[13px] font-semibold border-b-2 transition ${
+                  active ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
+                }`}>
+                {t.label}
+              </Link>
+            );
           })}
         </nav>
       </header>
-      <main className="max-w-3xl mx-auto px-5 py-6"><Outlet /></main>
+      <main className="max-w-4xl mx-auto px-5 py-6"><Outlet /></main>
     </div>
   );
 }

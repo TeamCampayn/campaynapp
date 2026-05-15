@@ -29,27 +29,33 @@ function AdminWd() {
     toast.success("Updated"); load();
   }
 
+  const STAT: Record<string,string> = { pending:"chip-warn", processing:"chip", paid:"chip-success", failed:"chip-error" };
   return (
     <div>
-      <h2 className="text-xl font-black">Withdrawals</h2>
-      <ul className="mt-4 space-y-2">
+      <h2 className="text-[22px] font-black tracking-tight">Withdrawals</h2>
+      <p className="text-sm text-muted-foreground mt-0.5">Approve and mark UPI payouts as paid.</p>
+      <ul className="mt-5 space-y-2">
+        {items.length === 0 && <p className="text-sm text-muted-foreground py-8 text-center">No withdrawal requests.</p>}
         {items.map(w => (
-          <li key={w.id} className="glass-card rounded-2xl p-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="font-bold">{inrFmt(w.amount_inr)} → {w.destination_value}</div>
-                <div className="text-xs text-muted-foreground">{w.profiles?.display_name ?? "creator"} · {new Date(w.created_at).toLocaleDateString()}</div>
+          <li key={w.id} className="cmp-card p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="font-black text-lg text-coin">{inrFmt(w.amount_inr)}</div>
+                <div className="text-[12px] text-foreground/80 mt-0.5">→ <span className="font-mono">{w.destination_value}</span></div>
+                <div className="text-[11px] text-muted-foreground mt-1">{w.profiles?.display_name ?? "creator"} · {new Date(w.created_at).toLocaleDateString()}</div>
+                {w.reference && <div className="text-[10px] text-muted-foreground mt-1 font-mono">ref: {w.reference}</div>}
               </div>
-              <span className="chip">{w.status}</span>
+              <span className={`chip ${STAT[w.status] ?? ""}`}>{w.status}</span>
             </div>
-            <div className="mt-2 flex gap-2">
-              {w.status === "pending" && <>
-                <button onClick={() => setStatus(w, "processing")} className="chip">processing</button>
-                <button onClick={() => setStatus(w, "paid")} className="chip ring-2 ring-coin text-coin">mark paid</button>
-                <button onClick={() => setStatus(w, "failed")} className="chip">failed</button>
-              </>}
-              {w.status === "processing" && <button onClick={() => setStatus(w, "paid")} className="chip ring-2 ring-coin text-coin">mark paid</button>}
-            </div>
+            {(w.status === "pending" || w.status === "processing") && (
+              <div className="mt-3 pt-3 border-t border-border flex gap-2 flex-wrap">
+                {w.status === "pending" && (
+                  <button onClick={() => setStatus(w, "processing")} className="px-3 py-1.5 rounded-full text-[12px] font-semibold bg-secondary text-primary">Mark processing</button>
+                )}
+                <button onClick={() => setStatus(w, "paid")} className="px-3 py-1.5 rounded-full text-[12px] font-semibold bg-coin text-coin-foreground">Mark paid</button>
+                <button onClick={() => setStatus(w, "failed")} className="px-3 py-1.5 rounded-full text-[12px] font-semibold bg-destructive/10 text-destructive border border-destructive/20">Failed</button>
+              </div>
+            )}
           </li>
         ))}
       </ul>

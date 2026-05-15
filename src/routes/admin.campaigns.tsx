@@ -55,26 +55,40 @@ function AdminCampaigns() {
   return (
     <div>
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-black">Campaigns</h2>
-        <button onClick={() => setEditing({ ...empty })} className="grad-coin px-3 py-2 rounded-xl font-bold text-sm inline-flex items-center gap-1"><Plus className="h-4 w-4" />New</button>
+        <div>
+          <h2 className="text-[22px] font-black tracking-tight">Campaigns</h2>
+          <p className="text-sm text-muted-foreground mt-0.5">{items.length} total</p>
+        </div>
+        <button onClick={() => setEditing({ ...empty })} className="btn-primary h-11 px-4 rounded-xl text-[14px]"><Plus className="h-4 w-4" />New</button>
       </div>
-      <ul className="mt-4 space-y-2">
-        {items.map(c => (
-          <li key={c.id} className="glass-card rounded-2xl p-3 flex items-center gap-3">
-            <div className="flex-1 min-w-0">
-              <div className="font-bold truncate">{c.title}</div>
-              <div className="text-xs text-muted-foreground">{c.brand_name} · {c.platform} · ₹{(c.cpv_paise/100).toFixed(2)} CPV · {c.slots_filled}/{c.slots_total}</div>
-            </div>
-            <button onClick={() => setEditing({ ...c, target_niches: c.target_niches?.join(", "), deliverables: c.deliverables?.join(", "), deadline: c.deadline?.slice(0,10) ?? "" })} className="text-muted-foreground"><Pencil className="h-4 w-4" /></button>
-            <button onClick={() => del(c.id)} className="text-destructive"><Trash2 className="h-4 w-4" /></button>
-          </li>
-        ))}
+      <ul className="mt-5 space-y-2">
+        {items.length === 0 && <p className="text-sm text-muted-foreground py-8 text-center">No campaigns. Create one.</p>}
+        {items.map(c => {
+          const fillPct = Math.round(((c.slots_filled ?? 0) / Math.max(1, c.slots_total)) * 100);
+          return (
+            <li key={c.id} className="cmp-card p-4 flex items-center gap-3">
+              <div className="flex-1 min-w-0">
+                <div className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">{c.brand_name}</div>
+                <div className="font-semibold text-[14px] truncate mt-0.5">{c.title}</div>
+                <div className="mt-1.5 flex items-center gap-2 flex-wrap">
+                  <span className="chip">{c.platform}</span>
+                  <span className="chip chip-neutral">₹{(c.cpv_paise/100).toFixed(2)} CPV</span>
+                  <span className={`chip ${fillPct >= 100 ? "chip-success" : fillPct >= 80 ? "chip-warn" : "chip-neutral"}`}>{c.slots_filled ?? 0}/{c.slots_total} slots</span>
+                  <span className={`chip ${c.status === "active" ? "chip-success" : "chip-neutral"}`}>{c.status}</span>
+                </div>
+              </div>
+              <button onClick={() => setEditing({ ...c, target_niches: c.target_niches?.join(", "), deliverables: c.deliverables?.join(", "), deadline: c.deadline?.slice(0,10) ?? "" })} className="p-2 text-muted-foreground hover:text-primary transition"><Pencil className="h-4 w-4" /></button>
+              <button onClick={() => del(c.id)} className="p-2 text-muted-foreground hover:text-destructive transition"><Trash2 className="h-4 w-4" /></button>
+            </li>
+          );
+        })}
       </ul>
 
       {editing && (
-        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur grid place-items-end sm:place-items-center" onClick={() => setEditing(null)}>
-          <div onClick={e => e.stopPropagation()} className="w-full max-w-lg glass-card rounded-t-3xl sm:rounded-3xl p-5 max-h-[90vh] overflow-auto">
-            <h3 className="font-black text-lg">{editing.id ? "Edit" : "New"} campaign</h3>
+        <div className="fixed inset-0 z-50 bg-foreground/40 backdrop-blur-sm grid place-items-end sm:place-items-center" onClick={() => setEditing(null)}>
+          <div onClick={e => e.stopPropagation()} className="w-full max-w-lg bg-white rounded-t-3xl sm:rounded-3xl p-6 max-h-[90vh] overflow-auto shadow-2xl">
+            <h3 className="font-black text-xl">{editing.id ? "Edit" : "New"} campaign</h3>
+            <p className="text-xs text-muted-foreground mt-0.5">All fields support markdown in brief.</p>
             <div className="mt-4 grid grid-cols-2 gap-2">
               <input className={cls} placeholder="Brand name" value={editing.brand_name} onChange={e => setEditing({ ...editing, brand_name: e.target.value })} />
               <input className={cls} placeholder="Title" value={editing.title} onChange={e => setEditing({ ...editing, title: e.target.value })} />
@@ -91,12 +105,12 @@ function AdminCampaigns() {
               <input className={cls + " col-span-2"} placeholder="Cover image URL" value={editing.cover_image_url ?? ""} onChange={e => setEditing({ ...editing, cover_image_url: e.target.value })} />
               <input className={cls + " col-span-2"} placeholder="Brand logo URL" value={editing.brand_logo_url ?? ""} onChange={e => setEditing({ ...editing, brand_logo_url: e.target.value })} />
             </div>
-            <button onClick={save} className="mt-4 w-full grad-coin py-3 rounded-2xl font-bold ring-coin">Save</button>
-            <button onClick={() => setEditing(null)} className="mt-2 w-full text-sm text-muted-foreground py-2">Cancel</button>
+            <button onClick={save} className="mt-5 btn-primary w-full">Save campaign</button>
+            <button onClick={() => setEditing(null)} className="mt-2 w-full text-sm text-muted-foreground py-2 font-semibold">Cancel</button>
           </div>
         </div>
       )}
     </div>
   );
 }
-const cls = "bg-input/60 border border-border rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary";
+const cls = "bg-white border border-border rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary";

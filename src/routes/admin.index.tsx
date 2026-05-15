@@ -25,21 +25,29 @@ function Dashboard() {
       });
     })();
   }, []);
-  if (!stats) return <p className="text-muted-foreground">Loading…</p>;
+  if (!stats) return (
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      {[1,2,3,4].map(i => <div key={i} className="h-24 cmp-card animate-pulse" />)}
+    </div>
+  );
   const cards = [
-    { l: "Creators", v: stats.users },
-    { l: "Active campaigns", v: stats.campaigns },
-    { l: "GMV (committed)", v: inrFmt(stats.gmv) },
-    { l: "Pending withdrawals", v: inrFmt(stats.pendingWd) },
+    { l: "Creators",            v: String(stats.users),       accent: "text-foreground" },
+    { l: "Active campaigns",    v: String(stats.campaigns),   accent: "text-primary" },
+    { l: "GMV (committed)",     v: inrFmt(stats.gmv),         accent: "text-coin" },
+    { l: "Pending withdrawals", v: inrFmt(stats.pendingWd),   accent: "text-warning" },
   ];
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-      {cards.map(c => (
-        <div key={c.l} className="glass-card rounded-2xl p-4">
-          <div className="text-xs uppercase text-muted-foreground">{c.l}</div>
-          <div className="mt-1 font-black text-xl text-coin">{c.v}</div>
-        </div>
-      ))}
+    <div>
+      <h2 className="text-[22px] font-black tracking-tight">Dashboard</h2>
+      <p className="text-sm text-muted-foreground mt-0.5">Real-time platform health.</p>
+      <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {cards.map(c => (
+          <div key={c.l} className="cmp-card p-4">
+            <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">{c.l}</div>
+            <div className={`mt-1.5 font-black text-2xl ${c.accent}`}>{c.v}</div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
