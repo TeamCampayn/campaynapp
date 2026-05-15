@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Sparkles, Search, Filter } from "lucide-react";
+import { Search, Bell, Star } from "lucide-react";
 import { CampaignCard, CampaignCardMini, type CampaignCardData } from "@/components/app/CampaignCard";
 
 export const Route = createFileRoute("/app/discover")({
@@ -13,7 +13,6 @@ function Discover() {
   const [items, setItems] = useState<CampaignCardData[] | null>(null);
   const [profile, setProfile] = useState<{ display_name: string | null } | null>(null);
   const [avgViews, setAvgViews] = useState<number>(50000);
-  const [q, setQ] = useState("");
   const [filter, setFilter] = useState<string>("all");
 
   useEffect(() => {
@@ -33,47 +32,63 @@ function Discover() {
 
   const filtered = useMemo(() => {
     if (!items) return null;
+    const now = Date.now();
     return items.filter(c => {
-      if (filter !== "all" && c.platform !== filter && c.platform !== "both") return false;
-      if (q && !`${c.title} ${c.brand_name}`.toLowerCase().includes(q.toLowerCase())) return false;
+      if (filter === "new") {
+        const isNew = c.created_at ? now - new Date(c.created_at).getTime() < 1000 * 60 * 60 * 24 * 4 : false;
+        if (!isNew) return false;
+      } else if (filter === "high") {
+        if (c.cpv_paise < 30) return false;
+      } else if (filter === "closing") {
+        const hours = c.deadline ? Math.ceil((new Date(c.deadline).getTime() - now) / 3600000) : null;
+        if (hours === null || hours > 24) return false;
+      }
       return true;
     });
-  }, [items, q, filter]);
+  }, [items, filter]);
+
+  const firstName = (profile?.display_name ?? "creator").split(" ")[0];
 
   return (
     <div className="pb-6">
-      {/* Header */}
-      <div className="px-5 pt-3 flex items-center gap-3">
-        <div className="flex-1">
-          <div className="text-[13px] text-muted-foreground">Namaste, {profile?.display_name ?? "creator"} 👋</div>
-          <h1 className="text-[28px] font-extrabold tracking-tight text-foreground leading-tight mt-0.5">Discover</h1>
+      {/* Top brand bar */}
+      <div className="px-5 pt-4 flex items-center justify-between">
+        <div className="text-[22px] font-extrabold tracking-tight" style={{ color: "var(--primary)" }}>
+          Campayn
         </div>
-        <div className="h-[42px] w-[42px] rounded-full grad-primary grid place-items-center text-white font-bold">
-          {(profile?.display_name?.[0] ?? "C").toUpperCase()}
+        <div className="flex items-center gap-2">
+          <button className="h-10 w-10 grid place-items-center rounded-full bg-white border border-border">
+            <Search className="h-[18px] w-[18px] text-foreground" />
+          </button>
+          <button className="relative h-10 w-10 grid place-items-center rounded-full bg-white border border-border">
+            <Bell className="h-[18px] w-[18px] text-foreground" />
+            <span className="absolute top-1 right-1 h-4 w-4 rounded-full grad-primary grid place-items-center text-[9px] font-bold text-white">3</span>
+          </button>
         </div>
       </div>
 
-      {/* Search + filter */}
-      <div className="px-5 pt-3.5 flex gap-2.5">
-        <div className="relative flex-1">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-muted-foreground" />
-          <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search campaigns…"
-            className="w-full h-11 pl-10 pr-3.5 rounded-xl bg-white border border-border text-[14px] outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
-        </div>
-        <button className="h-11 w-11 grid place-items-center rounded-xl bg-white border border-border text-foreground relative">
-          <Filter className="h-[18px] w-[18px]" />
-          <span className="absolute top-0.5 right-0.5 h-2.5 w-2.5 rounded-full" style={{ background:"#EF4343", border:"2px solid #fff" }} />
-        </button>
+      <div className="border-b border-border mt-4" />
+
+      {/* Greeting */}
+      <div className="px-5 pt-5">
+        <h1 className="text-[24px] font-extrabold tracking-tight text-foreground leading-tight">
+          Hey {firstName}! <span aria-hidden>👋</span>
+        </h1>
+        <p className="text-[14px] text-muted-foreground mt-1">
+          {items?.length ?? 0} campaigns waiting for you
+        </p>
       </div>
 
-      {/* Category chips */}
-      <div className="mt-3 px-5 flex gap-2 overflow-x-auto no-scrollbar pb-1">
-        {[["all","All"],["instagram","Instagram"],["youtube","YouTube"]].map(([v,l]) => {
+      {/* Filter chips */}
+      <div className="mt-4 px-5 flex gap-2 overflow-x-auto no-scrollbar pb-1">
+        {[["all","All"],["new","New"],["high","High Earning"],["closing","Closing Soon"]].map(([v,l]) => {
           const sel = filter === v;
           return (
             <button key={v} onClick={() => setFilter(v)}
-              className={`shrink-0 px-3.5 py-2 rounded-full text-[13px] border transition ${
-                sel ? "bg-primary text-white border-primary font-semibold" : "bg-white text-foreground border-border font-medium"
+              className={`shrink-0 px-4 py-2 rounded-full text-[13px] transition ${
+                sel
+                  ? "bg-primary text-white font-semibold shadow-[0_6px_16px_rgba(60,76,226,0.25)]"
+                  : "bg-white text-foreground border border-border font-medium"
               }`}>{l}</button>
           );
         })}
@@ -88,12 +103,10 @@ function Discover() {
 
       {/* Top picks rail */}
       {items && items.length > 0 && (
-        <div className="mt-2">
-          <div className="px-5 flex items-baseline justify-between mb-2.5">
-            <h2 className="text-[17px] font-semibold text-foreground">Top picks for you</h2>
-            <span className="text-[11px] font-medium text-muted-foreground tracking-wider inline-flex items-center gap-1">
-              <Sparkles className="h-3 w-3 text-primary-blue" /> AI-MATCHED
-            </span>
+        <div className="mt-5">
+          <div className="px-5 flex items-center gap-1.5 mb-3">
+            <Star className="h-[18px] w-[18px]" fill="#F0AC00" stroke="#F0AC00" />
+            <h2 className="text-[17px] font-bold text-foreground">Top Picks for You</h2>
           </div>
           <div className="flex gap-3 overflow-x-auto no-scrollbar px-5 pb-3">
             {items.slice(0, 5).map(c => (
@@ -105,9 +118,9 @@ function Discover() {
 
       {/* All campaigns */}
       {filtered && (
-        <div className="px-5 mt-2">
+        <div className="px-5 mt-4">
           <div className="flex items-baseline justify-between mb-3">
-            <h2 className="text-[17px] font-semibold text-foreground">All campaigns</h2>
+            <h2 className="text-[17px] font-bold text-foreground">All Campaigns</h2>
             <span className="text-[11px] font-medium text-muted-foreground">{filtered.length} live</span>
           </div>
           {filtered.length === 0 ? (
