@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, Bell, Star } from "lucide-react";
+import { Search, Sparkles, Star } from "lucide-react";
 import { CampaignCard, CampaignCardMini, type CampaignCardData } from "@/components/app/CampaignCard";
+import { NotificationsBell } from "@/components/app/NotificationsBell";
 
 export const Route = createFileRoute("/app/discover")({
   head: () => ({ meta: [{ title: "Discover — Campayn" }]}),
@@ -10,18 +11,20 @@ export const Route = createFileRoute("/app/discover")({
 });
 
 function Discover() {
-  const [items, setItems] = useState<CampaignCardData[] | null>(null);
-  const [profile, setProfile] = useState<{ display_name: string | null } | null>(null);
+  const [items, setItems] = useState<(CampaignCardData & { target_niches: string[] })[] | null>(null);
+  const [profile, setProfile] = useState<{ display_name: string | null; niches?: string[] | null } | null>(null);
   const [avgViews, setAvgViews] = useState<number>(50000);
   const [filter, setFilter] = useState<string>("all");
+  const [niches, setNiches] = useState<string[]>([]);
 
   useEffect(() => {
     supabase.from("campaigns").select("*").eq("status", "active").order("created_at", { ascending: false })
       .then(({ data }) => setItems((data as CampaignCardData[]) ?? []));
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) return;
-      const { data: p } = await supabase.from("profiles").select("display_name").eq("id", user.id).maybeSingle();
+      const { data: p } = await supabase.from("profiles").select("display_name, niches").eq("id", user.id).maybeSingle();
       setProfile(p);
+      setNiches(((p as any)?.niches ?? []) as string[]);
       const { data: socials } = await supabase.from("social_connections").select("avg_views").eq("user_id", user.id);
       if (socials && socials.length) {
         const top = Math.max(...socials.map((s: any) => s.avg_views || 0));
@@ -29,6 +32,20 @@ function Discover() {
       }
     });
   }, []);
+
+  // Personalized recommendations: niche overlap → tier → CPV
+  const recommended = useMemo(() => {
+    if (!items || items.length === 0) return [];
+    const userN = (niches ?? []).map(n => n.toLowerCase());
+    const scored = items.map(c => {
+      const cN = (c.target_niches ?? []).map(n => n.toLowerCase());
+      const overlap = userN.filter(n => cN.includes(n)).length;
+      const matchPct = userN.length ? Math.round((overlap / Math.max(1, userN.length)) * 100) : 0;
+      return { c, overlap, matchPct, cpv: c.cpv_paise };
+    });
+    scored.sort((a, b) => b.overlap - a.overlap || b.cpv - a.cpv);
+    return scored.slice(0, 6);
+  }, [items, niches]);
 
   const filtered = useMemo(() => {
     if (!items) return null;
@@ -48,50 +65,52 @@ function Discover() {
   }, [items, filter]);
 
   const firstName = (profile?.display_name ?? "creator").split(" ")[0];
+  const projected = Math.round(avgViews * 0.5); // ~₹0.50/view typical
 
   return (
     <div className="pb-6">
-      {/* Top brand bar */}
-      <div className="px-5 pt-4 flex items-center justify-between">
-        <div className="text-[22px] font-extrabold tracking-tight" style={{ color: "var(--primary)" }}>
-          Campayn
+      {/* Mesh hero band */}
+      <div className="relative mesh-bg pt-4 pb-5 overflow-hidden">
+        <div className="px-5 flex items-center justify-between">
+          <div className="text-[22px] font-extrabold tracking-tight" style={{ color: "var(--primary)" }}>
+            campayn
+          </div>
+          <div className="flex items-center gap-2">
+            <button className="h-10 w-10 grid place-items-center rounded-full glass">
+              <Search className="h-[18px] w-[18px] text-foreground" />
+            </button>
+            <NotificationsBell />
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button className="h-10 w-10 grid place-items-center rounded-full bg-white border border-border">
-            <Search className="h-[18px] w-[18px] text-foreground" />
-          </button>
-          <button className="relative h-10 w-10 grid place-items-center rounded-full bg-white border border-border">
-            <Bell className="h-[18px] w-[18px] text-foreground" />
-            <span className="absolute top-1 right-1 h-4 w-4 rounded-full grad-primary grid place-items-center text-[9px] font-bold text-white">3</span>
-          </button>
+
+        <div className="px-5 mt-4">
+          <span className="chip-glass">
+            <Sparkles className="h-3 w-3 sparkle text-primary" /> Hey {firstName}
+          </span>
+          <h1 className="mt-2 text-[24px] font-extrabold tracking-tight text-foreground leading-tight">
+            Matched to your{" "}
+            <span style={{ background: "linear-gradient(135deg,#3C4CE2,#8B5CF6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              niche
+            </span>{" "}
+            & ~{(avgViews/1000).toFixed(0)}K views
+          </h1>
+          <p className="text-[13.5px] text-muted-foreground mt-1">
+            {recommended.length > 0 ? `${recommended.length} hand-picked picks · earn up to ~₹${(projected/1000).toFixed(0)}K/post` : `${items?.length ?? 0} live campaigns waiting`}
+          </p>
         </div>
-      </div>
 
-      <div className="border-b border-border mt-4" />
-
-      {/* Greeting */}
-      <div className="px-5 pt-5">
-        <h1 className="text-[24px] font-extrabold tracking-tight text-foreground leading-tight">
-          Hey {firstName}! <span aria-hidden>👋</span>
-        </h1>
-        <p className="text-[14px] text-muted-foreground mt-1">
-          {items?.length ?? 0} campaigns waiting for you
-        </p>
-      </div>
-
-      {/* Filter chips */}
-      <div className="mt-4 px-5 flex gap-2 overflow-x-auto no-scrollbar pb-1">
-        {[["all","All"],["new","New"],["high","High Earning"],["closing","Closing Soon"]].map(([v,l]) => {
-          const sel = filter === v;
-          return (
-            <button key={v} onClick={() => setFilter(v)}
-              className={`shrink-0 px-4 py-2 rounded-full text-[13px] transition ${
-                sel
-                  ? "bg-primary text-white font-semibold shadow-[0_6px_16px_rgba(60,76,226,0.25)]"
-                  : "bg-white text-foreground border border-border font-medium"
-              }`}>{l}</button>
-          );
-        })}
+        {/* Filter chips — glass */}
+        <div className="mt-4 px-5 flex gap-2 overflow-x-auto no-scrollbar pb-1">
+          {[["all","All"],["new","New"],["high","High Earning"],["closing","Closing Soon"]].map(([v,l]) => {
+            const sel = filter === v;
+            return (
+              <button key={v} onClick={() => setFilter(v)}
+                className={`chip-glass shrink-0 ${sel ? "is-active" : ""}`}>
+                {sel && <Sparkles className="h-3 w-3" />}{l}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Loading skeleton */}
@@ -101,16 +120,25 @@ function Discover() {
         </div>
       )}
 
-      {/* Top picks rail */}
-      {items && items.length > 0 && (
+      {/* Recommended for You rail */}
+      {recommended.length > 0 && (
         <div className="mt-5">
           <div className="px-5 flex items-center gap-1.5 mb-3">
-            <Star className="h-[18px] w-[18px]" fill="#F0AC00" stroke="#F0AC00" />
-            <h2 className="text-[17px] font-bold text-foreground">Top Picks for You</h2>
+            <Sparkles className="h-[17px] w-[17px] text-primary" />
+            <h2 className="text-[17px] font-bold text-foreground">Recommended for You</h2>
+            <span className="ml-auto text-[11px] text-muted-foreground">niche-matched</span>
           </div>
           <div className="flex gap-3 overflow-x-auto no-scrollbar px-5 pb-3">
-            {items.slice(0, 5).map(c => (
-              <CampaignCardMini key={c.id} c={c} avgViews={avgViews} />
+            {recommended.map(({ c, matchPct }) => (
+              <div key={c.id} className="relative">
+                {matchPct > 0 && (
+                  <span className="absolute z-10 top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[10px] font-bold text-white shadow"
+                    style={{ background: "linear-gradient(135deg,#3C4CE2,#8B5CF6)" }}>
+                    Match {matchPct}%
+                  </span>
+                )}
+                <CampaignCardMini c={c} avgViews={avgViews} />
+              </div>
             ))}
           </div>
         </div>
