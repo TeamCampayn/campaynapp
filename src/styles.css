@@ -40,35 +40,38 @@
 
 :root {
   --radius: 1rem;
-  /* Campayn Design System — light, warm off-white canvas, blue primary, gold coin */
-  --background: #FAF8F5;            /* warm off-white app canvas */
-  --foreground: #0F172A;            /* near-black navy text */
+  /* Campayn Design System — exact tokens (no yellow). */
+  --background: #FAF8F5;
+  --foreground: #020817;
   --surface-1: #FFFFFF;
-  --surface-2: #F4F3EE;
+  --surface-2: #ECEEFE;
   --card: #FFFFFF;
-  --card-foreground: #0F172A;
+  --card-foreground: #020817;
   --popover: #FFFFFF;
-  --popover-foreground: #0F172A;
-  --primary: #3B4FE4;               /* Campayn blue */
+  --popover-foreground: #020817;
+  --primary: #3C4CE2;               /* Campayn blue */
   --primary-foreground: #FFFFFF;
-  --primary-2: #6C7EF5;             /* lighter blue (gradient stop) */
-  --secondary: #EEF0FD;             /* pale blue surface (chip fills) */
-  --secondary-foreground: #3B4FE4;
-  --muted: #F1F5F9;
-  --muted-foreground: #64748B;      /* slate captions */
-  --accent: #EEF0FD;
-  --accent-foreground: #3B4FE4;
-  --destructive: #EF4444;
+  --primary-2: #7586F5;             /* accent / gradient stop */
+  --campayn-dark: #111337;
+  --secondary: #ECEEFE;
+  --secondary-foreground: #3C4CE2;
+  --muted: #EEF2F6;
+  --muted-foreground: #65758B;
+  --accent: #ECEEFE;
+  --accent-foreground: #3C4CE2;
+  --destructive: #EF4343;
   --destructive-foreground: #FFFFFF;
-  --border: #E2E8F0;
-  --input: #FFFFFF;
-  --ring: #3B4FE4;
-  --coin: #F4B400;                  /* creator-coin gold */
-  --coin-foreground: #0F172A;
-  --coin-2: #FFCD3C;
-  --success: #22C55E;
-  --warning: #F59E0B;
-  --info: #3B4FE4;
+  --border: #E1E7EF;
+  --input: #E1E7EF;
+  --ring: #3C4CE2;
+  /* "coin" is now the dark earnings pill (no yellow). Gold reserved for the moon-coin emoji only. */
+  --coin: #111337;
+  --coin-foreground: #FFFFFF;
+  --coin-2: #1A1D4D;
+  --gold: #F0AC00;
+  --success: #21C45D;
+  --warning: #F59F0A;
+  --info: #3C4CE2;
 }
 
 :root { color-scheme: light; }
@@ -93,34 +96,40 @@
     box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
   }
   .cmp-card { background:#fff; border-radius:16px; box-shadow:0 4px 16px rgba(15,23,42,0.08); overflow:hidden; }
-  .grad-primary { background: linear-gradient(135deg, #3B4FE4 0%, #6C7EF5 100%); color:#fff; }
-  .grad-splash  { background: linear-gradient(180deg, #3B4FE4 0%, #1A1A2E 100%); color:#fff; }
-  .grad-coin    { background: linear-gradient(135deg, #F4B400 0%, #FFCD3C 100%); color:#0F172A; }
-  .text-coin    { color: var(--coin); }
+  .grad-primary { background: linear-gradient(135deg, #3C4CE2 0%, #7586F5 100%); color:#fff; }
+  .grad-splash  { background: linear-gradient(180deg, #3C4CE2 0%, #111337 100%); color:#fff; }
+  /* Primary CTA gradient (was yellow "coin"); kept under the same class so all CTAs reskin in one place. */
+  .grad-coin    { background: linear-gradient(135deg, #3C4CE2 0%, #7586F5 100%); color:#fff; }
+  .text-coin    { color: var(--primary); }
   .text-primary-blue { color: var(--primary); }
-  .ring-coin    { box-shadow: 0 6px 20px -8px rgba(244,180,0,0.55); }
-  .ring-primary { box-shadow: 0 8px 24px rgba(59,79,228,0.20); }
+  .ring-coin    { box-shadow: 0 8px 24px -8px rgba(60,76,226,0.45); }
+  .ring-primary { box-shadow: 0 8px 24px rgba(60,76,226,0.20); }
 
   /* Soft chip (used everywhere as filter/category/meta pill) */
   .chip {
     display: inline-flex; align-items: center; gap: 0.35rem;
     padding: 6px 10px; border-radius: 999px;
     font-size: 12px; font-weight: 600; line-height: 1;
-    background: #EEF0FD; color: #3B4FE4;
+    background: #ECEEFE; color: #3C4CE2;
     border: 1px solid transparent;
     white-space: nowrap;
   }
-  .chip-neutral { background:#F1F5F9; color:#64748B; }
-  .chip-warn    { background: rgba(245,158,11,0.12); color:#B07303; }
-  .chip-success { background: rgba(34,197,94,0.12);  color:#15803D; }
-  .chip-error   { background: rgba(239,68,68,0.12);  color:#B91C1C; }
+  .chip-neutral { background:#EEF2F6; color:#65758B; }
+  .chip-warn    { background: rgba(245,159,10,0.12); color:#B07303; }
+  .chip-success { background: rgba(33,196,93,0.12);  color:#15803D; }
+  .chip-error   { background: rgba(239,67,67,0.12);  color:#B91C1C; }
 
-  /* Coin pill — gold, with ₹ amount */
+  /* Earnings pill — dark navy with white text and small gold moon-coin (PRD §7.4). */
   .coin-pill {
     display: inline-flex; align-items: center; gap: 5px;
-    padding: 6px 12px; background: var(--coin); color: #fff;
-    border-radius: 999px; font-weight: 700; font-size: 12px; line-height: 1;
+    padding: 6px 12px; background: var(--coin); color: var(--coin-foreground);
+    border-radius: 999px; font-weight: 700; font-size: 12.5px; line-height: 1;
     letter-spacing: 0.01em; white-space: nowrap;
+    box-shadow: 0 4px 12px -6px rgba(17,19,55,0.35);
+  }
+  .coin-pill::before {
+    content: "🌑"; font-size: 11px; line-height: 1;
+    filter: hue-rotate(20deg) saturate(1.4);
   }
 
   /* Status chip — colored dot + label, used in My Campaigns */
@@ -128,10 +137,10 @@
             font-weight:600; font-size:12px; line-height:1; border:1px solid currentColor; }
   .status::before { content:""; width:6px; height:6px; border-radius:999px; background:currentColor; }
   .status-applied  { color:#3B4FE4; background:rgba(59,79,228,0.10); }
-  .status-approved { color:#22C55E; background:rgba(34,197,94,0.10); }
-  .status-pending  { color:#F59E0B; background:rgba(245,158,11,0.10); }
-  .status-rejected { color:#EF4444; background:rgba(239,68,68,0.10); }
-  .status-paid     { color:#22C55E; background:rgba(34,197,94,0.10); }
+  .status-approved { color:#21C45D; background:rgba(33,196,93,0.10); }
+  .status-pending  { color:#F59F0A; background:rgba(245,159,10,0.10); }
+  .status-rejected { color:#EF4343; background:rgba(239,67,67,0.10); }
+  .status-paid     { color:#21C45D; background:rgba(33,196,93,0.10); }
 
   /* Buttons — design-system primitives */
   .btn-primary {
@@ -142,14 +151,14 @@
   }
   .btn-primary:hover    { background:#2A3CC8; }
   .btn-primary:active   { transform: scale(0.97); }
-  .btn-primary:disabled { background:#EEF0FD; color:#94A3B8; cursor:not-allowed; }
+  .btn-primary:disabled { background:#ECEEFE; color:#94A3B8; cursor:not-allowed; }
   .btn-secondary {
     display:inline-flex; align-items:center; justify-content:center; gap:6px;
     height:44px; padding:0 18px; border-radius:14px; cursor:pointer;
     background:transparent; color:var(--primary); border:1.5px solid var(--primary);
     font-weight:600; font-size:14px;
   }
-  .btn-secondary:hover { background: rgba(59,79,228,0.06); }
+  .btn-secondary:hover { background: rgba(60,76,226,0.06); }
   .btn-ghost {
     display:inline-flex; align-items:center; justify-content:center; gap:6px;
     padding:8px 12px; border-radius:12px; background:transparent; color:#0F172A;
@@ -162,19 +171,19 @@
     border:1px solid var(--border); background:#fff; color:var(--foreground);
     font-size:15px; outline:none; transition: border-color 120ms, box-shadow 120ms;
   }
-  .cmp-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59,79,228,0.15); }
+  .cmp-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(60,76,226,0.15); }
   .cmp-textarea {
     width:100%; min-height:120px; padding:14px 16px; border-radius:12px;
     border:1px solid var(--border); background:#fff; color:var(--foreground);
     font-size:15px; line-height:1.5; outline:none; transition: border-color 120ms, box-shadow 120ms;
   }
-  .cmp-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59,79,228,0.15); }
+  .cmp-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(60,76,226,0.15); }
 
   /* Brand cover — gradient card hero */
   .brand-cover { position:relative; overflow:hidden; }
   .brand-cover::after {
     content:""; position:absolute; inset:auto 0 0 0; height:60%;
-    background: linear-gradient(180deg, transparent 0%, rgba(26,26,46,0.55) 100%);
+    background: linear-gradient(180deg, transparent 0%, rgba(17,19,55,0.6) 100%);
     pointer-events:none;
   }
 
