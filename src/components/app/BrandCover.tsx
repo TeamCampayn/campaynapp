@@ -10,9 +10,9 @@ type Props = {
 // Deterministic color from brand name → vibrant gradient pair
 function brandColors(name: string): [string, string] {
   const palette: [string, string][] = [
-    ["#3B4FE4", "#6C7EF5"], ["#F4B400", "#FF8A00"], ["#22C55E", "#10B981"],
-    ["#EF4444", "#F472B6"], ["#8B5CF6", "#EC4899"], ["#0EA5E9", "#22D3EE"],
-    ["#F59E0B", "#FB923C"], ["#14B8A6", "#06B6D4"], ["#EC4899", "#8B5CF6"],
+    ["#3C4CE2", "#7586F5"], ["#111337", "#3C4CE2"], ["#21C45D", "#10B981"],
+    ["#EF4343", "#F472B6"], ["#8B5CF6", "#EC4899"], ["#0EA5E9", "#22D3EE"],
+    ["#7586F5", "#3C4CE2"], ["#14B8A6", "#06B6D4"], ["#EC4899", "#8B5CF6"],
   ];
   let h = 0;
   for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;

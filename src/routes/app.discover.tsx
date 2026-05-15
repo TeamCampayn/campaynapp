@@ -62,7 +62,7 @@ function Discover() {
         </div>
         <button className="h-11 w-11 grid place-items-center rounded-xl bg-white border border-border text-foreground relative">
           <Filter className="h-[18px] w-[18px]" />
-          <span className="absolute top-0.5 right-0.5 h-2.5 w-2.5 rounded-full" style={{ background:"#F4B400", border:"2px solid #fff" }} />
+          <span className="absolute top-0.5 right-0.5 h-2.5 w-2.5 rounded-full" style={{ background:"#EF4343", border:"2px solid #fff" }} />
         </button>
       </div>
 
