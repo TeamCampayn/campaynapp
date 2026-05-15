@@ -8,7 +8,7 @@ import { Check, ChevronRight, Instagram, Youtube, Search, MapPin, Lock } from "l
 import { INDIAN_CITIES } from "@/lib/india";
 
 export const Route = createFileRoute("/onboarding")({
-  head: () => ({ meta: [{ title: "Set up your profile — Campayn" }]}),
+  head: () => ({ meta: [{ title: "Set up your profile - Campayn" }]}),
   component: Onboarding,
 });
 
@@ -66,14 +66,14 @@ function Onboarding() {
         profile_completion: Math.min(80, completion),
       }).eq("id", user!.id);
       if (error) throw error;
-      toast.success(skipSocial ? "Profile saved — you can connect Instagram later" : "Profile saved 🎯");
+      toast.success(skipSocial ? "Profile saved - you can connect Instagram later" : "Profile saved 🎯");
       nav({ to: "/app/discover" });
     } catch (e: any) { toast.error(e.message); }
     finally { setBusy(false); }
   }
 
   function connectInstagramSoon() {
-    toast.info("Instagram OAuth ships next week — we'll email you the moment it's live.");
+    toast.info("Instagram OAuth ships next week - we'll email you the moment it's live.");
   }
   function connectYouTubeSoon() {
     toast.info("YouTube OAuth ships next week.");
@@ -127,7 +127,7 @@ function Onboarding() {
     },
     {
       title: "Where are you based & a quick intro",
-      sub: "City helps us match local brand campaigns. Bio is optional — boosts brand interest.",
+      sub: "City helps us match local brand campaigns. Bio is optional - boosts brand interest.",
       body: (
         <div className="space-y-5">
           <section>
@@ -137,7 +137,7 @@ function Onboarding() {
               <input
                 value={city || cityQ}
                 onChange={e => { setCity(""); setCityQ(e.target.value); }}
-                placeholder="Start typing — e.g. 'Gha' for Ghaziabad"
+                placeholder="Start typing - e.g. 'Gha' for Ghaziabad"
                 className="cmp-input pl-10" />
               {city && (
                 <button onClick={() => { setCity(""); setCityQ(""); }}
@@ -173,7 +173,7 @@ function Onboarding() {
     },
     {
       title: "Connect your accounts",
-      sub: "Brands pay based on your real reach. Connect at least one — or skip and add later.",
+      sub: "Brands pay based on your real reach. Connect at least one - or skip and add later.",
       body: (
         <div className="space-y-3">
           <button onClick={connectInstagramSoon}
@@ -181,7 +181,7 @@ function Onboarding() {
             <div className="h-11 w-11 rounded-xl grad-primary grid place-items-center"><Instagram className="h-5 w-5 text-white" /></div>
             <div className="flex-1 text-left">
               <div className="font-semibold text-foreground flex items-center gap-2">Connect Instagram <Lock className="h-3 w-3 text-muted-foreground" /></div>
-              <div className="text-xs text-muted-foreground">Reels, posts & insights — official OAuth</div>
+              <div className="text-xs text-muted-foreground">Reels, posts & insights - official OAuth</div>
             </div>
             <ChevronRight className="h-4 w-4 text-muted-foreground" />
           </button>
@@ -190,7 +190,7 @@ function Onboarding() {
             <div className="h-11 w-11 rounded-xl grad-primary grid place-items-center"><Youtube className="h-5 w-5 text-white" /></div>
             <div className="flex-1 text-left">
               <div className="font-semibold text-foreground flex items-center gap-2">Connect YouTube <Lock className="h-3 w-3 text-muted-foreground" /></div>
-              <div className="text-xs text-muted-foreground">Shorts & long-form — Google OAuth</div>
+              <div className="text-xs text-muted-foreground">Shorts & long-form - Google OAuth</div>
             </div>
             <ChevronRight className="h-4 w-4 text-muted-foreground" />
           </button>

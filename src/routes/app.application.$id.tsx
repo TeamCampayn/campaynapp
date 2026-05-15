@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { inrFmt } from "@/lib/auth";
 
 export const Route = createFileRoute("/app/application/$id")({
-  head: () => ({ meta: [{ title: "Application — Campayn" }]}),
+  head: () => ({ meta: [{ title: "Application - Campayn" }]}),
   component: ApplicationDetail,
 });
 
@@ -52,7 +52,7 @@ function ApplicationDetail() {
       if (se) throw se;
       const { error: ue } = await supabase.from("applications").update({ status: "posted", post_url: postUrl }).eq("id", id);
       if (ue) throw ue;
-      setPostUrl(""); toast.success("Post submitted — verification in 24h");
+      setPostUrl(""); toast.success("Post submitted - verification in 24h");
       load();
     } catch (e: any) { toast.error(e.message); }
     finally { setBusy(false); }

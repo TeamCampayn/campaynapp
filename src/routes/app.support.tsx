@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Mail, MessageCircle } from "lucide-react";
 
 export const Route = createFileRoute("/app/support")({
-  head: () => ({ meta: [{ title: "Help — Campayn" }] }),
+  head: () => ({ meta: [{ title: "Help - Campayn" }] }),
   component: Support,
 });
 

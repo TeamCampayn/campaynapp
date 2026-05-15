@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/settings")({
-  head: () => ({ meta: [{ title: "Settings — Campayn" }] }),
+  head: () => ({ meta: [{ title: "Settings - Campayn" }] }),
   component: Settings,
 });
 
@@ -22,7 +22,7 @@ function Settings() {
     if (!confirm("Delete your account permanently?")) return;
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-    // soft: sign out — hard delete requires admin endpoint
+    // soft: sign out - hard delete requires admin endpoint
     await supabase.auth.signOut();
     toast.success("Signed out. Email support@campayn.app to delete data.");
     window.location.href = "/";

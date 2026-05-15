@@ -1,4 +1,4 @@
-// Indigo ₹ token — replaces every yellow dot in the app.
+// Indigo ₹ token - replaces every yellow dot in the app.
 type Props = { size?: number; className?: string };
 export function RupeeCoin({ size = 18, className = "" }: Props) {
   const id = `rc-${size}`;
@@ -19,7 +19,7 @@ export function RupeeCoin({ size = 18, className = "" }: Props) {
   );
 }
 
-// Compact INR formatter that pairs with the coin (no leading ₹ — the coin IS the ₹).
+// Compact INR formatter that pairs with the coin (no leading ₹ - the coin IS the ₹).
 export const compactInr = (n: number) => {
   if (n >= 10000000) return (n / 10000000).toFixed(n % 10000000 === 0 ? 0 : 1).replace(/\.0$/, "") + "Cr";
   if (n >= 100000)  return (n / 100000).toFixed(n % 100000 === 0 ? 0 : 1).replace(/\.0$/, "") + "L";

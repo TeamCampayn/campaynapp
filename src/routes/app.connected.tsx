@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { compactFmt } from "@/lib/auth";
 
 export const Route = createFileRoute("/app/connected")({
-  head: () => ({ meta: [{ title: "Connected accounts — Campayn" }] }),
+  head: () => ({ meta: [{ title: "Connected accounts - Campayn" }] }),
   component: Connected,
 });
 
@@ -43,7 +43,7 @@ function Connected() {
     <div className="px-5 pt-6 pb-10">
       <Link to="/app/profile" className="inline-flex items-center gap-1 text-sm text-muted-foreground"><ArrowLeft className="h-4 w-4" /> Back</Link>
       <h1 className="mt-3 text-2xl font-black">Connected accounts</h1>
-      <p className="mt-1 text-sm text-muted-foreground">OAuth is stubbed — real Instagram/YouTube hookup ships soon.</p>
+      <p className="mt-1 text-sm text-muted-foreground">OAuth is stubbed - real Instagram/YouTube hookup ships soon.</p>
 
       <ul className="mt-5 space-y-3">
         {items.map(s => (
@@ -71,7 +71,7 @@ function Connected() {
           <span className="text-sm font-semibold">Add YouTube</span>
         </button>
       </div>
-      <p className="mt-3 text-xs text-muted-foreground inline-flex items-center gap-1"><Plug className="h-3 w-3" /> Stub mode — numbers are demo values until OAuth ships.</p>
+      <p className="mt-3 text-xs text-muted-foreground inline-flex items-center gap-1"><Plug className="h-3 w-3" /> Stub mode - numbers are demo values until OAuth ships.</p>
     </div>
   );
 }

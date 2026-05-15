@@ -5,7 +5,7 @@ import { ArrowLeft, Copy, Gift } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/referrals")({
-  head: () => ({ meta: [{ title: "Refer & earn — Campayn" }] }),
+  head: () => ({ meta: [{ title: "Refer & earn - Campayn" }] }),
   component: Referrals,
 });
 
@@ -41,7 +41,7 @@ function Referrals() {
         <div className="mt-4 text-sm text-muted-foreground">Refer creators, both earn</div>
         <div className="mt-1 text-3xl font-black text-coin">₹100 each</div>
         <div className="mt-6 text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Your code</div>
-        <div className="mt-1.5 font-black text-2xl tracking-[0.3em] font-mono">{code ?? "—"}</div>
+        <div className="mt-1.5 font-black text-2xl tracking-[0.3em] font-mono">{code ?? "-"}</div>
         <div className="mt-6 flex gap-2">
           <button onClick={copy} className="btn-ghost flex-1 h-12 rounded-2xl"><Copy className="h-4 w-4" />Copy link</button>
           <button onClick={share} className="btn-primary flex-1 h-12 rounded-2xl">Share</button>

@@ -104,7 +104,7 @@
   .ring-coin    { box-shadow: 0 8px 24px -8px rgba(60,76,226,0.45); }
   .ring-primary { box-shadow: 0 8px 24px rgba(60,76,226,0.20); }
 
-  /* Mesh background for hero zones — soft AI feel without imagery */
+  /* Mesh background for hero zones - soft AI feel without imagery */
   .mesh-bg {
     background:
       radial-gradient(60% 50% at 15% 20%, rgba(117,134,245,0.35) 0%, transparent 60%),
@@ -137,7 +137,7 @@
     color: #fff;
   }
 
-  /* Soft chip (legacy — still used in places) */
+  /* Soft chip (legacy - still used in places) */
   .chip {
     display: inline-flex; align-items: center; gap: 0.35rem;
     padding: 6px 10px; border-radius: 999px;
@@ -151,7 +151,7 @@
   .chip-success { background: rgba(33,196,93,0.12);  color:#15803D; }
   .chip-error   { background: rgba(239,67,67,0.12);  color:#B91C1C; }
 
-  /* Glass chip — Gen-Z + AI feel */
+  /* Glass chip - Gen-Z + AI feel */
   .chip-glass {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 7px 13px; border-radius: 999px;
@@ -173,7 +173,7 @@
     box-shadow: 0 8px 22px rgba(60,76,226,0.32);
   }
 
-  /* Earnings pill — dark navy with white text */
+  /* Earnings pill - dark navy with white text */
   .coin-pill {
     display: inline-flex; align-items: center; gap: 5px;
     padding: 6px 12px; background: var(--coin); color: var(--coin-foreground);
