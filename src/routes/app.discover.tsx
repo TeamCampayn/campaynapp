@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, Sparkles, Star } from "lucide-react";
+import { Search, Sparkles } from "lucide-react";
 import { CampaignCard, CampaignCardMini, type CampaignCardData } from "@/components/app/CampaignCard";
 import { NotificationsBell } from "@/components/app/NotificationsBell";
 
