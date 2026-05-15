@@ -20,16 +20,22 @@ function Support() {
       <h1 className="mt-3 text-2xl font-black">Help & support</h1>
 
       <div className="mt-5 grid grid-cols-2 gap-3">
-        <a href="mailto:support@campayn.app" className="glass-card rounded-2xl p-4 flex flex-col items-center gap-1.5"><Mail className="h-5 w-5 text-coin" /><span className="text-sm font-semibold">Email</span></a>
-        <a href="https://wa.me/919999999999" target="_blank" rel="noreferrer" className="glass-card rounded-2xl p-4 flex flex-col items-center gap-1.5"><MessageCircle className="h-5 w-5 text-coin" /><span className="text-sm font-semibold">WhatsApp</span></a>
+        <a href="mailto:support@campayn.app" className="cmp-card p-4 flex flex-col items-center gap-2 active:scale-[0.99] transition">
+          <div className="h-10 w-10 rounded-xl bg-secondary grid place-items-center"><Mail className="h-5 w-5 text-primary" /></div>
+          <span className="text-sm font-semibold">Email</span>
+        </a>
+        <a href="https://wa.me/919999999999" target="_blank" rel="noreferrer" className="cmp-card p-4 flex flex-col items-center gap-2 active:scale-[0.99] transition">
+          <div className="h-10 w-10 rounded-xl bg-secondary grid place-items-center"><MessageCircle className="h-5 w-5 text-primary" /></div>
+          <span className="text-sm font-semibold">WhatsApp</span>
+        </a>
       </div>
 
       <h3 className="mt-6 font-bold">FAQs</h3>
       <ul className="mt-3 space-y-2">
         {FAQ.map(({ q, a }) => (
-          <li key={q} className="glass-card rounded-2xl p-4">
-            <div className="font-semibold">{q}</div>
-            <div className="mt-1 text-sm text-muted-foreground">{a}</div>
+          <li key={q} className="cmp-card p-4">
+            <div className="font-semibold text-[14px]">{q}</div>
+            <div className="mt-1 text-[13px] text-muted-foreground leading-relaxed">{a}</div>
           </li>
         ))}
       </ul>

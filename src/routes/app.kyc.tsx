@@ -45,9 +45,14 @@ function Kyc() {
       <h1 className="mt-3 text-2xl font-black">KYC verification</h1>
       <p className="mt-1 text-sm text-muted-foreground">Required to withdraw above ₹10,000.</p>
 
-      <div className="mt-5 glass-card rounded-2xl p-4 flex items-center gap-3">
-        <ShieldCheck className="h-5 w-5 text-coin" />
-        <div className="text-sm">Status: <span className="font-bold capitalize">{(k.status ?? "not_started").replace("_"," ")}</span></div>
+      <div className="mt-5 cmp-card p-4 flex items-center gap-3">
+        <div className="h-10 w-10 rounded-xl bg-secondary grid place-items-center"><ShieldCheck className="h-5 w-5 text-primary" /></div>
+        <div className="flex-1 text-sm">
+          <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Status</div>
+          <div className="font-bold capitalize">{(k.status ?? "not_started").replace("_"," ")}</div>
+        </div>
+        {k.status === "verified" && <span className="status status-paid">Verified</span>}
+        {k.status === "pending" && <span className="status status-pending">In review</span>}
       </div>
 
       <div className="mt-5 space-y-3">
@@ -55,10 +60,10 @@ function Kyc() {
         <input value={k.pan_name ?? ""} onChange={e => setK({ ...k, pan_name: e.target.value })} placeholder="Name as on PAN" className={cls} />
         <input value={k.aadhaar_last4 ?? ""} onChange={e => setK({ ...k, aadhaar_last4: e.target.value.replace(/\D/g,"") })} placeholder="Last 4 of Aadhaar" className={cls} maxLength={4} />
       </div>
-      <button disabled={busy || k.status === "verified"} onClick={submit} className="mt-5 w-full grad-coin py-3 rounded-2xl font-bold ring-coin disabled:opacity-50">
+      <button disabled={busy || k.status === "verified"} onClick={submit} className="mt-5 btn-primary w-full disabled:opacity-50">
         {k.status === "verified" ? "Already verified" : busy ? "Submitting…" : "Submit for verification"}
       </button>
     </div>
   );
 }
-const cls = "w-full bg-input/60 border border-border rounded-xl px-4 py-3 text-[15px] outline-none focus:ring-2 focus:ring-primary";
+const cls = "cmp-input";

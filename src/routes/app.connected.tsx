@@ -47,24 +47,31 @@ function Connected() {
 
       <ul className="mt-5 space-y-3">
         {items.map(s => (
-          <li key={s.id} className="glass-card rounded-2xl p-4 flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl grad-primary grid place-items-center">
+          <li key={s.id} className="cmp-card p-4 flex items-center gap-3">
+            <div className="h-11 w-11 rounded-xl grad-primary grid place-items-center ring-primary">
               {s.platform === "instagram" ? <Instagram className="h-5 w-5 text-primary-foreground" /> : <Youtube className="h-5 w-5 text-primary-foreground" />}
             </div>
             <div className="flex-1 min-w-0">
               <div className="font-bold truncate">{s.handle}</div>
-              <div className="text-xs text-muted-foreground">{compactFmt(s.followers)} followers · avg {compactFmt(s.avg_views)} views · {s.tier}</div>
+              <div className="text-[11px] text-muted-foreground mt-0.5">{compactFmt(s.followers)} followers · avg {compactFmt(s.avg_views)} views</div>
+              <span className="chip mt-1.5 capitalize">{s.tier}</span>
             </div>
-            <button onClick={() => remove(s.id)} className="text-muted-foreground"><Trash2 className="h-4 w-4" /></button>
+            <button onClick={() => remove(s.id)} className="text-muted-foreground p-2 hover:text-destructive transition"><Trash2 className="h-4 w-4" /></button>
           </li>
         ))}
       </ul>
 
       <div className="mt-5 grid grid-cols-2 gap-3">
-        <button onClick={() => add("instagram")} className="glass-card rounded-2xl p-4 flex flex-col items-center gap-1.5"><Instagram className="h-5 w-5 text-coin" /><span className="text-sm font-semibold">Add IG</span></button>
-        <button onClick={() => add("youtube")} className="glass-card rounded-2xl p-4 flex flex-col items-center gap-1.5"><Youtube className="h-5 w-5 text-coin" /><span className="text-sm font-semibold">Add YT</span></button>
+        <button onClick={() => add("instagram")} className="cmp-card p-4 flex flex-col items-center gap-2 active:scale-[0.99] transition">
+          <div className="h-10 w-10 rounded-xl bg-secondary grid place-items-center"><Instagram className="h-5 w-5 text-primary" /></div>
+          <span className="text-sm font-semibold">Add Instagram</span>
+        </button>
+        <button onClick={() => add("youtube")} className="cmp-card p-4 flex flex-col items-center gap-2 active:scale-[0.99] transition">
+          <div className="h-10 w-10 rounded-xl bg-secondary grid place-items-center"><Youtube className="h-5 w-5 text-primary" /></div>
+          <span className="text-sm font-semibold">Add YouTube</span>
+        </button>
       </div>
-      <p className="mt-3 text-xs text-muted-foreground inline-flex items-center gap-1"><Plug className="h-3 w-3" /> Stub: numbers are randomly generated for demo.</p>
+      <p className="mt-3 text-xs text-muted-foreground inline-flex items-center gap-1"><Plug className="h-3 w-3" /> Stub mode — numbers are demo values until OAuth ships.</p>
     </div>
   );
 }

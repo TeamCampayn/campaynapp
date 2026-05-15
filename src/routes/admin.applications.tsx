@@ -49,23 +49,45 @@ function AdminApps() {
 
   return (
     <div>
-      <h2 className="text-xl font-black">Applications</h2>
-      <ul className="mt-4 space-y-2">
+      <h2 className="text-[22px] font-black tracking-tight">Applications</h2>
+      <p className="text-sm text-muted-foreground mt-0.5">Review and progress creator submissions.</p>
+      <ul className="mt-5 space-y-2">
+        {items.length === 0 && <p className="text-sm text-muted-foreground py-8 text-center">No applications yet.</p>}
         {items.map(a => (
-          <li key={a.id} className="glass-card rounded-2xl p-3">
-            <div className="flex items-center justify-between">
-              <div className="min-w-0">
-                <div className="font-bold truncate">{a.campaigns?.title}</div>
-                <div className="text-xs text-muted-foreground">{a.campaigns?.brand_name} · {a.profiles?.display_name ?? "creator"} · est ₹{a.estimated_earning_inr}</div>
+          <li key={a.id} className="cmp-card p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <div className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">{a.campaigns?.brand_name}</div>
+                <div className="font-semibold text-[14px] truncate mt-0.5">{a.campaigns?.title}</div>
+                <div className="text-[11px] text-muted-foreground mt-1">
+                  by <span className="font-semibold text-foreground">{a.profiles?.display_name ?? "creator"}</span> · est ₹{a.estimated_earning_inr ?? 0}
+                </div>
               </div>
-              <span className="chip">{a.status}</span>
+              <span className="chip whitespace-nowrap">{a.status.replace(/_/g, " ")}</span>
             </div>
-            {a.post_url && <a href={a.post_url} target="_blank" className="text-xs text-coin underline truncate block mt-1" rel="noreferrer">{a.post_url}</a>}
-            <div className="mt-2 flex gap-2 flex-wrap">
-              {(NEXT[a.status] ?? []).map(s => (
-                <button key={s} onClick={() => moveTo(a, s)} className="chip">{s}</button>
-              ))}
-            </div>
+            {a.post_url && (
+              <a href={a.post_url} target="_blank" className="mt-2 text-[11px] text-primary underline truncate block" rel="noreferrer">
+                ↗ {a.post_url}
+              </a>
+            )}
+            {(NEXT[a.status] ?? []).length > 0 && (
+              <div className="mt-3 pt-3 border-t border-border flex gap-2 flex-wrap">
+                {(NEXT[a.status] ?? []).map(s => {
+                  const isDanger = s === "rejected";
+                  const isPay = s === "paid";
+                  return (
+                    <button key={s} onClick={() => moveTo(a, s)}
+                      className={`px-3 py-1.5 rounded-full text-[12px] font-semibold transition ${
+                        isDanger ? "bg-destructive/10 text-destructive border border-destructive/20" :
+                        isPay    ? "bg-coin text-coin-foreground border border-coin" :
+                        "bg-primary text-primary-foreground hover:bg-primary/90"
+                      }`}>
+                      {s.replace(/_/g, " ")}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </li>
         ))}
       </ul>
