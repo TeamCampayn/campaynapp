@@ -321,3 +321,61 @@ function TLRow({ n, label, desc }: { n: string; label: string; desc: string }) {
     </div>
   );
 }
+
+function AiBtn({ busy, onClick, label }: { busy: boolean; onClick: () => void; label: string }) {
+  return (
+    <button onClick={onClick} disabled={busy}
+      className="cmp-card p-2.5 rounded-xl flex flex-col items-center gap-1 text-[11.5px] font-semibold disabled:opacity-50">
+      {busy ? <Loader2 className="h-4 w-4 animate-spin text-primary" /> : <Sparkles className="h-4 w-4 text-primary" />}
+      <span className="leading-tight text-center">{label}</span>
+    </button>
+  );
+}
+
+function AiResults({ out }: { out: { kind: string; data: any } }) {
+  const { kind, data } = out;
+  if (kind === "content_ideas" && Array.isArray(data?.ideas)) {
+    return (
+      <div className="mt-3 space-y-2">
+        {data.ideas.map((it: any, i: number) => (
+          <div key={i} className="cmp-card p-3 rounded-xl">
+            <div className="flex items-center justify-between">
+              <div className="font-bold text-[13.5px]">{it.title}</div>
+              <span className="px-2 py-0.5 rounded-full bg-secondary text-primary text-[10.5px] font-semibold">{it.format}</span>
+            </div>
+            <div className="mt-1 text-[13px] text-foreground/85">{it.hook}</div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  if (kind === "script_ideas" && Array.isArray(data?.scripts)) {
+    return (
+      <div className="mt-3 space-y-2">
+        {data.scripts.map((s: any, i: number) => (
+          <div key={i} className="cmp-card p-3 rounded-xl text-[13px] space-y-1">
+            <div className="font-bold text-primary">{s.label || `Script ${i + 1}`}</div>
+            <div><span className="font-semibold">Hook:</span> {s.hook}</div>
+            <div><span className="font-semibold">Body:</span> {s.body}</div>
+            <div><span className="font-semibold">CTA:</span> {s.cta}</div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  if (kind === "caption_ideas" && Array.isArray(data?.captions)) {
+    return (
+      <div className="mt-3 space-y-2">
+        {data.captions.map((c: any, i: number) => (
+          <div key={i} className="cmp-card p-3 rounded-xl text-[13px]">
+            <div>{c.text}</div>
+            {Array.isArray(c.hashtags) && (
+              <div className="mt-1.5 text-[11.5px] text-primary font-semibold">{c.hashtags.map((h: string) => h.startsWith('#') ? h : `#${h}`).join(' ')}</div>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return null;
+}
