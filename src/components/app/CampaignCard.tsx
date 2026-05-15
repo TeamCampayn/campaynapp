@@ -126,8 +126,8 @@ export function CampaignCardMini({ c, avgViews }: { c: CampaignCardData; avgView
           </span>
         )}
       </div>
-      <div className="p-3.5">
-        <div className="font-bold text-[14.5px] leading-snug line-clamp-2 text-foreground min-h-[38px]">
+      <div className="p-3.5 flex flex-col" style={{ minHeight: 140 }}>
+        <div className="font-bold text-[14.5px] leading-snug line-clamp-2 text-foreground min-h-[40px]">
           {c.title}
         </div>
         <div className="mt-2 flex items-center gap-1.5 flex-wrap">
