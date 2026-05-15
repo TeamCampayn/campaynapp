@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Clock, Zap, Instagram, Youtube, BadgeCheck } from "lucide-react";
+import { Clock, Zap, Instagram, Youtube } from "lucide-react";
 import { BrandCover } from "./BrandCover";
 
 export type CampaignCardData = {
@@ -17,7 +17,6 @@ export type CampaignCardData = {
   created_at?: string;
 };
 
-const inr = (n: number) => new Intl.NumberFormat("en-IN").format(n);
 const compact = (n: number) => {
   if (n >= 1000) return (n / 1000).toFixed(n >= 10000 ? 1 : 1).replace(/\.0$/, "") + "K";
   return String(n);
