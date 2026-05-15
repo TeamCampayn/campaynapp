@@ -41,6 +41,12 @@ function Onboarding() {
       .then(({ data }) => { if (data?.onboarding_complete) setDone(true); });
   }, [user]);
 
+  const cityMatches = useMemo(() => {
+    const q = cityQ.trim().toLowerCase();
+    if (!q) return [] as string[];
+    return INDIAN_CITIES.filter(c => c.toLowerCase().includes(q)).slice(0, 8);
+  }, [cityQ]);
+
   if (loading) return <div className="min-h-screen grid place-items-center text-muted-foreground">Loading…</div>;
   if (!user) return <Navigate to="/auth" />;
   if (done) return <Navigate to="/app/discover" />;
@@ -49,12 +55,6 @@ function Onboarding() {
     if (arr.includes(v)) setArr(arr.filter(x => x !== v));
     else { if (max && arr.length >= max) return; setArr([...arr, v]); }
   }
-
-  const cityMatches = useMemo(() => {
-    const q = cityQ.trim().toLowerCase();
-    if (!q) return [] as string[];
-    return INDIAN_CITIES.filter(c => c.toLowerCase().includes(q)).slice(0, 8);
-  }, [cityQ]);
 
   async function finish(skipSocial = false) {
     setBusy(true);
