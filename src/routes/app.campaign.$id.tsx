@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Bookmark, BadgeCheck, ChevronDown, ChevronUp, Users, ArrowRight, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+import { RupeeCoin, compactInr } from "@/components/app/RupeeCoin";
+import { BrandLogo } from "@/components/app/BrandLogo";
 
 export const Route = createFileRoute("/app/campaign/$id")({
   head: () => ({ meta: [{ title: "Campaign - Campayn" }] }),
@@ -10,17 +12,6 @@ export const Route = createFileRoute("/app/campaign/$id")({
 });
 
 const compact = (n: number) => n >= 1000 ? (n/1000).toFixed(1).replace(/\.0$/,"") + "K" : String(n);
-
-function CoinIcon({ size = 22 }: { size?: number }) {
-  return (
-    <span aria-hidden style={{
-      width: size, height: size, borderRadius: "50%",
-      background: "radial-gradient(circle at 35% 30%, #F6D27A 0%, #D9A327 55%, #8C6510 100%)",
-      display: "inline-block", flexShrink: 0,
-      boxShadow: "inset -1px -1px 2px rgba(0,0,0,0.25)",
-    }} />
-  );
-}
 
 const TABS = ["Brief","Requirements","Brand","Timeline"] as const;
 type Tab = typeof TABS[number];
@@ -37,7 +28,7 @@ function CampaignDetail() {
   const [estOpen, setEstOpen] = useState(true);
   const [bookmarked, setBookmarked] = useState(false);
   const [aiOut, setAiOut] = useState<any>(null);
-  const [aiBusy, setAiBusy] = useState(false);
+  const [aiBusy, setAiBusy] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.from("campaigns").select("*").eq("id", id).maybeSingle().then(({ data }) => setC(data));
@@ -84,16 +75,16 @@ function CampaignDetail() {
     finally { setBusy(false); }
   }
 
-  async function genCaption() {
-    setAiBusy(true);
+  async function genIdeas(kind: "content_ideas" | "script_ideas" | "caption_ideas") {
+    setAiBusy(kind);
     try {
       const { data, error } = await supabase.functions.invoke("ai-helper", {
-        body: { kind: "caption", payload: { brand: c.brand_name, title: c.title, brief: c.brief } },
+        body: { kind, payload: { brand: c.brand_name, title: c.title, brief: c.brief, deliverables: c.deliverables } },
       });
       if (error) throw error;
-      setAiOut(data);
+      setAiOut({ kind, data });
     } catch (e: any) { toast.error(e.message ?? "AI error"); }
-    finally { setAiBusy(false); }
+    finally { setAiBusy(null); }
   }
 
   return (
@@ -102,10 +93,10 @@ function CampaignDetail() {
       <div className="relative h-[260px] overflow-hidden">
         {c.cover_image_url ? (
           <img src={c.cover_image_url} alt={c.brand_name} referrerPolicy="no-referrer"
+            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
             className="absolute inset-0 h-full w-full object-cover" />
-        ) : (
-          <div className="absolute inset-0 grad-primary" />
-        )}
+        ) : null}
+        <div className="absolute inset-0 grad-primary -z-10" />
         <button onClick={() => nav({ to: "/app/discover" })}
           className="absolute top-4 left-4 h-10 w-10 rounded-full bg-black/45 backdrop-blur grid place-items-center text-white">
           <ArrowLeft className="h-4.5 w-4.5" />
@@ -120,11 +111,7 @@ function CampaignDetail() {
       <div className="px-5 -mt-7 relative">
         {/* Brand verified pill */}
         <div className="inline-flex items-center gap-2 bg-white rounded-full pl-1 pr-3.5 py-1 shadow-md">
-          <span className="h-7 w-7 rounded-full grad-primary grid place-items-center text-white text-xs font-bold">
-            {c.brand_logo_url
-              ? <img src={c.brand_logo_url} alt="" referrerPolicy="no-referrer" className="h-7 w-7 rounded-full object-cover" />
-              : c.brand_name[0]?.toUpperCase()}
-          </span>
+          <BrandLogo name={c.brand_name} url={c.brand_logo_url} size={28} />
           <span className="text-[13.5px] font-bold text-foreground">{c.brand_name}</span>
           <span className="inline-flex items-center gap-0.5 text-[12px] font-semibold text-primary">
             <BadgeCheck className="h-3.5 w-3.5" /> Verified
@@ -145,11 +132,11 @@ function CampaignDetail() {
             {estOpen ? <ChevronUp className="h-4 w-4 text-[#3A3F70]" /> : <ChevronDown className="h-4 w-4 text-[#3A3F70]" />}
           </button>
           <div className="mt-2 flex items-center gap-3">
-            <CoinIcon size={28} />
-            <div className="text-[34px] leading-none font-black tracking-tight text-foreground">₹{compact(est)}</div>
+            <RupeeCoin size={28} />
+            <div className="text-[34px] leading-none font-black tracking-tight text-foreground">{compactInr(est)}</div>
           </div>
           {estOpen && (
-            <div className="mt-2 text-[13px] text-[#5B5F80]">Range: ₹{compact(lo)} - ₹{compact(hi)}</div>
+            <div className="mt-2 text-[13px] text-[#5B5F80]">Range: {compactInr(lo)} – {compactInr(hi)}</div>
           )}
         </div>
 
@@ -228,18 +215,15 @@ function CampaignDetail() {
               </div>
             )}
 
-            <button onClick={genCaption} disabled={aiBusy}
-              className="w-full glass-card rounded-2xl p-3 flex items-center justify-center gap-2 font-semibold text-sm">
-              {aiBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4 text-primary" />}
-              Generate caption ideas
-            </button>
-            {aiOut?.captions && (
-              <div className="space-y-2">
-                {aiOut.captions.map((cap: string, i: number) => (
-                  <div key={i} className="glass-card rounded-xl p-3 text-sm">{cap}</div>
-                ))}
+            <div>
+              <h3 className="font-bold text-[15px] text-foreground mb-2.5">AI Creator Suite</h3>
+              <div className="grid grid-cols-3 gap-2">
+                <AiBtn busy={aiBusy === "content_ideas"} onClick={() => genIdeas("content_ideas")} label="Content ideas" />
+                <AiBtn busy={aiBusy === "script_ideas"} onClick={() => genIdeas("script_ideas")} label="Script ideas" />
+                <AiBtn busy={aiBusy === "caption_ideas"} onClick={() => genIdeas("caption_ideas")} label="Captions" />
               </div>
-            )}
+              {aiOut && <AiResults out={aiOut} />}
+            </div>
           </div>
         )}
 
@@ -308,8 +292,8 @@ function CampaignDetail() {
             </Link>
           ) : (
             <button disabled={busy} onClick={apply}
-              className="w-full grad-coin py-4 rounded-2xl font-bold text-[15px] ring-coin disabled:opacity-50 inline-flex items-center justify-center gap-2">
-              {busy ? "Applying..." : <>Apply Now - Earn ₹{compact(est)} <CoinIcon size={20} /></>}
+              className="w-full bg-primary text-primary-foreground py-4 rounded-2xl font-bold text-[15px] disabled:opacity-50 inline-flex items-center justify-center gap-2 shadow-[0_8px_24px_-8px_rgba(60,76,226,0.55)]">
+              {busy ? "Applying..." : <>Apply Now · Earn {compactInr(est)} <RupeeCoin size={20} /></>}
             </button>
           )}
         </div>
