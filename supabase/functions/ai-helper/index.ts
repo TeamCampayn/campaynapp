@@ -1,4 +1,4 @@
-// Lovable AI helper edge function — caption/script generation + campaign matching
+// Lovable AI helper — content/script/caption ideas + match scoring
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -8,32 +8,50 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
     const { kind, payload } = await req.json();
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
+    const KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!KEY) throw new Error("LOVABLE_API_KEY not configured");
 
-    let system = "";
-    let user = "";
-    if (kind === "caption") {
-      system = "You are a viral Indian creator. Write 3 short Instagram captions in Hinglish for the given brand campaign. Punchy, emoji-friendly, native voice. Return JSON {captions:[string,string,string]}.";
-      user = `Brand: ${payload.brand}\nProduct: ${payload.title}\nBrief: ${payload.brief}`;
-    } else if (kind === "script") {
-      system = "You are a Reels script writer. Output a 30-second Reels script with HOOK/BODY/CTA sections in Hinglish. Return JSON {hook,body,cta}.";
-      user = `Brand: ${payload.brand}\nProduct: ${payload.title}\nBrief: ${payload.brief}\nDeliverables: ${(payload.deliverables||[]).join(', ')}`;
-    } else if (kind === "match") {
-      system = "You match creators to campaigns. Return JSON {score:0-100, reason:string} given creator profile and campaign.";
-      user = `Creator: ${JSON.stringify(payload.creator)}\nCampaign: ${JSON.stringify(payload.campaign)}`;
-    } else {
-      throw new Error("Unknown kind");
-    }
+    const prompts: Record<string, { system: string; user: string }> = {
+      content_ideas: {
+        system: "You are a viral Indian short-form creator. Generate 3 distinct CONTENT HOOK ideas for a brand campaign. Each hook = 1 line, scroll-stopping, Hinglish ok. Return JSON {ideas:[{title,hook,format}]} where format ∈ ['Reel','Story','YT Short'].",
+        user: `Brand: ${payload.brand}\nProduct: ${payload.title}\nBrief: ${payload.brief}`,
+      },
+      script_ideas: {
+        system: "You write 30s Reels scripts. Generate 2 distinct script options for a brand campaign. Each: HOOK (1 line), BODY (3-4 lines), CTA (1 line). Hinglish allowed. Return JSON {scripts:[{label,hook,body,cta}]}.",
+        user: `Brand: ${payload.brand}\nProduct: ${payload.title}\nBrief: ${payload.brief}\nDeliverables: ${(payload.deliverables||[]).join(', ')}`,
+      },
+      caption_ideas: {
+        system: "Write 3 short Instagram captions in Hinglish for the brand campaign. Punchy, native, emoji-friendly, ≤180 chars each. Include 4-6 niche hashtags per caption. Return JSON {captions:[{text,hashtags:[..]}]}.",
+        user: `Brand: ${payload.brand}\nProduct: ${payload.title}\nBrief: ${payload.brief}`,
+      },
+      // legacy aliases
+      caption: {
+        system: "Write 3 short Instagram captions in Hinglish for the brand campaign. Return JSON {captions:[string,string,string]}.",
+        user: `Brand: ${payload.brand}\nProduct: ${payload.title}\nBrief: ${payload.brief}`,
+      },
+      script: {
+        system: "Write a 30s Reels script (HOOK/BODY/CTA) in Hinglish. Return JSON {hook,body,cta}.",
+        user: `Brand: ${payload.brand}\nProduct: ${payload.title}\nBrief: ${payload.brief}\nDeliverables: ${(payload.deliverables||[]).join(', ')}`,
+      },
+      match: {
+        system: "Match creator to campaign. Return JSON {score:0-100, reason:string}.",
+        user: `Creator: ${JSON.stringify(payload.creator)}\nCampaign: ${JSON.stringify(payload.campaign)}`,
+      },
+    };
+    const p = prompts[kind];
+    if (!p) throw new Error("Unknown kind: " + kind);
 
     const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
-      headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+      headers: {
+        Authorization: `Bearer ${KEY}`,
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
         messages: [
-          { role: "system", content: system },
-          { role: "user", content: user },
+          { role: "system", content: p.system },
+          { role: "user", content: p.user },
         ],
         response_format: { type: "json_object" },
       }),
