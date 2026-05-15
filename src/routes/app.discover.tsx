@@ -90,7 +90,6 @@ function Discover() {
   }
 
   const firstName = (profile?.display_name ?? "creator").split(" ")[0];
-  const projected = Math.round(avgViews * 0.5); // ~₹0.50/view typical
 
   return (
     <div className="pb-6">
