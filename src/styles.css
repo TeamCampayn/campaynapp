@@ -40,7 +40,6 @@
 
 :root {
   --radius: 1rem;
-  /* Campayn Design System — exact tokens (no yellow). */
   --background: #FAF8F5;
   --foreground: #020817;
   --surface-1: #FFFFFF;
@@ -49,9 +48,11 @@
   --card-foreground: #020817;
   --popover: #FFFFFF;
   --popover-foreground: #020817;
-  --primary: #3C4CE2;               /* Campayn blue */
+  --primary: #3C4CE2;
   --primary-foreground: #FFFFFF;
-  --primary-2: #7586F5;             /* accent / gradient stop */
+  --primary-2: #7586F5;
+  --violet: #8B5CF6;
+  --pink-soft: #F0ABFC;
   --campayn-dark: #111337;
   --secondary: #ECEEFE;
   --secondary-foreground: #3C4CE2;
@@ -64,7 +65,6 @@
   --border: #E1E7EF;
   --input: #E1E7EF;
   --ring: #3C4CE2;
-  /* "coin" is now the dark earnings pill (no yellow). Gold reserved for the moon-coin emoji only. */
   --coin: #111337;
   --coin-foreground: #FFFFFF;
   --coin-2: #1A1D4D;
@@ -88,7 +88,6 @@
 }
 
 @layer components {
-  /* Card surface — flagship Campayn card */
   .glass-card {
     background: #FFFFFF;
     border: 1px solid #E2E8F0;
@@ -97,15 +96,48 @@
   }
   .cmp-card { background:#fff; border-radius:16px; box-shadow:0 4px 16px rgba(15,23,42,0.08); overflow:hidden; }
   .grad-primary { background: linear-gradient(135deg, #3C4CE2 0%, #7586F5 100%); color:#fff; }
-  .grad-splash  { background: linear-gradient(180deg, #3C4CE2 0%, #111337 100%); color:#fff; }
-  /* Primary CTA gradient (was yellow "coin"); kept under the same class so all CTAs reskin in one place. */
+  .grad-splash  { background: radial-gradient(120% 80% at 20% 10%, #7586F5 0%, #3C4CE2 35%, #1E2A9E 70%, #111337 100%); color:#fff; }
   .grad-coin    { background: linear-gradient(135deg, #3C4CE2 0%, #7586F5 100%); color:#fff; }
+  .grad-aurora  { background: linear-gradient(135deg, #3C4CE2 0%, #7586F5 35%, #8B5CF6 70%, #F0ABFC 100%); }
   .text-coin    { color: var(--primary); }
   .text-primary-blue { color: var(--primary); }
   .ring-coin    { box-shadow: 0 8px 24px -8px rgba(60,76,226,0.45); }
   .ring-primary { box-shadow: 0 8px 24px rgba(60,76,226,0.20); }
 
-  /* Soft chip (used everywhere as filter/category/meta pill) */
+  /* Mesh background for hero zones — soft AI feel without imagery */
+  .mesh-bg {
+    background:
+      radial-gradient(60% 50% at 15% 20%, rgba(117,134,245,0.35) 0%, transparent 60%),
+      radial-gradient(50% 45% at 85% 10%, rgba(139,92,246,0.30) 0%, transparent 65%),
+      radial-gradient(70% 55% at 70% 90%, rgba(240,171,252,0.22) 0%, transparent 60%),
+      linear-gradient(180deg, #FAF8F5 0%, #F4F2FE 100%);
+  }
+  .mesh-dark {
+    background:
+      radial-gradient(60% 50% at 20% 15%, rgba(117,134,245,0.55) 0%, transparent 60%),
+      radial-gradient(50% 45% at 85% 20%, rgba(139,92,246,0.45) 0%, transparent 65%),
+      radial-gradient(60% 50% at 50% 100%, rgba(240,171,252,0.30) 0%, transparent 60%),
+      linear-gradient(180deg, #1E2A9E 0%, #111337 100%);
+    color: #fff;
+  }
+
+  /* Glass surfaces */
+  .glass {
+    background: rgba(255,255,255,0.62);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    border: 1px solid rgba(255,255,255,0.7);
+    box-shadow: 0 8px 32px rgba(60,76,226,0.10);
+  }
+  .glass-dark {
+    background: rgba(17,19,55,0.45);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(255,255,255,0.14);
+    color: #fff;
+  }
+
+  /* Soft chip (legacy — still used in places) */
   .chip {
     display: inline-flex; align-items: center; gap: 0.35rem;
     padding: 6px 10px; border-radius: 999px;
@@ -119,7 +151,29 @@
   .chip-success { background: rgba(33,196,93,0.12);  color:#15803D; }
   .chip-error   { background: rgba(239,67,67,0.12);  color:#B91C1C; }
 
-  /* Earnings pill — dark navy with white text and small gold moon-coin (PRD §7.4). */
+  /* Glass chip — Gen-Z + AI feel */
+  .chip-glass {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 13px; border-radius: 999px;
+    font-size: 12.5px; font-weight: 600; line-height: 1;
+    color: #1E2A9E;
+    background: rgba(255,255,255,0.65);
+    backdrop-filter: blur(10px) saturate(140%);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+    border: 1px solid rgba(60,76,226,0.18);
+    box-shadow: 0 2px 10px rgba(60,76,226,0.06), inset 0 1px 0 rgba(255,255,255,0.6);
+    transition: transform 120ms ease, box-shadow 120ms ease;
+    white-space: nowrap;
+  }
+  .chip-glass:hover { transform: translateY(-1px); }
+  .chip-glass.is-active {
+    background: linear-gradient(135deg, #3C4CE2 0%, #7586F5 100%);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 8px 22px rgba(60,76,226,0.32);
+  }
+
+  /* Earnings pill — dark navy with white text */
   .coin-pill {
     display: inline-flex; align-items: center; gap: 5px;
     padding: 6px 12px; background: var(--coin); color: var(--coin-foreground);
@@ -127,12 +181,7 @@
     letter-spacing: 0.01em; white-space: nowrap;
     box-shadow: 0 4px 12px -6px rgba(17,19,55,0.35);
   }
-  .coin-pill::before {
-    content: "🌑"; font-size: 11px; line-height: 1;
-    filter: hue-rotate(20deg) saturate(1.4);
-  }
 
-  /* Status chip — colored dot + label, used in My Campaigns */
   .status { display:inline-flex; align-items:center; gap:6px; padding:5px 10px; border-radius:999px;
             font-weight:600; font-size:12px; line-height:1; border:1px solid currentColor; }
   .status::before { content:""; width:6px; height:6px; border-radius:999px; background:currentColor; }
@@ -142,16 +191,16 @@
   .status-rejected { color:#EF4343; background:rgba(239,67,67,0.10); }
   .status-paid     { color:#21C45D; background:rgba(33,196,93,0.10); }
 
-  /* Buttons — design-system primitives */
   .btn-primary {
     display:inline-flex; align-items:center; justify-content:center; gap:8px;
     height:52px; padding:0 24px; border-radius:14px; border:none; cursor:pointer;
     background: var(--primary); color:#fff; font-weight:600; font-size:16px;
     transition: transform 120ms ease, background 120ms ease, box-shadow 120ms ease;
+    box-shadow: 0 10px 24px -10px rgba(60,76,226,0.55);
   }
   .btn-primary:hover    { background:#2A3CC8; }
   .btn-primary:active   { transform: scale(0.97); }
-  .btn-primary:disabled { background:#ECEEFE; color:#94A3B8; cursor:not-allowed; }
+  .btn-primary:disabled { background:#ECEEFE; color:#94A3B8; cursor:not-allowed; box-shadow:none; }
   .btn-secondary {
     display:inline-flex; align-items:center; justify-content:center; gap:6px;
     height:44px; padding:0 18px; border-radius:14px; cursor:pointer;
@@ -164,8 +213,15 @@
     padding:8px 12px; border-radius:12px; background:transparent; color:#0F172A;
     border:1px solid #E2E8F0; cursor:pointer; font-weight:600; font-size:14px;
   }
+  .btn-google {
+    display:inline-flex; align-items:center; justify-content:center; gap:10px;
+    height:52px; width:100%; padding:0 18px; border-radius:14px; cursor:pointer;
+    background:#fff; color:#0F172A; border:1px solid #E1E7EF;
+    font-weight:600; font-size:15px;
+    box-shadow: 0 6px 18px -10px rgba(15,23,42,0.18);
+  }
+  .btn-google:hover { background:#FAFBFC; }
 
-  /* Inputs */
   .cmp-input {
     width:100%; height:52px; padding:0 16px; border-radius:12px;
     border:1px solid var(--border); background:#fff; color:var(--foreground);
@@ -179,7 +235,6 @@
   }
   .cmp-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(60,76,226,0.15); }
 
-  /* Brand cover — gradient card hero */
   .brand-cover { position:relative; overflow:hidden; }
   .brand-cover::after {
     content:""; position:absolute; inset:auto 0 0 0; height:60%;
@@ -189,4 +244,33 @@
 
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .snap-x-mandatory { scroll-snap-type: x mandatory; }
+  .snap-start-c { scroll-snap-align: start; }
+
+  /* Shimmer for AI-thinking states & balance reveals */
+  .shimmer {
+    background: linear-gradient(110deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.55) 50%, rgba(255,255,255,0) 70%);
+    background-size: 200% 100%;
+    animation: shimmer-sweep 2.4s linear infinite;
+  }
+  @keyframes shimmer-sweep { 0% {background-position: 200% 0;} 100% {background-position: -200% 0;} }
+
+  /* Floating logo / coin */
+  @keyframes float-y { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  .float { animation: float-y 4s ease-in-out infinite; }
+
+  /* Aurora shift for splash background */
+  @keyframes aurora { 0% { transform: translate(0,0) scale(1); } 50% { transform: translate(20px,-30px) scale(1.1); } 100% { transform: translate(0,0) scale(1); } }
+  .aurora { animation: aurora 12s ease-in-out infinite; }
+
+  /* Soft pulse / scale-in for splash logo */
+  @keyframes logo-in { 0% { transform: scale(0.6); opacity: 0; } 60% { transform: scale(1.06); opacity: 1; } 100% { transform: scale(1); } }
+  .logo-in { animation: logo-in 900ms cubic-bezier(.2,.8,.2,1) both; }
+
+  @keyframes fade-up { 0% { opacity:0; transform: translateY(8px);} 100% { opacity:1; transform: translateY(0);} }
+  .fade-up { animation: fade-up 600ms ease-out both; }
+
+  /* Sparkle micro-rotate */
+  @keyframes sparkle { 0%,100% { transform: rotate(0) scale(1); opacity: .9;} 50% { transform: rotate(20deg) scale(1.2); opacity: 1;} }
+  .sparkle { animation: sparkle 2.6s ease-in-out infinite; }
 }

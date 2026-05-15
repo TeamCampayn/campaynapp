@@ -1,111 +1,109 @@
-## Scope
+# Campayn — Gen Z + AI-feel Overhaul
 
-End state: a polished demo you can log into as **utkarsh@campayn.in / #campayn** with Instagram + YouTube pre-connected, an application mid-flow on the Script step, a wallet with real transactions, and the new design language applied across the app. No more yellow dot — every ₹ uses an **indigo ₹ token**. Brand logos render reliably.
+## Brand voice
+- Tagline: **"Empowering brands, elevating creators."**
+- Motto: **Collab · Create · Collect**
+- Logo: use uploaded Campayn mark on splash, auth, onboarding, empty states.
 
-## 1. Design tokens (one-shot reskin)
+## 1. Splash + Onboarding (Gen Z + AI feel)
 
-- New `<RupeeCoin>` component (SVG, indigo gradient `#3C4CE2 → #7586F5`, white **₹** glyph, soft shadow). Used everywhere a ₹ amount appears. Removes every inline yellow dot in `app.campaigns`, `app.profile`, `app.wallet`, `CampaignCard`, etc.
-- Drop the literal `₹` prefix on amounts that sit next to the coin (the coin IS the rupee mark).
-- `coin-pill` in `styles.css` repainted to indigo gradient, white text — kept dark navy variant only for the campaign-detail earnings hero.
+**Splash (`src/routes/index.tsx`)**
+- Animated Campayn logo (scale-in → soft pulse), gradient mesh background (indigo → violet → soft pink), grain overlay.
+- Tagline fades in below. 1.4s then route to `/onboarding-tour` (new) or `/auth` if seen.
 
-## 2. Brand logo rendering
+**Onboarding tour (new `src/routes/onboarding-tour.tsx`)**
+- 3 horizontally scrollable screens (snap):
+  1. **Collab** — "Brands find you" — animated brand-logo orbit
+  2. **Create** — "AI helps you script & caption" — typing-animation chip cluster
+  3. **Collect** — "Get paid per view" — animated indigo coin counter
+- Pagination dots, "Skip" top-right, "Get started" CTA at bottom.
+- Bottom: **Continue with Google** + **Sign up with email** + tiny "Sign in" link.
 
-Root cause: `<img src=brand_logo_url>` fails when the upstream host blocks hotlinking even with `referrerPolicy="no-referrer"`.
+**Auth (`src/routes/auth.tsx`)**
+- Add Google OAuth via Lovable managed (`lovable.auth.signInWithOAuth("google")`).
+- Glass card, gradient background, larger Campayn wordmark.
 
-Fix:
-- New `<BrandLogo name url size>` component: `<img>` with `onError → fallback to monogram tile` (first letter on `grad-primary`).
-- Use it everywhere brand logos appear (cards, detail hero, my-campaigns row, application page).
-- Seed campaigns store logos in **Supabase Storage** (new public bucket `brand-assets`) so they always load. Admin-uploaded logos go there too.
+## 2. Visual language — "AI feel" without AI imagery
 
-## 3. Bottom nav → 4 tabs
+Add to `src/styles.css`:
+- `--gradient-mesh`: subtle indigo→violet→pink radial mesh for hero areas
+- `.glass`: `backdrop-blur-xl bg-white/60 border border-white/40 shadow-[0_8px_32px_rgba(60,76,226,0.08)]`
+- `.glass-dark` variant for dark hero zones
+- `.chip-glass`: pill with backdrop blur, subtle gradient border, sparkle dot when active
+- `.shimmer`: animated gradient sweep utility for AI-thinking states
+- `.grain`: SVG noise overlay for hero cards
+- New animation tokens: `float`, `aurora-shift`, `coin-pulse`
 
-`Discover · Campaigns · Wallet · Profile`. Inbox tab removed. A bell icon in each page header opens a notifications sheet (re-uses existing `notifications` table). Inbox-style "you have an action" cards merge into Campaigns under a new **Action Needed** tab (already exists — we wire it to live data).
+**Chips refresh** (Discover filter chips, tabs)
+- Replace flat pills with glass chips: backdrop-blur, gradient ring on active, tiny ✦ sparkle icon, soft inner shadow.
+- Active chip gets indigo→violet gradient + white text + glow.
 
-## 4. Campaigns tab = full creator workflow
+## 3. Discover page
 
-Per-application detail (`/app/application/$id`) becomes the workspace, with a vertical timeline:
-1. Applied → 2. Approved (brief unlocked) → 3. Generate Content Ideas (AI) → 4. Submit Script → 5. Script approved / revision → 6. Shoot & Post → 7. Verify post URL → 8. Views accruing (7-day window, configurable per campaign) → 9. Paid.
+- Hero band at top: `Recommended for you · matched to your niche & ~{avgViews} views`
+- "Recommended for You" rail = filtered by niche overlap + tier match (replaces generic "Top Picks").
+- Greeting becomes glass chip with sparkle.
+- Filter chips → glass style.
+- Card UI unchanged (user likes it) — only swap chip styles inside CampaignCard.
 
-Each step is a card the creator interacts with. The **AI block** has 3 buttons:
-- **Generate Content Ideas** — calls `ai-helper` with `kind: "ideas"`, returns 3 hook/angle ideas tailored to the creator's niche + brand brief.
-- **Generate Script Ideas** — `kind: "script"`, returns 30/60s script.
-- **Generate Caption Ideas** — `kind: "caption"`, returns 3 captions + hashtags.
+## 4. 50+ Demo campaigns + 10-12 real logos
 
-Backend: `ai-helper` edge function exists; we extend it with these `kind`s. Inputs include the campaign brief, do/dont, the creator's niches + handle bio (from `social_connections`).
+New seed migration inserts 50 campaigns spanning niches: tech, lifestyle, fashion, beauty, food, fitness, gaming, finance, travel, education, parenting, automotive.
 
-Closing-soon timer fix: replace the broken `closes_at`-style logic with `campaigns.deadline` (which exists). Pill shows when `deadline - now < 24h`.
+**Real brand logos** (Wikimedia / Clearbit) for ~12 hero brands:
+Myntra, Zomato, Swiggy, Cred, Mamaearth, boAt, Nykaa, Cult.fit, Groww, MakeMyTrip, Sleepy Owl, BlueStone.
+Other campaigns use monogram fallback (already handled by `BrandLogo`).
 
-## 5. Wallet redesign
+Logos uploaded to `brand-assets` storage bucket; campaign rows reference public URLs.
 
-New layout:
-- **Hero**: indigo coin balance + "≈ ₹X cash withdrawable" + Withdraw CTA.
-- **Stat row**: Lifetime earned · This month · Pending (in 7-day window).
-- **Pending payouts list**: per-application card showing post URL, current verified views, projected payout, "matures in Xd Yh".
-- **Transactions**: grouped by month, icons per kind (`bonus`, `earning`, `withdrawal`, `referral`, `penalty`).
-- **Anti-fraud notice card**: "Fake views are auto-flagged. Flagged content forfeits payout and may permanently ban your account." Linked to Help.
-- **Withdraw sheet**: UPI / Bank, min ₹100, KYC-gated.
+## 5. My Campaigns — full flow per status
 
-## 6. Profile redesign
+**`app.application.$id.tsx`** redesigned with stage-specific UI:
 
-- Header: avatar, name, city, **Campayn Score (0–1000)** with tier label (Rookie/Rising/Pro/Elite/Legend) and a thin radial gauge.
-- Stat grid: Followers · Avg views · Engagement % · Campaigns done.
-- **Growth graph card**: 8-week sparkline of views and earnings (sampled from `applications` + seeded data). Built with inline SVG — no extra deps.
-- Profile completion card (kept) with reward CTA.
-- Lifetime earned banner (repainted indigo, no yellow).
-- Platform connections (IG handle, followers, ER, avg views, bio fetched at OAuth — for demo we seed them).
-- Cards: KYC · Refer & earn · Campayn Score breakdown · Payout settings · Help · Sign out.
-
-**Campayn Score formula** (your option 1, normalized to 0–1000):
+```text
+applied        → "You're in the queue"  + brand expectations card
+approved       → "Submit your script"   + script editor + AI generate
+script_submit  → "Brand reviewing"      + countdown + tips
+revision_req   → "Changes requested"    + brand feedback card + resubmit
+script_approved→ "Post your video"      + posting checklist + deadline
+video_submit   → "Verifying post"       + view-tracking placeholder
+posted         → "Earnings live"        + live view counter + projected ₹
+verified       → "Payout maturing"      + countdown to payout date
+paid           → "Paid ✓"               + transaction link + share earnings
 ```
-score =
-   campaigns_done * 8                 (cap 200)
- + reliability_pct * 2                (cap 200, reliability = on-time/total)
- + engagement_rate_pct * 10           (cap 200)
- + avg_views_tier                     (0/50/120/200 for <5k/<50k/<250k/250k+)
- + content_quality * 200              (approved / (approved+revisions+rejected))
- - 5% per quarter of inactivity
-```
-Stored on `profiles.campayn_score` (new int column) + breakdown JSON in `profiles.score_breakdown`. Recomputed via SQL function `recompute_campayn_score(uuid)` triggered after application status changes.
 
-## 7. Discover polish
+Vertical timeline with 8 stages, current one expanded with action card. Notifications hook into stage changes (already in DB).
 
-- Clean up card grid spacing, fix the "Closing soon" logic.
-- Top-Picks rail uses `social_connections.niches` ↔ `campaigns.target_niches` overlap.
-- Filter chips align to one row, scroll horizontally only when overflow.
+## 6. Profile — Campayn Score detail
 
-## 8. Backend changes (one migration)
+- Tap score → opens `/app/score` (new route) with breakdown:
+  - Animated radial gauge (current value vs 1000)
+  - Component bars: Campaigns done, Reliability, Engagement, Avg views tier, Content quality
+  - Formula explained in plain English
+  - "How to improve" tip cards
+- Profile also shows: connected platforms with stats, niches as glass chips, recent campaigns rail.
 
-- `profiles`: add `campayn_score int default 0`, `score_breakdown jsonb default '{}'`, `instagram_bio text`, `youtube_about text`.
-- `campaigns`: add `payout_window_days int default 7`.
-- `applications`: add `posted_at timestamptz`, `payout_due_at timestamptz` (computed = `posted_at + payout_window_days`), `is_flagged boolean default false`, `flag_reason text`.
-- New table `view_snapshots(application_id, captured_at, views)` for the growth graph + payout calc.
-- Storage bucket `brand-assets` (public read).
-- SQL function `recompute_campayn_score(uuid)`.
-- RLS on all new columns/tables follows existing self/admin pattern.
+## 7. Wallet — keep structure, add AI feel
 
-## 9. Demo data (seed)
+- Hero card → glass + gradient mesh + grain, shimmer on balance number on first mount
+- "Maturing payouts" gets thin progress ring per item
+- Quick-actions row with glass chips
+- No restructure.
 
-After migration, insert via the data tool:
-- Auth user `utkarsh@campayn.in` (password `#campayn`, email pre-confirmed).
-- Profile: name "Utkarsh Sharma", Mumbai, niches `["tech","lifestyle"]`, completion 85, score ~742.
-- `social_connections`: Instagram `@utkarsh.creates` (62k followers, 4.8% ER, 38k avg views, bio seeded), YouTube `@utkarshcreates` (18k subs).
-- KYC: `verified`.
-- 6 campaigns with real brand logos in storage (Boat, Mamaearth, CRED, Zomato, Myntra, Cult.fit).
-- Applications: 1 on **Submit Script** step, 1 **Script in review**, 1 **Live & accruing views** (with 7 days of `view_snapshots`), 1 **Paid**, 1 just **Applied**.
-- Transactions: welcome bonus, 2 earnings, 1 withdrawal, 1 referral.
-- Notifications matching each step.
+## 8. Personalization (Utkarsh login)
+
+On Discover load:
+1. Fetch profile niches + max avg_views
+2. Sort campaigns: niche-match first, then tier-match, then CPV
+3. "Recommended for You" rail shows top 5 niche matches with `Match {n}%` badge
 
 ## Technical notes
 
-- All AI calls use the existing `ai-helper` edge function (Lovable AI Gateway, `google/gemini-2.5-flash`). New `kind` switch added there.
-- Realtime not added (out of scope).
-- No new npm packages.
-- Files touched: `src/styles.css`, `src/components/app/{RupeeCoin,BrandLogo,CampaignCard,BottomNav}.tsx`, `src/routes/app.{discover,campaigns,campaign.$id,application.$id,wallet,profile,inbox}.tsx`, `src/router.tsx` (nav config), `supabase/functions/ai-helper/index.ts`, one new migration, one data seed via insert tool.
+- New files: `src/routes/onboarding-tour.tsx`, `src/routes/app.score.tsx`, `src/components/app/GlassChip.tsx`, `src/components/app/Sparkle.tsx`, `src/components/app/StageTimeline.tsx`
+- Edited: `src/styles.css`, `src/routes/index.tsx`, `src/routes/auth.tsx`, `src/routes/onboarding.tsx`, `src/routes/app.discover.tsx`, `src/routes/app.application.$id.tsx`, `src/routes/app.profile.tsx`, `src/routes/app.wallet.tsx`, `src/components/app/CampaignCard.tsx`
+- Migration: seed 50 campaigns with niche diversity + 12 real logos uploaded to `brand-assets`
+- Auth: enable managed Google via `configure_social_auth(["google"])`
+- Out of scope: real Instagram OAuth data sync, push notifications, real view-bot, payout cron
 
-## Out of scope (call out now)
-
-- Real Instagram/YouTube OAuth (we stub the data — UI shows "Connected" badges).
-- Real fake-view bot (we expose the `is_flagged` flag + UI copy; no model).
-- Push notifications.
-
-If this looks right, I'll execute it end-to-end. Reply **approve** (or tell me what to change).
+## Demo account
+`utkarsh@campayn.in / #campayn` — already seeded; will be re-seeded with niche-aligned applications (tech, lifestyle) so the personalized rail shows real matches.
