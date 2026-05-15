@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, Sparkles, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { CampaignCard, CampaignCardMini, type CampaignCardData } from "@/components/app/CampaignCard";
 import { NotificationsBell } from "@/components/app/NotificationsBell";
 
@@ -90,7 +90,6 @@ function Discover() {
   }
 
   const firstName = (profile?.display_name ?? "creator").split(" ")[0];
-  const projected = Math.round(avgViews * 0.5); // ~₹0.50/view typical
 
   return (
     <div className="pb-6">
@@ -128,29 +127,26 @@ function Discover() {
         )}
 
         <div className="px-5 mt-4">
-          <span className="chip-glass">
-            <Sparkles className="h-3 w-3 sparkle text-primary" /> Hey {firstName}
-          </span>
-          <h1 className="mt-2 text-[24px] font-extrabold tracking-tight text-foreground leading-tight">
-            Matched to your{" "}
-            <span style={{ background: "linear-gradient(135deg,#3C4CE2,#8B5CF6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-              niche
-            </span>{" "}
-            & ~{(avgViews/1000).toFixed(0)}K views
+          <h1 className="text-[26px] font-extrabold tracking-tight text-foreground leading-tight">
+            Hey {firstName},
           </h1>
-          <p className="text-[13.5px] text-muted-foreground mt-1">
-            {recommended.length > 0 ? `${recommended.length} hand-picked picks · earn up to ~₹${(projected/1000).toFixed(0)}K/post` : `${items?.length ?? 0} live campaigns waiting`}
+          <p className="text-[14px] text-muted-foreground mt-1">
+            Collaborate · Create · Collect
           </p>
         </div>
 
-        {/* Filter chips - glass */}
+        {/* Filter chips */}
         <div className="mt-4 px-5 flex gap-2 overflow-x-auto no-scrollbar pb-1">
           {[["all","All"],["new","New"],["high","High Earning"],["closing","Closing Soon"]].map(([v,l]) => {
             const sel = filter === v;
             return (
               <button key={v} onClick={() => setFilter(v)}
-                className={`chip-glass shrink-0 ${sel ? "is-active" : ""}`}>
-                {sel && <Sparkles className="h-3 w-3" />}{l}
+                className={`shrink-0 px-4 py-2 rounded-full text-[13px] font-semibold transition border ${
+                  sel
+                    ? "bg-primary text-white border-transparent shadow-[0_8px_22px_-8px_rgba(60,76,226,0.5)]"
+                    : "bg-white/80 text-foreground border-border"
+                }`}>
+                {l}
               </button>
             );
           })}
@@ -164,7 +160,7 @@ function Discover() {
                 <button key={n} onClick={() => toggleNiche(n)}
                   className={`shrink-0 px-3 py-1.5 rounded-full text-[12px] font-semibold transition border
                     ${sel ? "bg-primary text-white border-transparent" : "bg-white/70 text-muted-foreground border-border hover:text-foreground"}`}>
-                  #{n}
+                  {n.charAt(0).toUpperCase() + n.slice(1)}
                 </button>
               );
             })}
@@ -189,9 +185,8 @@ function Discover() {
       {recommended.length > 0 && (
         <div className="mt-5">
           <div className="px-5 flex items-center gap-1.5 mb-3">
-            <Sparkles className="h-[17px] w-[17px] text-primary" />
-            <h2 className="text-[17px] font-bold text-foreground">Recommended for You</h2>
-            <span className="ml-auto text-[11px] text-muted-foreground">niche-matched</span>
+            <h2 className="text-[17px] font-bold text-foreground">Matched to your niche</h2>
+            <span className="ml-auto text-[11px] text-muted-foreground">{recommended.length} picks</span>
           </div>
           <div className="flex gap-3 overflow-x-auto no-scrollbar px-5 pb-3">
             {recommended.map(({ c, matchPct }) => (
