@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Bookmark, BadgeCheck, Users, ChevronDown, Sparkles, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/app/campaign/$id")({
+export const Route = createFileRoute("/app/campaign/")({
   head: () => ({ meta: [{ title: "Campaign — Campayn" }] }),
   component: CampaignDetail,
 });
@@ -110,7 +110,6 @@ function CampaignDetail() {
           <Bookmark className="h-[18px] w-[18px]" fill={bookmarked ? "#fff" : "none"} />
         </button>
       </div>
-
       {/* Brand pill — overlaps hero bottom */}
       <div className="px-5 -mt-5 relative z-10">
         <div className="inline-flex items-center gap-2 bg-white rounded-full pl-1 pr-3.5 py-1 shadow-md border border-border">
@@ -123,14 +122,12 @@ function CampaignDetail() {
           </span>
         </div>
       </div>
-
       {/* Title */}
       <div className="px-5 mt-4">
         <h1 className="text-[24px] font-extrabold leading-[1.2] text-foreground tracking-tight">
           {c.title}
         </h1>
       </div>
-
       {/* Earnings card */}
       <div className="px-5 mt-4">
         <div
@@ -154,13 +151,11 @@ function CampaignDetail() {
           </div>
         </div>
       </div>
-
       {/* Applied count */}
       <div className="px-5 mt-4 flex items-center gap-1.5 text-[13px] text-muted-foreground">
         <Users className="h-4 w-4" />
         <span>{appliedCount} creators have applied</span>
       </div>
-
       {/* Tabs */}
       <div className="px-5 mt-5">
         <div className="bg-white rounded-2xl border border-border p-1 flex">
@@ -181,7 +176,6 @@ function CampaignDetail() {
           })}
         </div>
       </div>
-
       {/* Tab content */}
       <div className="px-5 mt-5 space-y-5">
         {tab === "brief" && (
@@ -328,7 +322,6 @@ function CampaignDetail() {
           </div>
         )}
       </div>
-
       {/* Sticky CTA */}
       <div className="fixed bottom-0 inset-x-0 z-30 px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 bg-gradient-to-t from-background via-background to-transparent">
         <div className="max-w-md mx-auto">
@@ -351,5 +344,5 @@ function CampaignDetail() {
         </div>
       </div>
     </div>
-  );
+  )
 }
