@@ -2,23 +2,14 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Briefcase } from "lucide-react";
+import { RupeeCoin, compactInr } from "@/components/app/RupeeCoin";
+import { BrandLogo } from "@/components/app/BrandLogo";
+import { NotificationsBell } from "@/components/app/NotificationsBell";
 
 export const Route = createFileRoute("/app/campaigns")({
   head: () => ({ meta: [{ title: "My Campaigns - Campayn" }] }),
   component: MyCampaigns,
 });
-
-function CoinIcon({ size = 16 }: { size?: number }) {
-  return (
-    <span aria-hidden style={{
-      width: size, height: size, borderRadius: "50%",
-      background: "radial-gradient(circle at 35% 30%, #F6D27A 0%, #D9A327 55%, #8C6510 100%)",
-      display: "inline-block", flexShrink: 0,
-      boxShadow: "inset -1px -1px 2px rgba(0,0,0,0.25)",
-    }} />
-  );
-}
-const compact = (n: number) => n >= 1000 ? (n/1000).toFixed(1).replace(/\.0$/,"") + "K" : String(n);
 
 const STAGES = ["applied","approved","script_submitted","script_approved","revision_requested","video_submitted","video_approved","posted","verified","paid","withdrawn"];
 function stageIndex(s: string) { return STAGES.indexOf(s); }
@@ -56,7 +47,10 @@ function MyCampaigns() {
 
   return (
     <div className="px-5 pt-8">
-      <h1 className="text-[28px] font-black tracking-tight">My Campaigns</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-[28px] font-black tracking-tight">My Campaigns</h1>
+        <NotificationsBell />
+      </div>
 
       <div className="mt-5 flex gap-2 overflow-x-auto no-scrollbar -mx-1 px-1">
         {TABS.map(t => {
@@ -105,11 +99,7 @@ function MyCampaigns() {
               <Link to="/app/application/$id" params={{ id: a.id }}
                 className="cmp-card block p-4 active:scale-[0.99] transition">
                 <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 rounded-xl overflow-hidden bg-secondary shrink-0">
-                    {c?.cover_image_url
-                      ? <img src={c.cover_image_url} alt="" referrerPolicy="no-referrer" className="h-12 w-12 object-cover" />
-                      : <div className="h-12 w-12 grad-primary" />}
-                  </div>
+                  <BrandLogo name={c?.brand_name ?? "?"} url={c?.brand_logo_url} size={48} rounded="xl" />
                   <div className="flex-1 min-w-0">
                     <div className="font-bold text-[14.5px] truncate">{c?.title}</div>
                     <div className="text-[12px] text-muted-foreground">{c?.brand_name}</div>
@@ -126,8 +116,8 @@ function MyCampaigns() {
                   ))}
                 </div>
                 <div className="mt-2.5 inline-flex items-center gap-1.5">
-                  <CoinIcon />
-                  <span className="font-black text-[15px]">₹{compact(earn)}</span>
+                  <RupeeCoin size={16} />
+                  <span className="font-black text-[15px]">{compactInr(earn)}</span>
                 </div>
               </Link>
             </li>

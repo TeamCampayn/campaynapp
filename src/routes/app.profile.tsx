@@ -2,24 +2,15 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Pencil, Settings, Instagram, Youtube, ChevronRight, ShieldCheck, Gift, LifeBuoy, Lock, LogOut } from "lucide-react";
+import { Pencil, Settings, Instagram, Youtube, ChevronRight, ShieldCheck, Gift, LifeBuoy, Lock, LogOut, TrendingUp, Award } from "lucide-react";
 import { inrFmt } from "@/lib/auth";
+import { RupeeCoin } from "@/components/app/RupeeCoin";
+import { NotificationsBell } from "@/components/app/NotificationsBell";
 
 export const Route = createFileRoute("/app/profile")({
   head: () => ({ meta: [{ title: "Profile - Campayn" }] }),
   component: Profile,
 });
-
-function CoinIcon({ size = 18 }: { size?: number }) {
-  return (
-    <span aria-hidden style={{
-      width: size, height: size, borderRadius: "50%",
-      background: "radial-gradient(circle at 35% 30%, #F6D27A 0%, #D9A327 55%, #8C6510 100%)",
-      display: "inline-block", flexShrink: 0,
-      boxShadow: "inset -1px -1px 2px rgba(0,0,0,0.25)",
-    }} />
-  );
-}
 
 function Profile() {
   const [p, setP] = useState<any>(null);
@@ -60,13 +51,17 @@ function Profile() {
 
   const ig = socials.find(s => s.platform === "instagram");
   const yt = socials.find(s => s.platform === "youtube");
+  const score = p?.campayn_score ?? 0;
+  const tier = score >= 800 ? "Legend" : score >= 600 ? "Pro" : score >= 400 ? "Rising" : score >= 200 ? "Rookie+" : "Rookie";
+  const eng = ig?.engagement_rate ? Number(ig.engagement_rate).toFixed(1) + "%" : "—";
 
   return (
     <div className="px-5 pt-8 pb-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-[28px] font-black tracking-tight">Profile</h1>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+          <NotificationsBell />
           <Link to="/app/edit-profile" className="h-10 w-10 rounded-full bg-secondary grid place-items-center text-primary">
             <Pencil className="h-4 w-4" />
           </Link>
@@ -87,12 +82,31 @@ function Profile() {
         </div>
       </div>
 
+      {/* Campayn Score */}
+      <div className="mt-5 rounded-2xl p-4 grad-coin text-white relative overflow-hidden">
+        <Award className="absolute -right-3 -bottom-3 h-28 w-28 opacity-15" strokeWidth={1.4} />
+        <div className="relative">
+          <div className="text-[11px] uppercase tracking-widest font-bold opacity-80 inline-flex items-center gap-1.5">
+            <Award className="h-3.5 w-3.5" /> Campayn Score
+          </div>
+          <div className="mt-1.5 flex items-end gap-2">
+            <div className="text-[40px] leading-none font-black">{score}</div>
+            <div className="text-sm font-semibold opacity-80 mb-1">/ 1000</div>
+            <div className="ml-auto text-[12.5px] font-bold bg-white/20 px-2.5 py-1 rounded-full">{tier}</div>
+          </div>
+          <div className="mt-3 h-2 bg-white/20 rounded-full overflow-hidden">
+            <div className="h-full bg-white" style={{ width: `${Math.min(100, score / 10)}%` }} />
+          </div>
+          <div className="mt-2 text-[11.5px] opacity-85">Higher score = priority on premium campaigns</div>
+        </div>
+      </div>
+
       {/* Profile completion card */}
       <div className="mt-5 rounded-2xl p-4" style={{ background: "var(--secondary)" }}>
         <div className="flex items-center justify-between">
           <div className="font-bold text-[14.5px]">Profile {completion}% complete</div>
           <div className="text-[12.5px] font-bold text-primary inline-flex items-center gap-1">
-            +50 coins on 100% <CoinIcon size={14} />
+            +50 coins on 100% <RupeeCoin size={14} />
           </div>
         </div>
         {missing.length > 0 && (
@@ -106,26 +120,24 @@ function Profile() {
       </div>
 
       {/* Stats */}
-      <div className="mt-4 grid grid-cols-3 gap-3">
+      <div className="mt-4 grid grid-cols-4 gap-2.5">
         <Stat label="Followers" value={stats.followers ? compact(stats.followers) : "0"} />
         <Stat label="Avg Views" value={stats.avgViews ? compact(stats.avgViews) : "0"} />
-        <Stat label="Reliability" value={`${stats.reliability}%`} />
+        <Stat label="Engagement" value={eng} />
+        <Stat label="Campaigns" value={String(stats.campaigns)} />
       </div>
 
       {/* Lifetime earnings banner */}
-      <div className="mt-4 rounded-2xl p-4 border" style={{ background:"linear-gradient(180deg,#FBF6E8 0%,#F8EDD3 100%)", borderColor:"#EFD9A0" }}>
+      <div className="mt-4 rounded-2xl p-4 border" style={{ background:"var(--secondary)", borderColor:"#DDDEF8" }}>
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-[12.5px] text-[#7A5A1F] font-medium">Lifetime earned on Campayn</div>
+            <div className="text-[12.5px] text-[#3A3F70] font-medium">Lifetime earned on Campayn</div>
             <div className="mt-1 inline-flex items-center gap-2">
+              <RupeeCoin size={20} />
               <span className="text-[24px] font-black text-foreground">{inrFmt(p?.lifetime_earnings ?? 0)}</span>
-              <CoinIcon size={20} />
             </div>
           </div>
-          <div className="text-right">
-            <div className="text-[12.5px] text-[#7A5A1F] font-medium">Campaigns</div>
-            <div className="mt-1 text-[24px] font-black text-foreground">{stats.campaigns}</div>
-          </div>
+          <TrendingUp className="h-10 w-10 text-primary" />
         </div>
       </div>
 

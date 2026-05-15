@@ -21,8 +21,12 @@ export type Database = {
           campaign_id: string
           estimated_earning_inr: number
           final_earning_inr: number | null
+          flag_reason: string | null
           id: string
+          is_flagged: boolean
+          payout_due_at: string | null
           post_url: string | null
+          posted_at: string | null
           status: Database["public"]["Enums"]["application_status"]
           updated_at: string
           user_id: string
@@ -34,8 +38,12 @@ export type Database = {
           campaign_id: string
           estimated_earning_inr?: number
           final_earning_inr?: number | null
+          flag_reason?: string | null
           id?: string
+          is_flagged?: boolean
+          payout_due_at?: string | null
           post_url?: string | null
+          posted_at?: string | null
           status?: Database["public"]["Enums"]["application_status"]
           updated_at?: string
           user_id: string
@@ -47,8 +55,12 @@ export type Database = {
           campaign_id?: string
           estimated_earning_inr?: number
           final_earning_inr?: number | null
+          flag_reason?: string | null
           id?: string
+          is_flagged?: boolean
+          payout_due_at?: string | null
           post_url?: string | null
+          posted_at?: string | null
           status?: Database["public"]["Enums"]["application_status"]
           updated_at?: string
           user_id?: string
@@ -78,6 +90,7 @@ export type Database = {
           deliverables: string[]
           do_dont: Json
           id: string
+          payout_window_days: number
           platform: Database["public"]["Enums"]["platform_type"]
           requires_script: boolean
           slots_filled: number
@@ -102,6 +115,7 @@ export type Database = {
           deliverables?: string[]
           do_dont?: Json
           id?: string
+          payout_window_days?: number
           platform?: Database["public"]["Enums"]["platform_type"]
           requires_script?: boolean
           slots_filled?: number
@@ -126,6 +140,7 @@ export type Database = {
           deliverables?: string[]
           do_dont?: Json
           id?: string
+          payout_window_days?: number
           platform?: Database["public"]["Enums"]["platform_type"]
           requires_script?: boolean
           slots_filled?: number
@@ -212,6 +227,7 @@ export type Database = {
         Row: {
           avatar_url: string | null
           bio: string | null
+          campayn_score: number
           city: string | null
           coin_balance: number
           created_at: string
@@ -219,6 +235,7 @@ export type Database = {
           dob: string | null
           gender: string | null
           id: string
+          instagram_bio: string | null
           languages: string[] | null
           lifetime_earnings: number
           niches: string[] | null
@@ -226,12 +243,15 @@ export type Database = {
           phone: string | null
           profile_completion: number
           referral_code: string | null
+          score_breakdown: Json
           state: string | null
           updated_at: string
+          youtube_about: string | null
         }
         Insert: {
           avatar_url?: string | null
           bio?: string | null
+          campayn_score?: number
           city?: string | null
           coin_balance?: number
           created_at?: string
@@ -239,6 +259,7 @@ export type Database = {
           dob?: string | null
           gender?: string | null
           id: string
+          instagram_bio?: string | null
           languages?: string[] | null
           lifetime_earnings?: number
           niches?: string[] | null
@@ -246,12 +267,15 @@ export type Database = {
           phone?: string | null
           profile_completion?: number
           referral_code?: string | null
+          score_breakdown?: Json
           state?: string | null
           updated_at?: string
+          youtube_about?: string | null
         }
         Update: {
           avatar_url?: string | null
           bio?: string | null
+          campayn_score?: number
           city?: string | null
           coin_balance?: number
           created_at?: string
@@ -259,6 +283,7 @@ export type Database = {
           dob?: string | null
           gender?: string | null
           id?: string
+          instagram_bio?: string | null
           languages?: string[] | null
           lifetime_earnings?: number
           niches?: string[] | null
@@ -266,8 +291,10 @@ export type Database = {
           phone?: string | null
           profile_completion?: number
           referral_code?: string | null
+          score_breakdown?: Json
           state?: string | null
           updated_at?: string
+          youtube_about?: string | null
         }
         Relationships: []
       }
@@ -413,6 +440,35 @@ export type Database = {
         }
         Relationships: []
       }
+      view_snapshots: {
+        Row: {
+          application_id: string
+          captured_at: string
+          id: string
+          views: number
+        }
+        Insert: {
+          application_id: string
+          captured_at?: string
+          id?: string
+          views?: number
+        }
+        Update: {
+          application_id?: string
+          captured_at?: string
+          id?: string
+          views?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "view_snapshots_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       withdrawals: {
         Row: {
           amount_inr: number
@@ -461,6 +517,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      recompute_campayn_score: { Args: { _user_id: string }; Returns: number }
     }
     Enums: {
       app_role: "admin" | "creator"
