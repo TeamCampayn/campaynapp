@@ -25,7 +25,7 @@ export function Logo({
         <span
           className={`font-extrabold tracking-tight text-lg ${invert ? "text-white" : "text-foreground"}`}
         >
-          campayn
+          Campayn
         </span>
       )}
     </div>

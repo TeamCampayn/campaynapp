@@ -1,7 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Logo } from "@/components/app/Logo";
-import { Users, Wand2, Coins, ArrowRight, ChevronRight } from "lucide-react";
+import { ArrowRight, ChevronRight } from "lucide-react";
+import collabImg from "@/assets/onboard-collab.jpg";
+import createImg from "@/assets/onboard-create.jpg";
+import collectImg from "@/assets/onboard-collect.jpg";
 
 export const Route = createFileRoute("/welcome")({
   head: () => ({ meta: [{ title: "Welcome to Campayn" }] }),
@@ -10,27 +13,27 @@ export const Route = createFileRoute("/welcome")({
 
 const SLIDES = [
   {
-    icon: Users,
+    image: collabImg,
     eyebrow: "Collab",
     title: "Brands that match your vibe",
-    body: "We hand-pick paid campaigns that fit your niche, audience and average views. No cold pitching. No DMs.",
+    body: "Hand-picked paid campaigns that fit your niche, audience and average views. No cold pitching.",
     accent: "#3C4CE2",
     soft: "#ECEEFE",
   },
   {
-    icon: Wand2,
+    image: createImg,
     eyebrow: "Create",
-    title: "AI-assisted scripts and captions",
-    body: "Hook, body and CTA written in your voice. Edit, post and ship faster than your group chat replies.",
+    title: "AI scripts in your voice",
+    body: "Hook, body and CTA written for your style. Edit, post and ship faster than your group chat replies.",
     accent: "#8B5CF6",
     soft: "#F1ECFE",
   },
   {
-    icon: Coins,
+    image: collectImg,
     eyebrow: "Collect",
-    title: "Get paid to UPI in 24 hours",
-    body: "Earnings shown upfront. No invoices. 1 coin = 1 rupee. Withdraw any amount above 100.",
-    accent: "#F0AC00",
+    title: "Paid to UPI in 24 hours",
+    body: "Earnings shown upfront. No invoices, no follow-ups. 1 coin = 1 rupee. Withdraw above 100.",
+    accent: "#B8860B",
     soft: "#FFF5E0",
   },
 ];
@@ -63,16 +66,20 @@ function Welcome() {
   if (showSplash) {
     return (
       <div className="min-h-screen relative overflow-hidden grid place-items-center"
-        style={{ background: "linear-gradient(180deg,#FFFFFF 0%,#F4F2FE 100%)" }}>
+        style={{ background: "radial-gradient(120% 80% at 50% 20%, #F4F2FE 0%, #FFFFFF 60%, #FBF7F1 100%)" }}>
+        <div aria-hidden className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full blur-3xl opacity-60"
+          style={{ background: "radial-gradient(circle, rgba(139,92,246,0.35), transparent 70%)" }} />
+        <div aria-hidden className="pointer-events-none absolute -bottom-24 -right-16 h-80 w-80 rounded-full blur-3xl opacity-50"
+          style={{ background: "radial-gradient(circle, rgba(240,172,0,0.30), transparent 70%)" }} />
         <div className="relative text-center logo-in">
-          <div className="inline-flex items-center justify-center h-24 w-24 rounded-[28px] bg-white shadow-[0_20px_50px_-15px_rgba(60,76,226,0.35)] overflow-hidden">
-            <Logo size={72} showWordmark={false} />
+          <div className="inline-flex items-center justify-center h-16 w-16 rounded-[20px] bg-white shadow-[0_12px_30px_-12px_rgba(60,76,226,0.45)] overflow-hidden ring-1 ring-black/5">
+            <Logo size={44} showWordmark={false} />
           </div>
-          <div className="mt-6 text-[34px] font-extrabold tracking-tight" style={{ color: "var(--primary)" }}>
-            campayn
+          <div className="mt-5 text-[32px] font-black tracking-tight" style={{ color: "var(--primary)" }}>
+            Campayn
           </div>
-          <div className="mt-2 text-[14px] font-semibold text-muted-foreground tracking-wide">
-            Collaborate · Create · Collect
+          <div className="mt-1.5 text-[12px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+            Collab · Create · Collect
           </div>
         </div>
       </div>
@@ -90,29 +97,31 @@ function Welcome() {
 
         <div ref={trackRef} onScroll={onScroll}
           className="mt-6 flex-1 flex overflow-x-auto snap-x-mandatory no-scrollbar -mx-5">
-          {SLIDES.map((s, idx) => {
-            const Icon = s.icon;
-            return (
-              <div key={idx} className="snap-start-c shrink-0 w-full px-5">
-                <div className="relative h-[58vh] min-h-[440px] rounded-[28px] overflow-hidden p-7 flex flex-col bg-white border border-border shadow-[0_20px_50px_-25px_rgba(15,23,42,0.18)]">
-                  <div className="inline-flex w-fit items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold tracking-widest uppercase"
-                    style={{ background: s.soft, color: s.accent }}>
+          {SLIDES.map((s, idx) => (
+            <div key={idx} className="snap-start-c shrink-0 w-full px-5">
+              <div className="relative h-[62vh] min-h-[480px] rounded-[28px] overflow-hidden flex flex-col bg-white border border-border shadow-[0_24px_60px_-28px_rgba(15,23,42,0.25)]">
+                <div className="relative flex-1 overflow-hidden" style={{ background: s.soft }}>
+                  <img
+                    src={s.image}
+                    alt={s.eyebrow}
+                    loading={idx === 0 ? "eager" : "lazy"}
+                    width={1024}
+                    height={1024}
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                  <div className="absolute top-3 left-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold tracking-widest uppercase bg-white/85 backdrop-blur ring-1 ring-black/5"
+                    style={{ color: s.accent }}>
                     {idx + 1} / {SLIDES.length} · {s.eyebrow}
                   </div>
-                  <div className="flex-1 grid place-items-center">
-                    <div className="h-28 w-28 rounded-3xl grid place-items-center logo-in"
-                      style={{ background: s.soft }}>
-                      <Icon className="h-14 w-14" strokeWidth={1.6} style={{ color: s.accent }} />
-                    </div>
-                  </div>
-                  <div>
-                    <h2 className="text-[26px] font-black leading-tight tracking-tight text-foreground">{s.title}</h2>
-                    <p className="mt-2 text-[14.5px] text-muted-foreground leading-relaxed">{s.body}</p>
-                  </div>
+                  <div aria-hidden className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-white" />
+                </div>
+                <div className="p-6 pt-4">
+                  <h2 className="text-[24px] font-black leading-tight tracking-tight text-foreground">{s.title}</h2>
+                  <p className="mt-2 text-[14px] text-muted-foreground leading-relaxed">{s.body}</p>
                 </div>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
 
         <div className="mt-5 flex items-center justify-center gap-2">
