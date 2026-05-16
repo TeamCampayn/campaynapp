@@ -97,7 +97,7 @@ function Discover() {
       <div className="relative mesh-bg pt-4 pb-5 overflow-hidden">
         <div className="px-5 flex items-center justify-between">
           <div className="text-[22px] font-extrabold tracking-tight" style={{ color: "var(--primary)" }}>
-            campayn
+            Campayn
           </div>
           <div className="flex items-center gap-2">
             <button onClick={() => setShowSearch(s => !s)}
