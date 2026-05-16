@@ -65,23 +65,34 @@ function Welcome() {
 
   if (showSplash) {
     return (
-      <div className="min-h-screen relative overflow-hidden grid place-items-center"
-        style={{ background: "radial-gradient(120% 80% at 50% 20%, #F4F2FE 0%, #FFFFFF 60%, #FBF7F1 100%)" }}>
-        <div aria-hidden className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full blur-3xl opacity-60"
-          style={{ background: "radial-gradient(circle, rgba(139,92,246,0.35), transparent 70%)" }} />
-        <div aria-hidden className="pointer-events-none absolute -bottom-24 -right-16 h-80 w-80 rounded-full blur-3xl opacity-50"
-          style={{ background: "radial-gradient(circle, rgba(240,172,0,0.30), transparent 70%)" }} />
-        <div className="relative text-center logo-in">
-          <div className="inline-flex items-center justify-center h-16 w-16 rounded-[20px] bg-white shadow-[0_12px_30px_-12px_rgba(60,76,226,0.45)] overflow-hidden ring-1 ring-black/5">
-            <Logo size={44} showWordmark={false} />
+      <div className="min-h-screen relative overflow-hidden grid place-items-center bg-white">
+        <div aria-hidden className="pointer-events-none absolute inset-0"
+          style={{ background: "radial-gradient(60% 45% at 50% 38%, #EEF0FE 0%, rgba(255,255,255,0) 70%)" }} />
+        <div className="relative text-center">
+          <div className="splash-logo inline-block">
+            <Logo size={92} showWordmark={false} />
           </div>
-          <div className="mt-5 text-[32px] font-black tracking-tight" style={{ color: "var(--primary)" }}>
+          <div className="splash-word mt-6 text-[36px] font-black tracking-tight leading-none"
+            style={{ color: "var(--primary)", letterSpacing: "-0.02em" }}>
             Campayn
           </div>
-          <div className="mt-1.5 text-[12px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+          <div className="splash-tag mt-2 text-[11px] font-semibold uppercase tracking-[0.32em] text-muted-foreground">
             Collab · Create · Collect
           </div>
+          <div className="splash-bar mx-auto mt-7 h-[3px] w-24 rounded-full overflow-hidden bg-[color:var(--primary)]/10">
+            <div className="splash-bar-fill h-full w-full origin-left bg-[color:var(--primary)]" />
+          </div>
         </div>
+        <style>{`
+          .splash-logo{filter:drop-shadow(0 18px 28px rgba(60,76,226,0.28)) drop-shadow(0 4px 8px rgba(60,76,226,0.18));animation:splashLogoIn .9s cubic-bezier(.2,.8,.2,1) both}
+          .splash-word{opacity:0;animation:splashRise .7s .35s cubic-bezier(.2,.8,.2,1) forwards}
+          .splash-tag{opacity:0;animation:splashRise .7s .55s cubic-bezier(.2,.8,.2,1) forwards}
+          .splash-bar{opacity:0;animation:splashRise .5s .75s ease-out forwards}
+          .splash-bar-fill{transform:scaleX(0);animation:splashBar 1s .8s cubic-bezier(.6,.2,.2,1) forwards}
+          @keyframes splashLogoIn{0%{opacity:0;transform:scale(.7) translateY(8px)}60%{opacity:1;transform:scale(1.06) translateY(0)}100%{opacity:1;transform:scale(1)}}
+          @keyframes splashRise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+          @keyframes splashBar{to{transform:scaleX(1)}}
+        `}</style>
       </div>
     );
   }
