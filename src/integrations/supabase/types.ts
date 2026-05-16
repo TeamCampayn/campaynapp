@@ -89,7 +89,9 @@ export type Database = {
           deadline: string | null
           deliverables: string[]
           do_dont: Json
+          hashtags: string[]
           id: string
+          key_messages: string[]
           payout_window_days: number
           platform: Database["public"]["Enums"]["platform_type"]
           requires_script: boolean
@@ -114,7 +116,9 @@ export type Database = {
           deadline?: string | null
           deliverables?: string[]
           do_dont?: Json
+          hashtags?: string[]
           id?: string
+          key_messages?: string[]
           payout_window_days?: number
           platform?: Database["public"]["Enums"]["platform_type"]
           requires_script?: boolean
@@ -139,7 +143,9 @@ export type Database = {
           deadline?: string | null
           deliverables?: string[]
           do_dont?: Json
+          hashtags?: string[]
           id?: string
+          key_messages?: string[]
           payout_window_days?: number
           platform?: Database["public"]["Enums"]["platform_type"]
           requires_script?: boolean
