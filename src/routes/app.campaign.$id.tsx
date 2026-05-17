@@ -52,8 +52,10 @@ function CampaignDetail() {
   const lo = Math.round(est * 0.7);
   const hi = Math.round(est * 1.4);
   const dod = (c.do_dont as { do?: string[]; dont?: string[] }) ?? {};
-  const keyMessages: string[] = (c.deliverables ?? []).slice(0, 3);
-  const hashtags: string[] = (c.target_niches ?? []).slice(0, 3).map((n: string) => `#${c.brand_name.replace(/\s+/g,"")}${n.charAt(0).toUpperCase()+n.slice(1)}`);
+  const keyMessages: string[] = (c.key_messages?.length ? c.key_messages : (c.deliverables ?? []).slice(0, 3));
+  const hashtags: string[] = (c.hashtags?.length
+    ? c.hashtags
+    : (c.target_niches ?? []).slice(0, 3).map((n: string) => `#${c.brand_name.replace(/\s+/g,"")}${n.charAt(0).toUpperCase()+n.slice(1)}`));
 
   async function apply() {
     setBusy(true);
