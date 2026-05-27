@@ -44,7 +44,7 @@ function MyCampaigns() {
 
   useEffect(() => {
     supabase.from("applications")
-      .select("*, campaigns(*)")
+      .select("*, legacy_campaigns(*)")
       .order("applied_at", { ascending: false })
       .then(({ data }) => setItems(data ?? []));
   }, []);
@@ -114,8 +114,8 @@ function MyCampaigns() {
       </div>
 
       {filtered === null && (
-        <div className="mt-6 space-y-4">
-          {[1,2].map(i => <div key={i} className="h-64 rounded-2xl bg-white border border-border animate-pulse" />)}
+        <div className="mt-6 space-y-4 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-5">
+          {[1,2,3].map(i => <div key={i} className="h-64 rounded-2xl bg-white border border-border animate-pulse" />)}
         </div>
       )}
 
@@ -130,9 +130,9 @@ function MyCampaigns() {
         </div>
       )}
 
-      <ul className="mt-5 space-y-4">
+      <ul className="mt-5 space-y-4 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-5">
         {filtered?.map(a => {
-          const c = a.campaigns;
+          const c = a.legacy_campaigns;
           const meta = STATUS_META[a.status] ?? STATUS_META.applied;
           const idx = stageIndex(a.status);
           const totalSteps = 6;

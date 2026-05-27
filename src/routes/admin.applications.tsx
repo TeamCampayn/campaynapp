@@ -21,7 +21,7 @@ const NEXT: Record<string, string[]> = {
 function AdminApps() {
   const [items, setItems] = useState<any[]>([]);
   async function load() {
-    const { data } = await supabase.from("applications").select("*, campaigns(brand_name, title), profiles(display_name)").order("applied_at", { ascending: false }).limit(100);
+    const { data } = await supabase.from("applications").select("*, campaigns:legacy_campaigns(brand_name, title), profiles(display_name)").order("applied_at", { ascending: false }).limit(100);
     setItems(data ?? []);
   }
   useEffect(() => { load(); }, []);

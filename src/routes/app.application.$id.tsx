@@ -15,13 +15,11 @@ export const Route = createFileRoute("/app/application/$id")({
 
 const STAGES: { key: string; label: string; icon: any; statuses: string[] }[] = [
   { key: "applied",    label: "Applied",        icon: Send,          statuses: ["applied"] },
-  { key: "approved",   label: "Approved by brand", icon: Check,      statuses: ["approved","script_submitted","script_approved","revision_requested","video_submitted","video_approved","posted","verified","paid","withdrawn"] },
-  { key: "script",     label: "Script submitted", icon: FileText,    statuses: ["script_submitted","script_approved","revision_requested","video_submitted","video_approved","posted","verified","paid","withdrawn"] },
-  { key: "script_ok",  label: "Script approved",  icon: ClipboardCheck, statuses: ["script_approved","video_submitted","video_approved","posted","verified","paid","withdrawn"] },
-  { key: "posted",     label: "Content posted",   icon: Video,       statuses: ["posted","verified","paid","withdrawn"] },
-  { key: "tracking",   label: "Views tracking",   icon: Eye,         statuses: ["posted","verified","paid","withdrawn"] },
-  { key: "verified",   label: "Verified by Campayn", icon: ShieldCheck, statuses: ["verified","paid","withdrawn"] },
-  { key: "paid",       label: "Paid to wallet",   icon: Coins,       statuses: ["paid","withdrawn"] },
+  { key: "approved",   label: "Approved by brand", icon: Check,      statuses: ["approved", "script_submitted", "script_approved", "video_submitted", "video_approved", "posted", "verified", "paid", "withdrawn"] },
+  { key: "posted",     label: "Content posted",   icon: Video,       statuses: ["posted", "verified", "paid", "withdrawn"] },
+  { key: "tracking",   label: "Views tracking",   icon: Eye,         statuses: ["posted", "verified", "paid", "withdrawn"] },
+  { key: "verified",   label: "Verified by Campayn", icon: ShieldCheck, statuses: ["verified", "paid", "withdrawn"] },
+  { key: "paid",       label: "Paid to wallet",   icon: Coins,       statuses: ["paid", "withdrawn"] },
 ];
 
 function stageIndex(status: string) {
@@ -58,7 +56,7 @@ function ApplicationDetail() {
   const [capBusy, setCapBusy] = useState(false);
 
   async function load() {
-    const { data } = await supabase.from("applications").select("*, campaigns(*)").eq("id", id).maybeSingle();
+    const { data } = await supabase.from("applications").select("*, campaigns:legacy_campaigns(*)").eq("id", id).maybeSingle();
     setA(data);
     const { data: s } = await supabase.from("submissions").select("*").eq("application_id", id).order("created_at");
     setSubs(s ?? []);
@@ -83,8 +81,14 @@ function ApplicationDetail() {
   const latestViews = snapshots.length ? snapshots[snapshots.length - 1].views : (a?.verified_views ?? 0);
   const projected = useMemo(() => {
     if (!a) return 0;
-    const cpv = (a.campaigns?.cpv_paise ?? 50) / 100;
-    return Math.round(latestViews * cpv);
+    const cpv = (a.campaigns?.cpv_rate ?? a.campaigns?.cpv_paise ?? 50) / 100;
+    const minG = a.campaigns?.min_guarantee_per_creator ?? 0;
+    const maxP = a.campaigns?.max_payout_per_creator ?? 0;
+    const gross = latestViews * cpv;
+    if (maxP > 0) {
+      return Math.max(minG, Math.min(maxP, gross));
+    }
+    return Math.max(minG, gross);
   }, [a, latestViews]);
 
   if (!a) return <div className="px-5 pt-10 text-muted-foreground">Loading…</div>;
@@ -107,14 +111,26 @@ function ApplicationDetail() {
     if (!/^https?:\/\//.test(postUrl)) return toast.error("Paste a valid URL");
     setBusy(true);
     try {
-      const { error: se } = await supabase.from("submissions").insert({ application_id: id, kind: "video", asset_url: postUrl });
-      if (se) throw se;
-      const { error: ue } = await supabase.from("applications").update({ status: "posted", post_url: postUrl }).eq("id", id);
-      if (ue) throw ue;
-      setPostUrl(""); toast.success("Post submitted - verification in 24h");
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+      const response = await fetch(`${backendUrl}/api/applications/${id}/submit-post`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ postUrl })
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Failed to submit post');
+      }
+      setPostUrl("");
+      toast.success("Post submitted successfully - views tracking started!");
       load();
-    } catch (e: any) { toast.error(e.message); }
-    finally { setBusy(false); }
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function genScript() {
@@ -142,10 +158,10 @@ function ApplicationDetail() {
     finally { setCapBusy(false); }
   }
 
-  const showScript = ["approved","revision_requested"].includes(a.status);
-  const showPost = ["script_approved","video_approved"].includes(a.status);
+  const showScript = false;
+  const showPost = ["approved", "script_approved", "video_approved"].includes(a.status);
   const isRejected = a.status === "rejected";
-  const showCaptions = ["script_approved","video_approved","posted","verified","paid"].includes(a.status);
+  const showCaptions = ["approved", "script_approved", "video_approved", "posted", "verified", "paid"].includes(a.status);
 
   return (
     <div className="px-5 pt-6 pb-24">
@@ -181,6 +197,38 @@ function ApplicationDetail() {
           <div className="mt-3 text-[12.5px] bg-white/15 backdrop-blur rounded-xl p-3">💬 {a.brand_feedback}</div>
         )}
       </div>
+
+      {/* Hybrid Payout Details */}
+      {a.campaigns && (a.campaigns.max_payout_per_creator || 0) > 0 && (
+        <div className="mt-3 cmp-card p-4 bg-slate-50 border border-slate-200 rounded-2xl text-left space-y-3">
+          <div className="flex justify-between items-center text-xs">
+            <span className="font-semibold text-slate-700">CPV Rate:</span>
+            <span className="font-bold text-slate-900">{(a.campaigns.cpv_rate ?? a.campaigns.cpv_paise ?? 50)} Paise / view</span>
+          </div>
+          <div className="flex justify-between items-center text-xs">
+            <span className="font-semibold text-slate-700">Minimum Guarantee:</span>
+            <span className="font-bold text-blue-600">{inrFmt(a.campaigns.min_guarantee_per_creator ?? 0)}</span>
+          </div>
+          <div className="flex justify-between items-center text-xs">
+            <span className="font-semibold text-slate-700">Maximum Payout Cap:</span>
+            <span className="font-bold text-emerald-600">{inrFmt(a.campaigns.max_payout_per_creator ?? 0)}</span>
+          </div>
+          
+          {/* Visual Progress toward cap */}
+          <div className="pt-2">
+            <div className="relative w-full h-2.5 bg-slate-200 rounded-full overflow-hidden border border-slate-300">
+              <div 
+                className="h-full bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full transition-all duration-500"
+                style={{ width: `${Math.min(100, (((a.final_earning_inr ?? a.estimated_earning_inr ?? projected ?? 0)) / (a.campaigns.max_payout_per_creator || 1)) * 100)}%` }}
+              />
+            </div>
+            <div className="flex justify-between text-[9px] text-slate-400 mt-1">
+              <span>Progress to Max Payout</span>
+              <span>{Math.round(Math.min(100, (((a.final_earning_inr ?? a.estimated_earning_inr ?? projected ?? 0)) / (a.campaigns.max_payout_per_creator || 1)) * 100))}%</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {isRejected && (
         <div className="mt-3 rounded-2xl p-4 border flex items-start gap-3"
@@ -236,9 +284,33 @@ function ApplicationDetail() {
                 </div>
               )}
               {active && s.key === "script_ok" && (
-                <div className="mt-2 cmp-card p-3.5">
-                  <div className="font-bold text-[13.5px]">📹 Time to film & post</div>
-                  <ul className="mt-2 space-y-1.5 text-[12.5px] text-muted-foreground">
+                <div className="mt-2 cmp-card p-4 space-y-3">
+                  <div className="font-bold text-[13.5px] text-foreground flex items-center gap-1.5">
+                    <Video className="h-4.5 w-4.5 text-primary" />
+                    📹 Time to film & post
+                  </div>
+                  
+                  {/* Show the approved script prominently */}
+                  {(() => {
+                    const approvedScript = subs.find((sub: any) => sub.kind === 'script' && sub.approved === true);
+                    if (approvedScript?.content) {
+                      return (
+                        <div className="bg-primary/5 border border-primary/20 rounded-xl p-3.5 text-[13px] text-left">
+                          <span className="font-bold text-primary block mb-1.5 flex items-center gap-1">
+                            <FileText className="h-3.5 w-3.5" />
+                            Approved Script to Film:
+                          </span>
+                          <p className="font-mono text-xs whitespace-pre-wrap bg-white/70 p-2.5 rounded border leading-relaxed text-foreground select-all">
+                            {approvedScript.content}
+                          </p>
+                          <span className="text-[10px] text-muted-foreground block mt-1.5">💡 Tip: Select the script to copy it for your video teleprompter.</span>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
+
+                  <ul className="space-y-1.5 text-[12.5px] text-muted-foreground text-left">
                     <li className="flex gap-2"><Check className="h-3.5 w-3.5 text-success mt-0.5 shrink-0" /> Use brand mention in caption</li>
                     <li className="flex gap-2"><Check className="h-3.5 w-3.5 text-success mt-0.5 shrink-0" /> Tag @{a.campaigns?.brand_name?.toLowerCase().replace(/\s+/g, "")}</li>
                     <li className="flex gap-2"><Check className="h-3.5 w-3.5 text-success mt-0.5 shrink-0" /> Add #ad or #paidpartnership</li>

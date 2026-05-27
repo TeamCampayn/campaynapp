@@ -100,7 +100,7 @@ function Welcome() {
   return (
     <div className="min-h-screen relative overflow-hidden flex flex-col"
       style={{ background: "linear-gradient(180deg,#FFFFFF 0%,#F7F5FB 100%)" }}>
-      <div className="relative max-w-md w-full mx-auto flex-1 flex flex-col px-5 pt-6 pb-7">
+      <div className="relative max-w-md md:max-w-2xl w-full mx-auto flex-1 flex flex-col px-5 pt-6 md:pt-12 pb-7">
         <div className="flex items-center justify-between">
           <Logo size={32} />
           <Link to="/auth" className="text-[13px] font-semibold text-muted-foreground hover:text-foreground transition">Skip</Link>

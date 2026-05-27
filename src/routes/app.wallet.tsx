@@ -37,7 +37,7 @@ function Wallet() {
       supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
       supabase.from("transactions").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(80),
       supabase.from("withdrawals").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(20),
-      supabase.from("applications").select("*, campaigns(brand_name, cpv_paise, payout_window_days)").eq("user_id", user.id).in("status", ["posted","verified"]),
+      supabase.from("applications").select("*, campaigns:legacy_campaigns(brand_name, cpv_paise, payout_window_days)").eq("user_id", user.id).in("status", ["posted","verified"]),
     ]);
     setProfile(p); setTx(t ?? []); setWithdrawals(w ?? []); setPending(live ?? []);
   }
@@ -120,7 +120,7 @@ function Wallet() {
             <h3 className="font-bold text-[15px]">Maturing payouts</h3>
             <span className="text-[11px] font-semibold text-muted-foreground">{pending.length} live</span>
           </div>
-          <ul className="space-y-2.5">
+          <ul className="space-y-2.5 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
             {pending.map(a => {
               const due = a.payout_due_at ? new Date(a.payout_due_at) : null;
               const window = (a.campaigns?.payout_window_days ?? 7) * 86400000;
@@ -163,7 +163,7 @@ function Wallet() {
       {withdrawals.filter(w => w.status === "pending").length > 0 && (
         <section className="mt-6">
           <h3 className="font-bold text-[15px]">Withdrawal requests</h3>
-          <ul className="mt-2.5 space-y-2">
+          <ul className="mt-2.5 space-y-2 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
             {withdrawals.filter(w => w.status === "pending").map(w => (
               <li key={w.id} className="cmp-card p-3.5 flex items-center justify-between">
                 <div>
@@ -206,7 +206,7 @@ function Wallet() {
         {Object.entries(grouped).map(([month, list]) => (
           <div key={month}>
             <div className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-2">{month}</div>
-            <ul className="space-y-2">
+            <ul className="space-y-2 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
               {list.map((t: any) => {
                 const meta = KIND_META[t.kind] ?? KIND_META.earning;
                 const Icon = meta.icon;

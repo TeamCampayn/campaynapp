@@ -24,6 +24,24 @@ function Connected() {
   }
   useEffect(() => { load(); }, []);
 
+  async function handleConnectInstagram() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { toast.error("Please log in first"); return; }
+    
+    const appId = import.meta.env.VITE_FACEBOOK_APP_ID || "1951089435528507";
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://campayn-backend.onrender.com";
+    const redirectUri = `${backendUrl}/api/auth/facebook/callback`;
+    const scope = [
+      'instagram_basic', 'instagram_manage_insights', 'pages_show_list',
+      'pages_read_engagement', 'pages_manage_metadata', 'business_management', 'public_profile'
+    ].join(',');
+    
+    const authUrl = `https://www.facebook.com/v19.0/dialog/oauth?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&state=${user.id}&auth_type=rerequest`;
+    
+    toast.loading("Redirecting to Facebook OAuth...");
+    window.location.href = authUrl;
+  }
+
   async function connectFlow() {
     if (!modal) return;
     const cleaned = handle.replace(/^@+/, "").trim();
@@ -102,7 +120,7 @@ function Connected() {
       </ul>
 
       <div className="mt-5 grid grid-cols-2 gap-3">
-        <button onClick={() => setModal("instagram")} disabled={items.some(s => s.platform === "instagram")}
+        <button onClick={handleConnectInstagram} disabled={items.some(s => s.platform === "instagram")}
           className="cmp-card p-4 flex flex-col items-center gap-2 active:scale-[0.99] transition disabled:opacity-40">
           <div className="h-11 w-11 rounded-xl grid place-items-center text-white"
             style={{ background: "linear-gradient(135deg,#F58529,#DD2A7B,#8134AF)" }}>

@@ -10,9 +10,16 @@ export function useAuth() {
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
       setSession(s); setUser(s?.user ?? null);
+      if (!s) {
+        localStorage.removeItem("campayn_onboarding_completed");
+      }
     });
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session); setUser(session?.user ?? null); setLoading(false);
+      setSession(session); setUser(session?.user ?? null);
+      if (!session) {
+        localStorage.removeItem("campayn_onboarding_completed");
+      }
+      setLoading(false);
     });
     return () => sub.subscription.unsubscribe();
   }, []);

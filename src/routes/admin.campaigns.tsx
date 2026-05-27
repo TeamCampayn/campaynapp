@@ -19,7 +19,7 @@ function AdminCampaigns() {
   const [editing, setEditing] = useState<any | null>(null);
 
   async function load() {
-    const { data } = await supabase.from("campaigns").select("*").order("created_at", { ascending: false });
+    const { data } = await supabase.from("legacy_campaigns").select("*").order("created_at", { ascending: false });
     setItems(data ?? []);
   }
   useEffect(() => { load(); }, []);
@@ -35,10 +35,10 @@ function AdminCampaigns() {
       deadline: editing.deadline || null,
     };
     if (editing.id) {
-      const { error } = await supabase.from("campaigns").update(payload).eq("id", editing.id);
+      const { error } = await supabase.from("legacy_campaigns").update(payload).eq("id", editing.id);
       if (error) return toast.error(error.message);
     } else {
-      const { error } = await supabase.from("campaigns").insert(payload);
+      const { error } = await supabase.from("legacy_campaigns").insert(payload);
       if (error) return toast.error(error.message);
     }
     toast.success("Saved");
@@ -47,7 +47,7 @@ function AdminCampaigns() {
 
   async function del(id: string) {
     if (!confirm("Delete?")) return;
-    const { error } = await supabase.from("campaigns").delete().eq("id", id);
+    const { error } = await supabase.from("legacy_campaigns").delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Deleted"); load();
   }

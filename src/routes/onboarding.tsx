@@ -33,13 +33,67 @@ function Onboarding() {
   const [cityQ, setCityQ] = useState("");
   const [bio, setBio] = useState("");
   const [busy, setBusy] = useState(false);
-  const [done, setDone] = useState(false);
+  const [done, setDone] = useState(() => {
+    return localStorage.getItem("campayn_onboarding_completed") === "true";
+  });
+  const [instagramHandle, setInstagramHandle] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
-    supabase.from("profiles").select("onboarding_complete").eq("id", user.id).maybeSingle()
-      .then(({ data }) => { if (data?.onboarding_complete) setDone(true); });
+    async function checkOnboarding() {
+      try {
+        const { data, error } = await supabase.from("profiles").select("onboarding_complete").eq("id", user!.id).maybeSingle();
+        if (error) {
+          console.error("Error fetching onboarding status:", error);
+        } else if (data?.onboarding_complete) {
+          localStorage.setItem("campayn_onboarding_completed", "true");
+          setDone(true);
+        }
+      } catch (err) {
+        console.error("Failed to check onboarding status:", err);
+      }
+    }
+    
+    async function checkSocials() {
+      try {
+        const { data } = await supabase.from("social_connections").select("handle").eq("user_id", user!.id).eq("platform", "instagram").maybeSingle();
+        if (data?.handle) {
+          setInstagramHandle(data.handle);
+        }
+      } catch (err) {
+        console.error("Failed to check social connections:", err);
+      }
+    }
+
+    checkOnboarding();
+    checkSocials();
   }, [user]);
+
+  useEffect(() => {
+    const onboardingSuccess = localStorage.getItem("campayn_onboarding_success");
+    if (onboardingSuccess === "true") {
+      localStorage.removeItem("campayn_onboarding_success");
+      
+      // Restore previous step's field values so the user doesn't lose any inputs!
+      const rawData = localStorage.getItem("campayn_onboarding_data");
+      if (rawData) {
+        try {
+          const parsed = JSON.parse(rawData);
+          if (parsed.niches) setNiches(parsed.niches);
+          if (parsed.languages) setLanguages(parsed.languages);
+          if (parsed.city) setCity(parsed.city);
+          if (parsed.bio) setBio(parsed.bio);
+        } catch (e) {
+          console.error("Failed to restore onboarding data:", e);
+        }
+        localStorage.removeItem("campayn_onboarding_data");
+      }
+      
+      // Set to step 2 (Connect accounts step)
+      setStep(2);
+      toast.success("Instagram connected successfully! Let's complete your profile. 🚀");
+    }
+  }, []);
 
   const cityMatches = useMemo(() => {
     const q = cityQ.trim().toLowerCase();
@@ -66,15 +120,36 @@ function Onboarding() {
         profile_completion: Math.min(80, completion),
       }).eq("id", user!.id);
       if (error) throw error;
+      
+      // Set local storage flag to prevent page mount race conditions
+      localStorage.setItem("campayn_onboarding_completed", "true");
+      
       toast.success(skipSocial ? "Profile saved - you can connect Instagram later" : "Profile saved 🎯");
       nav({ to: "/app/discover" });
     } catch (e: any) { toast.error(e.message); }
     finally { setBusy(false); }
   }
 
-  function connectInstagramSoon() {
-    toast.info("Instagram OAuth ships next week - we'll email you the moment it's live.");
+  function connectInstagram() {
+    if (!user) { toast.error("Please log in first"); return; }
+    const appId = import.meta.env.VITE_FACEBOOK_APP_ID || "1951089435528507";
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://campayn-backend.onrender.com";
+    const redirectUri = `${backendUrl}/api/auth/facebook/callback`;
+    const scope = [
+      'instagram_basic', 'instagram_manage_insights', 'pages_show_list',
+      'pages_read_engagement', 'pages_manage_metadata', 'business_management', 'public_profile'
+    ].join(',');
+    
+    // Save onboarding step in local storage to resume onboarding on redirect back!
+    localStorage.setItem("campayn_onboarding_pending", "true");
+    localStorage.setItem("campayn_onboarding_data", JSON.stringify({ niches, languages, city, bio }));
+    
+    const authUrl = `https://www.facebook.com/v19.0/dialog/oauth?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&state=${user.id}&auth_type=rerequest`;
+    
+    toast.loading("Redirecting to Facebook OAuth...");
+    window.location.href = authUrl;
   }
+
   function connectYouTubeSoon() {
     toast.info("YouTube OAuth ships next week.");
   }
@@ -176,15 +251,25 @@ function Onboarding() {
       sub: "Brands pay based on your real reach. Connect at least one - or skip and add later.",
       body: (
         <div className="space-y-3">
-          <button onClick={connectInstagramSoon}
-            className="w-full cmp-card p-4 flex items-center gap-3 active:scale-[0.99] transition">
-            <div className="h-11 w-11 rounded-xl grad-primary grid place-items-center"><Instagram className="h-5 w-5 text-white" /></div>
-            <div className="flex-1 text-left">
-              <div className="font-semibold text-foreground flex items-center gap-2">Connect Instagram <Lock className="h-3 w-3 text-muted-foreground" /></div>
-              <div className="text-xs text-muted-foreground">Reels, posts & insights - official OAuth</div>
+          {instagramHandle ? (
+            <div className="w-full cmp-card p-4 flex items-center gap-3 border-emerald-500/20 bg-emerald-50/10">
+              <div className="h-11 w-11 rounded-xl bg-emerald-500 grid place-items-center"><Check className="h-5 w-5 text-white" /></div>
+              <div className="flex-1 text-left">
+                <div className="font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-2">Instagram Connected!</div>
+                <div className="text-xs text-muted-foreground">@{instagramHandle} connected successfully</div>
+              </div>
             </div>
-            <ChevronRight className="h-4 w-4 text-muted-foreground" />
-          </button>
+          ) : (
+            <button onClick={connectInstagram}
+              className="w-full cmp-card p-4 flex items-center gap-3 active:scale-[0.99] transition">
+              <div className="h-11 w-11 rounded-xl grad-primary grid place-items-center"><Instagram className="h-5 w-5 text-white" /></div>
+              <div className="flex-1 text-left">
+                <div className="font-semibold text-foreground flex items-center gap-2">Connect Instagram <Lock className="h-3 w-3 text-muted-foreground" /></div>
+                <div className="text-xs text-muted-foreground">Reels, posts & insights - official OAuth</div>
+              </div>
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            </button>
+          )}
           <button onClick={connectYouTubeSoon}
             className="w-full cmp-card p-4 flex items-center gap-3 active:scale-[0.99] transition">
             <div className="h-11 w-11 rounded-xl grad-primary grid place-items-center"><Youtube className="h-5 w-5 text-white" /></div>
@@ -196,7 +281,7 @@ function Onboarding() {
           </button>
           <div className="cmp-card p-3.5 bg-secondary/60 text-[12px] text-muted-foreground flex gap-2">
             <Lock className="h-3.5 w-3.5 mt-0.5 shrink-0 text-primary" />
-            <span>Official Instagram & YouTube OAuth is rolling out this month. Skip for now and you can connect anytime from your profile.</span>
+            <span>Official Instagram OAuth is live! Connect your account to enable paid campaigns from top brands.</span>
           </div>
         </div>
       ),
@@ -208,7 +293,7 @@ function Onboarding() {
   const isLast = step === steps.length - 1;
 
   return (
-    <div className="min-h-screen flex flex-col px-5 pt-6 pb-10 max-w-md mx-auto w-full">
+    <div className="min-h-screen flex flex-col px-5 pt-6 md:pt-12 pb-10 max-w-md md:max-w-2xl mx-auto w-full">
       <div className="flex items-center justify-between">
         <Logo />
         <span className="text-[11px] font-semibold text-muted-foreground tracking-wider">STEP {step + 1} / {steps.length}</span>

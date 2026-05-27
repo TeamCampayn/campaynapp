@@ -1,5 +1,6 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
-import { Toaster } from "sonner";
+import { Toaster, toast } from "sonner";
+import { useEffect } from "react";
 
 import appCss from "../styles.css?url";
 
@@ -70,6 +71,49 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  useEffect(() => {
+    // Intercept Instagram connection callback redirect parameters
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get("status");
+    const handle = params.get("handle");
+    const message = params.get("message");
+
+    if (status) {
+      if (status === "success") {
+        toast.success(`Instagram account @${handle} connected successfully! 🎉`);
+        
+        // Check if there was a pending onboarding flow
+        const onboardingPending = localStorage.getItem("campayn_onboarding_pending");
+        if (onboardingPending === "true") {
+          // Clear pending flag so we don't loop
+          localStorage.removeItem("campayn_onboarding_pending");
+          // Let onboarding know it was successful
+          localStorage.setItem("campayn_onboarding_success", "true");
+          // Force navigate to onboarding so they can finish
+          window.location.href = "/onboarding";
+          return;
+        } else {
+          // If not in onboarding, redirect to the connected accounts page!
+          window.location.href = "/app/connected";
+          return;
+        }
+      } else if (status === "error") {
+        toast.error(message || "Failed to connect Instagram account.");
+        
+        const onboardingPending = localStorage.getItem("campayn_onboarding_pending");
+        if (onboardingPending === "true") {
+          localStorage.removeItem("campayn_onboarding_pending");
+          window.location.href = "/onboarding";
+          return;
+        }
+      }
+      
+      // Clean query parameters from URL
+      const cleanUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
+  }, []);
+
   return (
     <>
       <Outlet />

@@ -13,7 +13,7 @@ function Dashboard() {
     (async () => {
       const [users, camps, apps, wd] = await Promise.all([
         supabase.from("profiles").select("id", { count: "exact", head: true }),
-        supabase.from("campaigns").select("id", { count: "exact", head: true }).eq("status", "active"),
+        supabase.from("legacy_campaigns").select("id", { count: "exact", head: true }).eq("status", "active"),
         supabase.from("applications").select("estimated_earning_inr"),
         supabase.from("withdrawals").select("amount_inr").eq("status", "pending"),
       ]);

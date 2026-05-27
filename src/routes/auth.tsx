@@ -64,58 +64,92 @@ function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      <div aria-hidden className="absolute inset-0 mesh-bg" />
-      <div aria-hidden className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-24 -left-20 h-80 w-80 rounded-full opacity-60 blur-3xl aurora"
-          style={{ background: "radial-gradient(closest-side, rgba(117,134,245,0.55), transparent 70%)" }} />
-        <div className="absolute top-1/3 -right-24 h-80 w-80 rounded-full opacity-50 blur-3xl aurora"
-          style={{ background: "radial-gradient(closest-side, rgba(240,171,252,0.5), transparent 70%)" }} />
-      </div>
-    <div className="relative min-h-screen flex flex-col px-5 pt-8 pb-10 max-w-md mx-auto w-full">
-      <Logo size={36} />
-      <span className="mt-8 chip-glass self-start">
-        <Sparkles className="h-3 w-3 sparkle" /> Collab · Create · Collect
-      </span>
-      <h1 className="mt-3 text-[30px] font-extrabold tracking-tight text-foreground leading-[1.1]">
-        {mode === "signup" ? "Join the new creator economy" : "Welcome back"}
-      </h1>
-      <p className="mt-2 text-muted-foreground text-[14.5px]">
-        {mode === "signup" ? "30 seconds. No card. Get ₹100 welcome coins." : "Sign in to continue earning."}
-      </p>
-
-      <button onClick={google} disabled={googleBusy} className="mt-7 btn-google">
-        <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34 6.5 29.3 4.5 24 4.5 12.7 4.5 3.5 13.7 3.5 25S12.7 45.5 24 45.5 44.5 36.3 44.5 25c0-1.5-.2-3-.5-4.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.8 16 19 13 24 13c3.1 0 5.9 1.2 8 3l5.7-5.7C34 6.5 29.3 4.5 24 4.5 16.3 4.5 9.6 8.8 6.3 14.7z"/><path fill="#4CAF50" d="M24 45.5c5.3 0 10-2 13.6-5.2l-6.3-5.3c-2 1.4-4.5 2.3-7.3 2.3-5.3 0-9.7-3.4-11.3-8L6.1 33.9C9.3 40 16.1 45.5 24 45.5z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.7 2-2 3.7-3.7 5l6.3 5.3C41.6 35.6 44.5 30.7 44.5 25c0-1.5-.2-3-.5-4.5z"/></svg>
-        {googleBusy ? "Opening Google…" : "Continue with Google"}
-      </button>
-
-      <div className="mt-5 flex items-center gap-3 text-[12px] text-muted-foreground">
-        <div className="flex-1 h-px bg-border" /> or with email <div className="flex-1 h-px bg-border" />
+    <div className="min-h-screen relative overflow-hidden md:flex">
+      
+      {/* Left side (Desktop only) */}
+      <div className="hidden md:flex relative flex-col justify-center px-12 lg:px-20 flex-1 border-r border-border mesh-bg overflow-hidden bg-background">
+        <div aria-hidden className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 -left-20 h-96 w-96 rounded-full opacity-50 blur-3xl aurora"
+            style={{ background: "radial-gradient(closest-side, rgba(117,134,245,0.55), transparent 70%)" }} />
+          <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full opacity-40 blur-3xl aurora"
+            style={{ background: "radial-gradient(closest-side, rgba(240,171,252,0.5), transparent 70%)" }} />
+        </div>
+        
+        <div className="relative z-10 max-w-lg">
+          <Logo size={48} />
+          <span className="mt-12 chip-glass self-start inline-flex">
+            <Sparkles className="h-4 w-4 sparkle" /> Collab · Create · Collect
+          </span>
+          <h1 className="mt-6 text-[44px] lg:text-[54px] font-extrabold tracking-tight text-foreground leading-[1.05]">
+            Campayn for Creators
+          </h1>
+          <p className="mt-4 text-muted-foreground text-lg leading-relaxed">
+            Join the new creator economy. Discover paid brand campaigns, use AI to write hooks, and get paid directly to your UPI in 24 hours.
+          </p>
+        </div>
       </div>
 
-      <form onSubmit={submit} className="mt-5 space-y-3">
-        {mode === "signup" && (
-          <input className="cmp-input" placeholder="Display name" value={form.name}
-            onChange={e => setForm({ ...form, name: e.target.value })} maxLength={40} />
-        )}
-        <input className="cmp-input" type="email" placeholder="Email" value={form.email}
-          onChange={e => setForm({ ...form, email: e.target.value })} maxLength={255} autoComplete="email" />
-        <input className="cmp-input" type="password" placeholder="Password (8+ chars)" value={form.password}
-          onChange={e => setForm({ ...form, password: e.target.value })} maxLength={72}
-          autoComplete={mode === "signup" ? "new-password" : "current-password"} />
+      {/* Right side (Auth Form) */}
+      <div className="relative min-h-screen flex flex-col justify-center px-5 py-10 w-full md:w-[480px] lg:w-[560px] mx-auto md:mx-0 md:shrink-0 bg-background md:bg-white">
+        {/* Mobile background */}
+        <div aria-hidden className="absolute inset-0 mesh-bg md:hidden" />
+        <div aria-hidden className="absolute inset-0 pointer-events-none md:hidden">
+          <div className="absolute -top-24 -left-20 h-80 w-80 rounded-full opacity-60 blur-3xl aurora"
+            style={{ background: "radial-gradient(closest-side, rgba(117,134,245,0.55), transparent 70%)" }} />
+          <div className="absolute top-1/3 -right-24 h-80 w-80 rounded-full opacity-50 blur-3xl aurora"
+            style={{ background: "radial-gradient(closest-side, rgba(240,171,252,0.5), transparent 70%)" }} />
+        </div>
 
-        <button type="submit" disabled={busy} className="btn-primary w-full mt-2">
-          {busy ? "Please wait…" : mode === "signup" ? "Create account" : "Sign in"}
-        </button>
-      </form>
+        <div className="relative z-10 max-w-md w-full mx-auto md:mx-0 md:px-10 lg:px-12">
+          <div className="md:hidden">
+            <Logo size={36} />
+            <span className="mt-8 chip-glass inline-flex">
+              <Sparkles className="h-3 w-3 sparkle" /> Collab · Create · Collect
+            </span>
+          </div>
 
-      <button onClick={() => setMode(mode === "signup" ? "signin" : "signup")}
-        className="mt-6 text-sm text-muted-foreground text-center self-center">
-        {mode === "signup"
-          ? <>Already have an account? <span className="text-primary-blue font-semibold">Sign in</span></>
-          : <>New to Campayn? <span className="text-primary-blue font-semibold">Create account</span></>}
-      </button>
-    </div>
+          <h1 className="mt-3 md:mt-0 text-[30px] md:text-[36px] font-extrabold tracking-tight text-foreground leading-[1.1]">
+            {mode === "signup" ? "Join the new creator economy" : "Welcome back"}
+          </h1>
+          <p className="mt-2 text-muted-foreground text-[14.5px] md:text-[16px]">
+            {mode === "signup" ? "30 seconds. No card. Get ₹100 welcome coins." : "Sign in to continue earning."}
+          </p>
+
+          <button onClick={google} disabled={googleBusy} className="mt-7 md:mt-8 btn-google">
+            <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34 6.5 29.3 4.5 24 4.5 12.7 4.5 3.5 13.7 3.5 25S12.7 45.5 24 45.5 44.5 36.3 44.5 25c0-1.5-.2-3-.5-4.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.8 16 19 13 24 13c3.1 0 5.9 1.2 8 3l5.7-5.7C34 6.5 29.3 4.5 24 4.5 16.3 4.5 9.6 8.8 6.3 14.7z"/><path fill="#4CAF50" d="M24 45.5c5.3 0 10-2 13.6-5.2l-6.3-5.3c-2 1.4-4.5 2.3-7.3 2.3-5.3 0-9.7-3.4-11.3-8L6.1 33.9C9.3 40 16.1 45.5 24 45.5z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.7 2-2 3.7-3.7 5l6.3 5.3C41.6 35.6 44.5 30.7 44.5 25c0-1.5-.2-3-.5-4.5z"/></svg>
+            {googleBusy ? "Opening Google…" : "Continue with Google"}
+          </button>
+
+          <div className="mt-6 flex items-center gap-3 text-[12px] text-muted-foreground">
+            <div className="flex-1 h-px bg-border" /> or with email <div className="flex-1 h-px bg-border" />
+          </div>
+
+          <form onSubmit={submit} className="mt-6 space-y-4">
+            {mode === "signup" && (
+              <input className="cmp-input" placeholder="Display name" value={form.name}
+                onChange={e => setForm({ ...form, name: e.target.value })} maxLength={40} />
+            )}
+            <input className="cmp-input" type="email" placeholder="Email" value={form.email}
+              onChange={e => setForm({ ...form, email: e.target.value })} maxLength={255} autoComplete="email" />
+            <input className="cmp-input" type="password" placeholder="Password (8+ chars)" value={form.password}
+              onChange={e => setForm({ ...form, password: e.target.value })} maxLength={72}
+              autoComplete={mode === "signup" ? "new-password" : "current-password"} />
+
+            <button type="submit" disabled={busy} className="btn-primary w-full mt-2 h-12">
+              {busy ? "Please wait…" : mode === "signup" ? "Create account" : "Sign in"}
+            </button>
+          </form>
+
+          <div className="mt-8 text-center">
+            <button onClick={() => setMode(mode === "signup" ? "signin" : "signup")}
+              className="text-sm text-muted-foreground hover:text-foreground transition">
+              {mode === "signup"
+                ? <>Already have an account? <span className="text-primary font-bold">Sign in</span></>
+                : <>New to Campayn? <span className="text-primary font-bold">Create account</span></>}
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

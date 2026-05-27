@@ -21,7 +21,7 @@ function Discover() {
   const [activeNiches, setActiveNiches] = useState<string[]>([]);
 
   useEffect(() => {
-    supabase.from("campaigns").select("*").eq("status", "active").order("created_at", { ascending: false })
+    supabase.from("legacy_campaigns").select("*").eq("status", "active").order("created_at", { ascending: false })
       .then(({ data }) => setItems((data as CampaignCardData[]) ?? []));
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) return;
@@ -176,8 +176,8 @@ function Discover() {
 
       {/* Loading skeleton */}
       {items === null && (
-        <div className="mt-5 px-5 space-y-4">
-          {[1,2,3].map(i => <div key={i} className="h-56 rounded-2xl bg-white border border-border animate-pulse" />)}
+        <div className="mt-5 px-5 space-y-4 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-5">
+          {[1,2,3,4,5,6].map(i => <div key={i} className="h-56 rounded-2xl bg-white border border-border animate-pulse" />)}
         </div>
       )}
 
@@ -214,7 +214,7 @@ function Discover() {
           {filtered.length === 0 ? (
             <div className="py-10 text-center text-muted-foreground text-sm">No campaigns match. Try clearing filters.</div>
           ) : (
-            <div className="space-y-3.5">
+            <div className="space-y-3.5 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-5">
               {filtered.map(c => <CampaignCard key={c.id} c={c} avgViews={avgViews} />)}
             </div>
           )}

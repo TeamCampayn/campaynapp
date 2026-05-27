@@ -30,7 +30,7 @@ function Profile() {
         supabase.from("applications").select("id", { count: "exact", head: true }).eq("user_id", user.id),
         supabase.from("social_connections").select("*").eq("user_id", user.id),
         supabase.from("kyc").select("status").eq("user_id", user.id).maybeSingle(),
-        supabase.from("applications").select("id, post_url, verified_views, final_earning_inr, estimated_earning_inr, posted_at, status, campaigns(title, brand_name, brand_logo_url, cover_image_url)").eq("user_id", user.id).in("status", ["posted","verified","paid","withdrawn"]).order("posted_at", { ascending: false }).limit(12),
+        supabase.from("applications").select("id, post_url, verified_views, final_earning_inr, estimated_earning_inr, posted_at, status, campaigns:legacy_campaigns(title, brand_name, brand_logo_url, cover_image_url)").eq("user_id", user.id).in("status", ["posted","verified","paid","withdrawn"]).order("posted_at", { ascending: false }).limit(12),
         supabase.from("transactions").select("amount_inr, created_at, kind").eq("user_id", user.id).eq("kind","earning").order("created_at", { ascending: true }),
       ]);
       setP(data);
@@ -173,7 +173,7 @@ function Profile() {
             <h3 className="font-black text-[16px]">My posts</h3>
             <span className="text-[12px] text-muted-foreground">{posts.length} live</span>
           </div>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 md:gap-4">
             {posts.map(po => (
               <a key={po.id} href={po.post_url || "#"} target="_blank" rel="noreferrer"
                  className="relative aspect-[3/4] rounded-xl overflow-hidden bg-secondary group active:scale-[0.98] transition">
@@ -197,17 +197,18 @@ function Profile() {
         </div>
       )}
 
-      {/* Platform connections */}
       <div className="mt-4 cmp-card p-4">
         <div className="font-bold text-[15px]">Platform Connections</div>
-        <PlatformRow icon={<Instagram className="h-4 w-4" />} name="Instagram"
-          conn={ig} bg="linear-gradient(135deg,#F58529,#DD2A7B,#8134AF)" />
-        <PlatformRow icon={<Youtube className="h-4 w-4" />} name="YouTube"
-          conn={yt} bg="#FF0000" />
+        <div className="md:grid md:grid-cols-2 md:gap-4">
+          <PlatformRow icon={<Instagram className="h-4 w-4" />} name="Instagram"
+            conn={ig} bg="linear-gradient(135deg,#F58529,#DD2A7B,#8134AF)" />
+          <PlatformRow icon={<Youtube className="h-4 w-4" />} name="YouTube"
+            conn={yt} bg="#FF0000" />
+        </div>
       </div>
 
       {/* Quick links */}
-      <ul className="mt-4 space-y-2">
+      <ul className="mt-4 space-y-2 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
         <NavRow to="/app/kyc" icon={ShieldCheck} label="KYC verification" />
         <NavRow to="/app/referrals" icon={Gift} label="Refer & earn" />
         <NavRow to="/app/support" icon={LifeBuoy} label="Help & support" />
@@ -222,7 +223,7 @@ function Profile() {
         )}
       </ul>
 
-      <button onClick={signOut} className="mt-5 w-full bg-white border border-border rounded-2xl py-3.5 font-semibold text-destructive inline-flex items-center justify-center gap-2 active:scale-[0.99] transition">
+      <button onClick={signOut} className="mt-6 md:mt-8 w-full md:w-auto md:px-12 bg-white border border-border rounded-2xl py-3.5 font-semibold text-destructive inline-flex items-center justify-center gap-2 active:scale-[0.99] transition">
         <LogOut className="h-4 w-4" /> Sign out
       </button>
       <p className="mt-6 text-center text-xs text-muted-foreground">Campayn v1.0 · Made in India 🇮🇳</p>

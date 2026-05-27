@@ -11,7 +11,7 @@ const items = [
 export function BottomNav() {
   const loc = useLocation();
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-40 border-t border-border bg-white/95 backdrop-blur-xl"
+    <nav className="fixed bottom-0 inset-x-0 z-40 border-t border-border bg-white/95 backdrop-blur-xl md:hidden"
       style={{ boxShadow: "0 -8px 32px rgba(15,23,42,0.06)" }}>
       <ul className="mx-auto max-w-md grid grid-cols-4 px-2 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
         {items.map(({ to, icon: Icon, label }) => {

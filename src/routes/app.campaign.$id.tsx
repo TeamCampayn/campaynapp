@@ -31,7 +31,7 @@ function CampaignDetail() {
   const [aiBusy, setAiBusy] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.from("campaigns").select("*").eq("id", id).maybeSingle().then(({ data }) => setC(data));
+    supabase.from("legacy_campaigns").select("*").eq("id", id).maybeSingle().then(({ data }) => setC(data));
     supabase.from("applications").select("id", { count: "exact", head: true }).eq("campaign_id", id)
       .then(({ count }) => setAppliedCount(count ?? 0));
     supabase.auth.getUser().then(async ({ data: { user } }) => {
