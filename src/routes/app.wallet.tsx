@@ -45,9 +45,10 @@ function Wallet() {
 
   async function withdraw() {
     const amt = parseInt(amount);
+    const available = Math.max(0, (profile?.coin_balance ?? 0) - pendingTotal);
     if (!amt || amt < 100) return toast.error("Minimum withdrawal ₹100");
-    if (amt > (profile?.coin_balance ?? 0)) return toast.error("Insufficient balance");
-    if (!/^[\w.-]+@[\w.-]+$/.test(upi)) return toast.error("Enter a valid UPI ID");
+    if (amt > available) return toast.error("Insufficient available balance");
+    if (!upi || !/^[\w.-]+@[\w.-]+$/.test(upi)) return toast.error("Enter a valid UPI ID");
     setBusy(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -72,7 +73,8 @@ function Wallet() {
   const thisMonthStart = new Date(); thisMonthStart.setDate(1); thisMonthStart.setHours(0,0,0,0);
   const thisMonth = tx.filter(t => t.amount_inr > 0 && new Date(t.created_at) >= thisMonthStart)
     .reduce((s,t) => s + t.amount_inr, 0);
-  const pendingTotal = withdrawals.filter(w => w.status === "pending").reduce((s,w) => s + w.amount_inr, 0);
+  const pendingTotal = withdrawals.filter(w => w.status === "pending" || w.status === "processing").reduce((s,w) => s + w.amount_inr, 0);
+  const availableBalance = Math.max(0, (profile?.coin_balance ?? 0) - pendingTotal);
 
   return (
     <div className="px-5 pt-6 pb-10">
@@ -90,11 +92,16 @@ function Wallet() {
           <div className="text-[11px] uppercase tracking-widest font-bold opacity-80">Available balance</div>
           <div className="mt-2 flex items-end gap-2.5">
             <RupeeCoin size={38} />
-            <div className="text-[44px] leading-none font-black tracking-tight">{(profile?.coin_balance ?? 0).toLocaleString("en-IN")}</div>
+            <div className="text-[44px] leading-none font-black tracking-tight">{availableBalance.toLocaleString("en-IN")}</div>
           </div>
-          <div className="mt-1.5 text-[12.5px] opacity-85">1 coin = ₹1 · withdrawable to UPI / Bank</div>
+          {pendingTotal > 0 && (
+            <div className="text-[11px] opacity-75 mt-1">
+              (₹{profile?.coin_balance?.toLocaleString("en-IN")} total - ₹{pendingTotal.toLocaleString("en-IN")} pending)
+            </div>
+          )}
+          <div className="mt-2 text-[12.5px] opacity-85">1 coin = ₹1 · withdrawable to UPI / Bank</div>
           <div className="mt-4 flex gap-2">
-            <button onClick={() => setOpen(true)} disabled={(profile?.coin_balance ?? 0) < 100}
+            <button onClick={() => setOpen(true)} disabled={availableBalance < 100}
               className="flex-1 inline-flex items-center justify-center gap-2 bg-foreground text-background rounded-xl py-3 font-bold text-sm disabled:opacity-50">
               <ArrowDownToLine className="h-4 w-4" />Withdraw
             </button>
@@ -251,11 +258,11 @@ function Wallet() {
               <input value={amount} onChange={e => setAmount(e.target.value.replace(/\D/g, ""))} placeholder="₹ 0" inputMode="numeric"
                 className="cmp-input mt-1.5 text-lg font-bold" />
               <div className="mt-2 flex gap-2 flex-wrap">
-                {[100, 500, 1000].filter(v => v <= (profile?.coin_balance ?? 0)).map(v => (
+                {[100, 500, 1000].filter(v => v <= availableBalance).map(v => (
                   <button key={v} onClick={() => setAmount(String(v))} className="chip">₹{v}</button>
                 ))}
-                {(profile?.coin_balance ?? 0) >= 100 && (
-                  <button onClick={() => setAmount(String(profile.coin_balance))} className="chip">All ({inrFmt(profile.coin_balance)})</button>
+                {availableBalance >= 100 && (
+                  <button onClick={() => setAmount(String(availableBalance))} className="chip">All ({inrFmt(availableBalance)})</button>
                 )}
               </div>
             </div>

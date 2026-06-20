@@ -27,6 +27,26 @@ function AdminApps() {
   useEffect(() => { load(); }, []);
 
   async function moveTo(a: any, status: string) {
+    if (status === "paid") {
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+      try {
+        const response = await fetch(`${backendUrl}/api/admin/disburse-funds`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ applicationId: a.id })
+        });
+        const resData = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          return toast.error(resData.error || "Failed to disburse payout");
+        }
+        toast.success("Payout disbursed successfully!");
+        load();
+      } catch (err: any) {
+        toast.error("Network error: " + err.message);
+      }
+      return;
+    }
+
     const update: any = { status };
     if (status === "verified") {
       update.verified_views = a.estimated_earning_inr ? Math.round(a.estimated_earning_inr * 1000 / 50) : 50000;
@@ -34,17 +54,16 @@ function AdminApps() {
     }
     const { error } = await supabase.from("applications").update(update).eq("id", a.id);
     if (error) return toast.error(error.message);
-    if (status === "paid") {
-      // credit coins
-      const amt = a.final_earning_inr ?? a.estimated_earning_inr ?? 0;
-      await supabase.from("transactions").insert({ user_id: a.user_id, amount_inr: amt, kind: "earning", description: `${a.campaigns?.brand_name} – ${a.campaigns?.title}`, application_id: a.id });
-      const { data: prof } = await supabase.from("profiles").select("coin_balance, lifetime_earnings").eq("id", a.user_id).maybeSingle();
-      await supabase.from("profiles").update({ coin_balance: (prof?.coin_balance ?? 0) + amt, lifetime_earnings: (prof?.lifetime_earnings ?? 0) + amt }).eq("id", a.user_id);
-      await supabase.from("notifications").insert({ user_id: a.user_id, kind: "wallet", title: `+${amt} Coins credited 🎉`, body: `${a.campaigns?.brand_name} paid out for "${a.campaigns?.title}".` });
-    } else {
-      await supabase.from("notifications").insert({ user_id: a.user_id, kind: "campaign", title: `Status: ${status}`, body: `${a.campaigns?.title}` });
-    }
-    toast.success("Updated"); load();
+    
+    await supabase.from("notifications").insert({ 
+      user_id: a.user_id, 
+      kind: "campaign", 
+      title: `Status: ${status}`, 
+      body: `${a.campaigns?.title}` 
+    });
+    
+    toast.success("Updated"); 
+    load();
   }
 
   return (
